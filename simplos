@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+if [[ $# -ne 1 ]]; then
+  echo "Please supply a parameter of {build, flash, sim, debug, rebuild_container ,clean}."
+  exit
+fi
+
+case $1 in 
+  build)
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make compile
+    ;;
+
+  flash)
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make compile
+    BAUD=115200
+	  avr-size -C src/out.o
+	  avr-objcopy -O ihex -R .eeprom src/out.o out.hex
+	  avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf   -c wiring           \
+                                                                -p ATMEGA2560       \
+                                                                -D -P /dev/ttyUSB0   \
+                                                                -b $BAUD            \
+                                                                -U flash:w:out.hex  \
+                                                                /
+  ;;
+
+  sim)
+    sudo docker run  -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make debug_compile
+    avr-size -C src/out_dbg.o
+    simavr -g -m atmega2560 src/out_dbg.o
+  ;;
+
+  debug)
+	  avr-gdb src/out_dbg.o -ex "target remote :1234" -ex "directory src/"
+  ;;
+
+  rebuild_container)
+    sudo docker build --rm -t avr_docker .
+  ;;
+
+  clean)
+  	rm src/*.o
+	  rm src/*.hex
+  ;;
+
+esac
