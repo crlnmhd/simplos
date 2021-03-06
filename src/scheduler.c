@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <avr/io.h>
 
-#define USE_STATIC
+#define USE_STATIC 1
 
 void select_next_task(Scheduler* scheduler)
 {
@@ -13,16 +13,13 @@ void select_next_task(Scheduler* scheduler)
 
   if (scheduler->force_prev)
   {
-
     printf("Forcing previous\n");
     scheduler->queue.curr_task_index = scheduler->prev_task;
     scheduler->force_prev = false;
     return;
   }
 
-
 #ifdef USE_STATIC
-  printf("selecting next task using circular scheduling.\n");
   scheduler->prev_task = scheduler->queue.curr_task_index;
   scheduler->force_prev = false;
   for (uint8_t i = 1; i < TASKS_MAX; ++i)
@@ -31,9 +28,13 @@ void select_next_task(Scheduler* scheduler)
     if (scheduler->queue.task_queue[next_candidate_index].status == READY)
     {
       scheduler->queue.curr_task_index = next_candidate_index;
+      printf("selected task  %d using circular scheduling.\n", next_candidate_index);
+
       break;
     }
   }
+  printf("Thats odd!\n");
+
 #else
   uint8_t next_to_run_index = 0;
   uint8_t highest_priority = 0;

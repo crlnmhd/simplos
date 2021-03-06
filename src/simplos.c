@@ -53,6 +53,9 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue)
 
 void create_task(void (*fn)(void), uint8_t priority, Scheduler* scheduler)
 {
+
+  // FIXME work here!
+
   DISABLE_MT();
   //printf("Initiating new function!\n");
 
@@ -70,6 +73,7 @@ void create_task(void (*fn)(void), uint8_t priority, Scheduler* scheduler)
   Simplos_Task* task = &scheduler->queue.task_queue[task_index];
 
   SAVE_CONTEXT();
+  SAVE_SP();
 
   ENABLE_MT();
   fn();

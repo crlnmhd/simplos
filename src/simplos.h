@@ -176,7 +176,7 @@ static inline void idle_fn(Scheduler* schedule)
   printf("In idle loop!\n");
 
   // main_sp = *STACK_POINTER;
-  // create_task(test_fn1, 1, schedule);
+  create_task(test_fn1, 1, schedule);
 
   // // main_sp = *STACK_POINTER;
   // create_task(test_fn2, 1, schedule);

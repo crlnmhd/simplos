@@ -9,7 +9,7 @@ DEBUG_FLAGS=-g
 SRCS=*.c
 
 compile: $(SRCS)
-	$(CC) $(CFLAGS)$^ -o out.o
+	$(CC) $(CFLAGS) $(EXTRA_OPT_FLAGS) $^ -o out.o
 	rm out_dbg.o
 
 debug_compile:$(SRCS)
