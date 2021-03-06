@@ -3,13 +3,13 @@
 
 CC=avr-gcc
 BAUD=115200
-CFLAGS= -Wall -pedantic -Wextra -fshort-enums -Os -mmcu=atmega2560 -DF_CPU=16000000 -DBAUD=$(BAUD)
-EXTRA_OPT_FLAGS=
+CFLAGS= -Wall -pedantic -Wextra -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DBAUD=$(BAUD)
+EXTRA_OPT_FLAGS=-Os
 DEBUG_FLAGS=-g
 SRCS=*.c
 
 compile: $(SRCS)
-	$(CC) $(CFLAGS) $(EXTRA_OPT_FLAGS) $^ -o out.o
+	$(CC) $(CFLAGS)$^ -o out.o
 	rm out_dbg.o
 
 debug_compile:$(SRCS)

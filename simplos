@@ -8,6 +8,7 @@ fi
 case $1 in 
   build)
     sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make compile
+    avr-size -C src/out.o
     ;;
 
   flash)
@@ -25,7 +26,6 @@ case $1 in
 
   sim)
     sudo docker run  -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make debug_compile
-    avr-size -C src/out_dbg.o
     simavr -g -m atmega2560 src/out_dbg.o
   ;;
 
