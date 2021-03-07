@@ -1,11 +1,6 @@
 #ifndef SIMPLOS_H_
 #define SIMPLOS_H_
 
-#define TASKS_MAX 5
-#define TASK_MEMORY_BYTES 512
-#define ALLOCABLE_MEMORY_BYTES 1024
-
-
 // #define  STACK_POINTER ((volatile uint16_t * const) 0x5E)
 
 #include "simplos_types.h"
@@ -26,6 +21,8 @@
  printf("disabling MT\n"); 
 
 extern volatile uint16_t task_sp;
+
+#define force_inline static inline  __attribute__((always_inline))
 
 // Somewhat borrowed from 
 // https://www.freertos.org/kernel/secondarydocs.html
@@ -135,8 +132,37 @@ void init_empty_queue(Task_Queue*);
 // Must be run when multitasking is off
 uint8_t add_task_to_queue(uint8_t, Task_Queue*);
 
-void create_task(void (*fn)(void), uint8_t, Scheduler*);
+void create_task(void (*fn)(void), uint8_t, volatile Scheduler*);
 
+
+force_inline
+void change_task_sp(uint8_t task_index,  Scheduler * schedule)
+{
+  task_sp = schedule->queue.task_queue[task_index].task_sp;
+  SET_SP();
+}
+
+force_inline
+void spawn_task(void (*fn)(void), uint8_t priority, Scheduler* schedule)
+{
+  SAVE_CONTEXT();
+  SAVE_SP();
+  create_task(fn, priority, (volatile Scheduler *)schedule);
+}
+
+/*
+  Yield current task.
+*/
+force_inline
+void yield()
+{
+  // "Reset" timer
+  TCNT1 = 0;
+  // Ensure MT is enabled.
+  ENABLE_MT();
+  // Call the interupt routine to simulate an "ordinary" fiering of the interupt.
+  TIMER1_COMPA_vect();
+}
 
 /*
 // Starts the multitasking by enabling timer interupts and starting the idle task.
@@ -154,7 +180,7 @@ void create_task(void (*fn)(void), uint8_t, Scheduler*);
   for(;;);
 
 // Always inlined
-static inline  __attribute__((always_inline))
+force_inline
 void setup_idle_task(void (*fn)(Scheduler* schedule), Scheduler* schedule)
 {
   DISABLE_MT();
@@ -176,10 +202,14 @@ static inline void idle_fn(Scheduler* schedule)
   printf("In idle loop!\n");
 
   // main_sp = *STACK_POINTER;
-  create_task(test_fn1, 1, schedule);
+  spawn_task(test_fn1, 1, schedule);
 
   // // main_sp = *STACK_POINTER;
-  // create_task(test_fn2, 1, schedule);
+  spawn_task(test_fn2, 1, schedule);
+
+  spawn_task(test_fn3, 1, schedule);
+
+  for(;;) yield();
 
   // Finally let the scheduler run!
   for (;;)

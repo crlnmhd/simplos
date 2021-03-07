@@ -1,3 +1,4 @@
+#include "scheduler.h"
 #include "simplos.h"
 #include "serial.h"
 
@@ -18,13 +19,16 @@ void select_next_task(Scheduler* scheduler)
     scheduler->force_prev = false;
     return;
   }
+  print_tasks(scheduler);
 
 #ifdef USE_STATIC
   scheduler->prev_task = scheduler->queue.curr_task_index;
   scheduler->force_prev = false;
-  for (uint8_t i = 1; i < TASKS_MAX; ++i)
+  printf("At block: %d\n", scheduler->queue.curr_task_index);
+  for (uint8_t i = 1; i <= TASKS_MAX; ++i)
   {
-    uint8_t const next_candidate_index = scheduler->queue.curr_task_index + i % TASKS_MAX;
+    uint8_t const next_candidate_index = (scheduler->queue.curr_task_index + i) % TASKS_MAX;
+    printf("Investigating %d\n", next_candidate_index);
     if (scheduler->queue.task_queue[next_candidate_index].status == READY)
     {
       scheduler->queue.curr_task_index = next_candidate_index;
@@ -33,8 +37,6 @@ void select_next_task(Scheduler* scheduler)
       break;
     }
   }
-  printf("Thats odd!\n");
-
 #else
   uint8_t next_to_run_index = 0;
   uint8_t highest_priority = 0;
@@ -55,4 +57,30 @@ void select_next_task(Scheduler* scheduler)
   scheduler->force_prev = false;
   scheduler->queue.curr_task_index = next_to_run_index;
 #endif // USE STATIC
+}
+
+
+void print_tasks(Scheduler* scheduler)
+{
+  for (uint8_t i = 0; i < TASKS_MAX; ++i)
+  {
+    Simplos_Task * task = &scheduler->queue.task_queue[i];
+    printf("Task at block %d : ", i);
+    switch (task->status)
+    {
+    case READY:
+      printf("READY\n");
+      break;
+    case DONE:
+      printf("DONE\n");
+      break;
+    case RUNNING:
+      printf("RUNNING\n");
+      break;
+    default:
+      printf("OTHER\n");
+      break;
+    }
+
+  }
 }

@@ -4,11 +4,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define TASKS_MAX 5
+#define TASK_MEMORY_BYTES 512
+#define ALLOCABLE_MEMORY_BYTES 1024
+
 // TODO place "empty" in this enum.
 enum Task_Status {
   SLEEPING,
   READY,
   DONE,
+  RUNNING,
 };
 
 typedef struct {
@@ -24,8 +29,6 @@ typedef struct {
   Simplos_Task task_queue[TASKS_MAX];
   uint8_t curr_task_index;
 } Task_Queue;
-
-
 
 typedef struct {
   bool force_prev;

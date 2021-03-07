@@ -59,7 +59,7 @@ int main()
 
   // FIXME Can't create more tasks after this.
   // ENABLE_MT_IDLE_TASK(idle_task);
-  
+
   // Should not reach this
   ENABLE_MT();
   printf("Should not happen!!!!\n");
@@ -67,7 +67,6 @@ int main()
 
   // debug_print_message(&test[0], &test[99]);
 }
-
 
 // Here for easy access to global static variable.
 ISR(TIMER1_COMPA_vect)
@@ -82,27 +81,20 @@ ISR(TIMER1_COMPA_vect)
   SAVE_SP();
   // fflush(stdout);
 
-
   Simplos_Task* prev = &schedule.queue.task_queue[schedule.queue.curr_task_index];
   prev->task_sp = task_sp;
+  prev->status = READY;
 
-  if (schedule.enabled)
-  {
-    printf("Using scheduler\n");
-    // prev->status = READY;
-    // printf("Equal? prev: %u =?= %u : schedule\n", prev->task_sp, schedule.queue.task_queue[schedule.queue.curr_task_index].task_sp);
-    select_next_task(&schedule);   // Updates curr_task_index
-    //printf("Context switch from %d to %d\n", prev->task_memory_block, schedule.queue.curr_task_index);
-    // Save old stack pointer to the previous task
-    // Set SP for the new task.
-    task_sp = schedule.queue.task_queue[schedule.queue.curr_task_index].task_sp;
-  }
-  // // Return to the main() function to add more tasks.
-  // else
-  // {
-  //   task_sp = main_sp;
-  //   printf("Returning to main()\n");
-  // }
+  printf("Using scheduler\n");
+  // prev->status = READY;
+  // printf("Equal? prev: %u =?= %u : schedule\n", prev->task_sp, schedule.queue.task_queue[schedule.queue.curr_task_index].task_sp);
+  select_next_task(&schedule);   // Updates curr_task_index
+  //printf("Context switch from %d to %d\n", prev->task_memory_block, schedule.queue.curr_task_index);
+  // Save old stack pointer to the previous task
+  // Set SP for the new task.
+  task_sp = schedule.queue.task_queue[schedule.queue.curr_task_index].task_sp;
+  Simplos_Task * new_task = &schedule.queue.task_queue[schedule.queue.curr_task_index];
+  new_task->status = RUNNING;
 
   SET_SP();
   RESTORE_CONTEXT();

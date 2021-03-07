@@ -15,8 +15,6 @@ static volatile uint8_t shared_x = 5;
 
 void test_fn1(void);
 void test_fn2(void);
-
-
-
+void test_fn3(void);
 
 #endif 
