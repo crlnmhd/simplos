@@ -6,11 +6,12 @@
 #include <stdbool.h>
 #include <avr/io.h>
 
-#define USE_STATIC 1
+#define USE_STATIC
 
-void select_next_task(Scheduler* scheduler)
+void select_next_task(volatile Scheduler* scheduler)
 {
   // This defaults to the idle task.
+  print_tasks(scheduler);
 
   if (scheduler->force_prev)
   {
@@ -19,7 +20,6 @@ void select_next_task(Scheduler* scheduler)
     scheduler->force_prev = false;
     return;
   }
-  print_tasks(scheduler);
 
 #ifdef USE_STATIC
   scheduler->prev_task = scheduler->queue.curr_task_index;
@@ -28,12 +28,10 @@ void select_next_task(Scheduler* scheduler)
   for (uint8_t i = 1; i <= TASKS_MAX; ++i)
   {
     uint8_t const next_candidate_index = (scheduler->queue.curr_task_index + i) % TASKS_MAX;
-    printf("Investigating %d\n", next_candidate_index);
     if (scheduler->queue.task_queue[next_candidate_index].status == READY)
     {
       scheduler->queue.curr_task_index = next_candidate_index;
       printf("selected task  %d using circular scheduling.\n", next_candidate_index);
-
       break;
     }
   }
@@ -60,11 +58,12 @@ void select_next_task(Scheduler* scheduler)
 }
 
 
-void print_tasks(Scheduler* scheduler)
+void print_tasks(volatile Scheduler* scheduler)
 {
+  DISABLE_MT();
   for (uint8_t i = 0; i < TASKS_MAX; ++i)
   {
-    Simplos_Task * task = &scheduler->queue.task_queue[i];
+    volatile Simplos_Task * task = &scheduler->queue.task_queue[i];
     printf("Task at block %d : ", i);
     switch (task->status)
     {
@@ -81,6 +80,6 @@ void print_tasks(Scheduler* scheduler)
       printf("OTHER\n");
       break;
     }
-
   }
+  ENABLE_MT();
 }

@@ -1,8 +1,7 @@
 FROM fedora:33
 
-MAINTAINER Carl Nimhed carl.nimhed@icloud.com
-
-RUN dnf install -y avr-gcc make avr-libc
+RUN dnf install -y avr-gcc avr-libc make
+# scons
 
 WORKDIR build
 

@@ -5,6 +5,7 @@
 
 #include "simplos_types.h"
 #include "tasks.h"
+#include "scheduler.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -21,13 +22,19 @@
  printf("disabling MT\n"); 
 
 extern volatile uint16_t task_sp;
+extern volatile Scheduler simplos_schedule;
 
-#define force_inline static inline  __attribute__((always_inline))
+#define INLINED static inline  __attribute__((always_inline))
 
-// Somewhat borrowed from 
+#define INTERNAL_LED_PORT PORTB
+#define INTERNAL_LED PORTB5
+
+uint8_t add_task_to_queue(uint8_t priority, volatile Task_Queue* queue);
+
+
+// More or less borrowed from 
 // https://www.freertos.org/kernel/secondarydocs.html
 
-// TODO use STACK_POINTER macro instead of asm.
 #define SAVE_CONTEXT()              \
 asm volatile (                      \
   "push  r0                    \n\t"\
@@ -126,34 +133,67 @@ asm volatile(                        \
   "out  __SP_H__, r29          \n\t" \
 );
 
+#define FATAL_ERROR(msg)              \
+  cli();                              \
+  printf("FATAL ERROR: %s\n", msg);   \
+  for(;;);
+
+
 // void create_task(void (*fn)(void), uint8_t priority, Task_Queue* task_queue);
-void init_empty_queue(Task_Queue*);
+void init_empty_queue(volatile Task_Queue*);
 
 // Must be run when multitasking is off
-uint8_t add_task_to_queue(uint8_t, Task_Queue*);
+uint8_t add_task_to_queue(uint8_t, volatile Task_Queue*);
 
 void create_task(void (*fn)(void), uint8_t, volatile Scheduler*);
 
+#define SPAWN_TASK(fn, priority, schedule)                                                  \
+  SAVE_CONTEXT();                                                                           \
+  SAVE_SP();                                                                                \
+  schedule->prev_task = schedule->queue.curr_task_index;                                    \
+  {                                                                                         \
+  Simplos_Task* old_task = (Simplos_Task*) &schedule->queue.task_queue[schedule->queue.curr_task_index];    \
+  old_task->status = READY;                                                                 \
+  old_task->task_sp = task_sp;                                                              \
+  }                                                                                         \
+create_task(fn, priority, (volatile Scheduler*)schedule);                                   \
 
-force_inline
-void change_task_sp(uint8_t task_index,  Scheduler * schedule)
-{
-  task_sp = schedule->queue.task_queue[task_index].task_sp;
-  SET_SP();
-}
 
-force_inline
-void spawn_task(void (*fn)(void), uint8_t priority, Scheduler* schedule)
+INLINED
+void context_switch()
 {
+    printf("Context switch!\n");
+  // fflush(stdout);
+
+  INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
+  // printf("hi!\n");
+
   SAVE_CONTEXT();
   SAVE_SP();
-  create_task(fn, priority, (volatile Scheduler *)schedule);
+  // fflush(stdout);
+
+  volatile Simplos_Task* prev = &simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index];
+  prev->task_sp = task_sp;
+  prev->status = READY;
+
+  select_next_task(&simplos_schedule);   // Updates curr_task_index
+
+  volatile Simplos_Task* new_task = &simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index];
+  new_task->status = RUNNING;
+
+  task_sp = simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index].task_sp;
+
+  task_sp = simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index].task_sp;
+  SET_SP();
+
+  RESTORE_CONTEXT();
+  INTERNAL_LED_PORT &= ~(1 << INTERNAL_LED);
 }
 
 /*
   Yield current task.
 */
-force_inline
+INLINED
 void yield()
 {
   // "Reset" timer
@@ -161,63 +201,8 @@ void yield()
   // Ensure MT is enabled.
   ENABLE_MT();
   // Call the interupt routine to simulate an "ordinary" fiering of the interupt.
-  TIMER1_COMPA_vect();
+  context_switch();
 }
 
-/*
-// Starts the multitasking by enabling timer interupts and starting the idle task.
-#define ENABLE_MT_IDLE_TASK(first_task)         \
-  cli();                                        \
-  printf("Initiating first task!!!!\n");        \
-  first_task->status = READY;                   \
-  sei();                                        \
-  first_task->fn();
-*/
-
-#define FATAL_ERROR(msg)              \
-  cli();                              \
-  printf("FATAL ERROR: %s\n", msg);   \
-  for(;;);
-
-// Always inlined
-force_inline
-void setup_idle_task(void (*fn)(Scheduler* schedule), Scheduler* schedule)
-{
-  DISABLE_MT();
-  // SAVE_CONTEXT();
-
-  uint8_t index = add_task_to_queue(0, &schedule->queue);
-  Simplos_Task* new_task = &schedule->queue.task_queue[index];
-  new_task->status = READY;
-  schedule->queue.curr_task_index = index;
-  schedule->force_prev = false;
-  task_sp = new_task->task_sp;
-  SET_SP();
-  ENABLE_MT();
-  fn(schedule);
-}
-
-static inline void idle_fn(Scheduler* schedule)
-{
-  printf("In idle loop!\n");
-
-  // main_sp = *STACK_POINTER;
-  spawn_task(test_fn1, 1, schedule);
-
-  // // main_sp = *STACK_POINTER;
-  spawn_task(test_fn2, 1, schedule);
-
-  spawn_task(test_fn3, 1, schedule);
-
-  for(;;) yield();
-
-  // Finally let the scheduler run!
-  for (;;)
-  {
-    for (uint16_t i = 0; i < 0xFFFF; ++i) { ; }
-    printf(".\n");
-    fflush(stdout);
-  }
-}
 
 #endif // SIMPLOS_H_

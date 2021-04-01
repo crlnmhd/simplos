@@ -12,6 +12,9 @@ compile: $(SRCS)
 	$(CC) $(CFLAGS) $(EXTRA_OPT_FLAGS) $^ -o out.o
 	rm out_dbg.o
 
+main_asm: simplos.c
+	$(CC) $(CFLAGS) $(EXTRA_OPT_FLAGS) -S $^ -o simplos_asm.s
+
 debug_compile:$(SRCS)
 	$(CC) $(CFLAGS) $(EXTRA_OPT_FLAGS) $(DEBUG_FLAGS) $^ -o out_dbg.o
 	rm out.o
