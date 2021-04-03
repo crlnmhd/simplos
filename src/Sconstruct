@@ -1,0 +1,38 @@
+import os
+
+# Add color to the output.
+
+src_files = Split('''main.c
+                     scheduler.c
+                     serial.c
+                     simplos.c
+                     tasks.c''')
+
+print('Formatting')
+
+
+env = Environment(CC='avr-gcc',
+                  CFLAGS=Split(''' -Wall
+                                    -pedantic
+                                    -Wextra
+                                    -Wstrict-prototypes
+                                    -fshort-enums
+                                    -mmcu=atmega2560
+                                    -DF_CPU=16000000
+                                    -g
+                                    -Os'''))
+
+env['ENV']['TERM'] = os.environ['TERM']
+
+baud_rate = ARGUMENTS.get('BAUD', 115200)
+
+env.Append(CCFLAGS=f'-DBAUD={baud_rate}')
+
+
+print(f'CFLAGS is {env.subst("$CCFLAGS")}')
+
+env.Append(LINKFLAGS='-mmcu=atmega2560')
+
+debug = env.Program(target='simplos', source=src_files)
+
+Default(debug)

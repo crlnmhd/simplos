@@ -12,7 +12,7 @@
 /*
   Initiate serial communication, taken from https://appelsiini.net/2011/simple-usart-with-avr-libc/
 */
-void uart_init()
+void uart_init(void)
 {
   UBRR0H = UBRRH_VALUE;
   UBRR0L = UBRRL_VALUE;
@@ -37,7 +37,7 @@ int uart_putchar(char c, FILE *stream){
   return 0;
 }
 
-int uart_getchar(FILE *stream){
+int uart_getchar(FILE * stream){
   loop_until_bit_is_set(UCSR0A, RXC0);
   return UDR0;
 }

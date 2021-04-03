@@ -6,6 +6,10 @@ if [[ $# -ne 1 ]]; then
 fi
 
 case $1 in 
+  scons)
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons
+    avr-size -C src/out.o
+    ;;
   build)
     sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make compile
     avr-size -C src/out.o
@@ -38,8 +42,8 @@ case $1 in
   ;;
 
   clean)
-  	rm src/*.o
-	  rm src/*.hex
+  	rm -f src/*.o
+	  rm -f src/*.hex
   ;;
 
 esac

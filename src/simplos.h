@@ -31,6 +31,9 @@ extern volatile Scheduler simplos_schedule;
 
 uint8_t add_task_to_queue(uint8_t priority, volatile Task_Queue* queue);
 
+void kill_task(volatile Scheduler*, uint8_t);
+
+uint16_t task_default_sp(uint8_t);
 
 // More or less borrowed from 
 // https://www.freertos.org/kernel/secondarydocs.html
@@ -148,53 +151,56 @@ uint8_t add_task_to_queue(uint8_t, volatile Task_Queue*);
 void create_task(void (*fn)(void), uint8_t, volatile Scheduler*);
 
 #define SPAWN_TASK(fn, priority, schedule)                                                  \
-  SAVE_CONTEXT();                                                                           \
+{                                                                                           \
+  DISABLE_MT();                                                                             \
   SAVE_SP();                                                                                \
   schedule->prev_task = schedule->queue.curr_task_index;                                    \
-  {                                                                                         \
   Simplos_Task* old_task = (Simplos_Task*) &schedule->queue.task_queue[schedule->queue.curr_task_index];    \
   old_task->status = READY;                                                                 \
   old_task->task_sp = task_sp;                                                              \
-  }                                                                                         \
-create_task(fn, priority, (volatile Scheduler*)schedule);                                   \
-
+  create_task(fn, priority, (volatile Scheduler*)schedule);                                 \
+  ENABLE_MT();                                                                              \
+}                                                                            
 
 INLINED
-void context_switch()
+void save_running_task(void)
 {
-    printf("Context switch!\n");
-  // fflush(stdout);
-
   INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
-  // printf("hi!\n");
-
   SAVE_CONTEXT();
   SAVE_SP();
-  // fflush(stdout);
 
-  volatile Simplos_Task* prev = &simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index];
+  Simplos_Task* prev = (Simplos_Task*)&simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index];
   prev->task_sp = task_sp;
   prev->status = READY;
+}
 
-  select_next_task(&simplos_schedule);   // Updates curr_task_index
-
-  volatile Simplos_Task* new_task = &simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index];
-  new_task->status = RUNNING;
-
-  task_sp = simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index].task_sp;
-
-  task_sp = simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index].task_sp;
-  SET_SP();
-
-  RESTORE_CONTEXT();
+INLINED
+void prepare_next_task(Simplos_Task* task)
+{
+  printf("Restoring context to task: %d\n", task->task_memory_block);
   INTERNAL_LED_PORT &= ~(1 << INTERNAL_LED);
+
+  task->status = RUNNING;
+  task_sp = task->task_sp;
+  SET_SP();
+  RESTORE_CONTEXT();
+}
+
+INLINED
+void context_switch(void)
+{
+  printf("Context switch!\n");
+  save_running_task();
+
+  Simplos_Task* new_task = (Simplos_Task*)select_next_task(&simplos_schedule);   // Updates curr_task_index
+  prepare_next_task(new_task);
 }
 
 /*
   Yield current task.
 */
 INLINED
-void yield()
+void yield(void)
 {
   // "Reset" timer
   TCNT1 = 0;
@@ -203,6 +209,7 @@ void yield()
   // Call the interupt routine to simulate an "ordinary" fiering of the interupt.
   context_switch();
 }
+
 
 
 #endif // SIMPLOS_H_

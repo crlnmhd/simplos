@@ -2,6 +2,7 @@
 #define TASKS_H
 
 #include <stdint.h>
+
 #include "simplos_types.h"
 
 /***********     Shared memory ***********/
@@ -19,4 +20,4 @@ void test_fn3(void);
 
 void idle_fn(volatile Scheduler* schedule);
 
-#endif 
+#endif
