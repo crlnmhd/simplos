@@ -7,16 +7,16 @@ fi
 
 case $1 in 
   scons)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons
-    avr-size -C src/out.o
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons g
+    avr-size -C src/simplos.o
     ;;
   build)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make compile
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons
     avr-size -C src/out.o
     ;;
 
   flash)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make compile
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons
     BAUD=115200
 	  avr-size -C src/out.o
 	  avr-objcopy -O ihex -R .eeprom src/out.o out.hex

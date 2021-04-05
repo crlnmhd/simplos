@@ -1,8 +1,8 @@
 #ifndef SIMPLOS_TYPES_H_
 #define SIMPLOS_TYPES_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define TASKS_MAX 5
 #define TASK_MEMORY_BYTES 512
@@ -22,7 +22,7 @@ typedef struct {
   uint8_t task_memory_block;
   uint8_t priority;
   enum Task_Status status;
-  uint32_t sleep_until;    // ticks 
+  uint32_t sleep_until;  // ticks
 } Simplos_Task;
 
 typedef struct {
@@ -36,7 +36,6 @@ typedef struct {
   Task_Queue queue;
   // uint8_t processes;
   bool enabled;
-}Scheduler;
+} Scheduler;
 
-
-#endif // SIMPLOS_TYPES_H_
+#endif  // SIMPLOS_TYPES_H_

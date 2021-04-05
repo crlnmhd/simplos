@@ -12,7 +12,9 @@ uint16_t task_default_sp(uint8_t task_memory_block) {
   return RAMSTART + task_memory_block * TASK_MEMORY_BYTES;
 }
 
-void init_empty_queue(volatile Task_Queue* queue) {
+void init_empty_queue(volatile Task_Queue* queue)
+
+{
   // queue->curr_new_task_index = 0;
   // Simplos_Task* idle_task = queue->task_queue;
   // // Idle task

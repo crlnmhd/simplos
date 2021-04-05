@@ -13,4 +13,4 @@ int uart_putchar(char c, FILE *);
 
 int uart_getchar(FILE *);
 
-#endif // SERIAL_H_
+#endif  // SERIAL_H_

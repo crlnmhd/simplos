@@ -9,4 +9,4 @@ volatile Simplos_Task* select_next_task(volatile Scheduler* scheduler);
 
 void print_tasks(volatile Scheduler* scheduler);
 
-#endif // SCHEDULER_H_
+#endif  // SCHEDULER_H_

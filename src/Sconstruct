@@ -1,6 +1,5 @@
 import os
-
-# Add color to the output.
+import subprocess
 
 src_files = Split('''main.c
                      scheduler.c
@@ -8,8 +7,7 @@ src_files = Split('''main.c
                      simplos.c
                      tasks.c''')
 
-print('Formatting')
-
+header_files = Glob('*.h')
 
 env = Environment(CC='avr-gcc',
                   CFLAGS=Split(''' -Wall
@@ -19,20 +17,30 @@ env = Environment(CC='avr-gcc',
                                     -fshort-enums
                                     -mmcu=atmega2560
                                     -DF_CPU=16000000
-                                    -g
                                     -Os'''))
 
+# User environment terminal may support features like colored output (e.g. warnings and errors)
 env['ENV']['TERM'] = os.environ['TERM']
 
-baud_rate = ARGUMENTS.get('BAUD', 115200)
+# Builder to format source code.
+clang_format = env.Command('format_code', src_files + header_files, 'clang-format -i -style=Google $SOURCES')
 
-env.Append(CCFLAGS=f'-DBAUD={baud_rate}')
+baud_rate = ARGUMENTS.get('baud', 115200)
 
-
-print(f'CFLAGS is {env.subst("$CCFLAGS")}')
+env.Append(CFLAGS=f'-DBAUD={baud_rate}')
 
 env.Append(LINKFLAGS='-mmcu=atmega2560')
 
-debug = env.Program(target='simplos', source=src_files)
+system_cpu_count = len(os.sched_getaffinity(0))
+num_cpu = int(os.environ.get('NUM_CPU', system_cpu_count))
+SetOption('num_jobs', num_cpu)
 
-Default(debug)
+env.Append(CFLAGS=ARGUMENTS.get('-g', ''))
+
+simplos = env.Program(target='simplos', source=src_files)
+
+
+#prepare()
+
+Default(clang_format, simplos)
+
