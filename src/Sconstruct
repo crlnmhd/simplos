@@ -34,7 +34,9 @@ system_cpu_count = len(os.sched_getaffinity(0))
 num_cpu = int(os.environ.get('NUM_CPU', system_cpu_count))
 SetOption('num_jobs', num_cpu)
 
-env.Append(CFLAGS=ARGUMENTS.get('-g', ''))
+env.Append(CFLAGS=ARGUMENTS.get('debug', None))
+if env.debug:
+  env.Append(CFLAGS='-g')
 
 simplos = env.Program(target='simplos.out', source=src_files)
 

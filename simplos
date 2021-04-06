@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+BAUD=115200
+
 if [[ $# -ne 1 ]]; then
   echo "Please supply a parameter of {build, flash, sim, debug, rebuild_container ,clean}."
   exit
@@ -7,19 +9,19 @@ fi
 
 case $1 in
   scons)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons -g
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD -g
     avr-size -C src/simplos.o
     ;;
   build)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
     avr-size -C src/out.o
     ;;
 
   flash)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
     BAUD=115200
-	  avr-size -C src/out.o
-	  avr-objcopy -O ihex -R .eeprom src/out.o out.hex
+	  avr-size -C src/simplos.out
+	  avr-objcopy -O ihex -R .eeprom src/simplos.uto out.hex
 	  avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf   -c wiring           \
                                                                 -p ATMEGA2560       \
                                                                 -D -P /dev/ttyUSB0   \
@@ -29,8 +31,8 @@ case $1 in
   ;;
 
   sim)
-    sudo docker run  -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker make debug_compile
-    simavr -g -m atmega2560 src/out_dbg.o
+    sudo docker run  -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD -g
+    simavr -g -m atmega2560 src/simplos.out
   ;;
 
   debug)
