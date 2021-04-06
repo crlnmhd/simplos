@@ -1,6 +1,6 @@
 FROM fedora:33
 
-RUN dnf install -y avr-gcc avr-libc make scons
+RUN dnf install -y avr-gcc avr-libc scons clang-tools-extra
 # scons
 
 WORKDIR build

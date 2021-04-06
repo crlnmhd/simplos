@@ -2,7 +2,6 @@
 # https://github.com/lpodkalicki/avr-toolchain-docker
 
 CC=avr-gcc
-BAUD=115200
 CFLAGS= -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DBAUD=$(BAUD)
 EXTRA_OPT_FLAGS=-Os
 DEBUG_FLAGS=-g

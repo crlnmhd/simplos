@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 src_files = Split('''main.c
                      scheduler.c
@@ -37,10 +36,6 @@ SetOption('num_jobs', num_cpu)
 
 env.Append(CFLAGS=ARGUMENTS.get('-g', ''))
 
-simplos = env.Program(target='simplos', source=src_files)
-
-
-#prepare()
+simplos = env.Program(target='simplos.out', source=src_files)
 
 Default(clang_format, simplos)
-

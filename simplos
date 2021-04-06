@@ -5,9 +5,9 @@ if [[ $# -ne 1 ]]; then
   exit
 fi
 
-case $1 in 
+case $1 in
   scons)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons g
+    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons -g
     avr-size -C src/simplos.o
     ;;
   build)
