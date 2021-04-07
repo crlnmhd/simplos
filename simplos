@@ -7,45 +7,49 @@ if [[ $# -ne 1 ]]; then
   exit
 fi
 
+uP="atmega2560"
+
 case $1 in
-  scons)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD -g
-    avr-size -C src/simplos.o
-    ;;
-  build)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
-    avr-size -C src/out.o
-    ;;
-
-  flash)
-    sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
-    BAUD=115200
-	  avr-size -C src/simplos.out
-	  avr-objcopy -O ihex -R .eeprom src/simplos.uto out.hex
-	  avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf   -c wiring           \
-                                                                -p ATMEGA2560       \
-                                                                -D -P /dev/ttyUSB0   \
-                                                                -b $BAUD            \
-                                                                -U flash:w:out.hex  \
-                                                                /
+scons)
+  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug
+  avr-size --mcu=$uP -C src/simplos.out
+  ;;
+build)
+  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
+  avr-size --mcu=$uP -C src/simplos.out
   ;;
 
-  sim)
-    sudo docker run  -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD -g
-    simavr -g -m atmega2560 src/simplos.out
+flash)
+  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
+  BAUD=115200
+  avr-size --mcu=$uP -C src/simplos.out
+  avr-objcopy -O ihex -R .eeprom src/simplos.out out.hex
+  avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf -c wiring \
+    -p $uP \
+    -D -P /dev/ttyUSB0 \
+    -b $BAUD \
+    -U flash:w:out.hex \
+    /
   ;;
 
-  debug)
-	  avr-gdb src/out_dbg.o -ex "target remote :1234" -ex "directory src/"
+sim)
+  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug=1
+  simavr -g -m $uP src/simplos.out
   ;;
 
-  rebuild_container)
-    sudo docker build --rm -t avr_docker .
+debug)
+  avr-gdb src/simplos.out -ex "target remote :1234" -ex "directory src/"
   ;;
 
-  clean)
-  	rm -f src/*.o
-	  rm -f src/*.hex
+rebuild_container)
+  sudo docker build --rm -t avr_docker \
+    --build-arg USER_ID=$(id -u) \
+    --build-arg GROUP_ID=$(id -g) .
+  ;;
+
+clean)
+  rm -f src/*.o
+  rm -f src/*.hex
   ;;
 
 esac

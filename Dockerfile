@@ -1,10 +1,16 @@
-FROM fedora:33
+# Fedora has a much more up to date version of avr-gcc.
+FROM fedora:33 
 
 RUN dnf install -y avr-gcc avr-libc scons clang-tools-extra
-# scons
+
+ARG USER_ID
+ARG GROUP_ID
+
+RUN groupadd --gid $GROUP_ID user
+RUN  useradd --uid $USER_ID --gid $GROUP_ID user
+USER user
 
 WORKDIR build
-
 
 # Install AVR toolchain
 #ARG AVR_TOOLCHAIN_TARBALL=avr8-gnu-toolchain-3.6.2.1759-linux.any.x86_64.tar.gz
