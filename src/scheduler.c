@@ -21,6 +21,8 @@ volatile Simplos_Task* select_next_task(volatile Scheduler* scheduler) {
   //   return;
   // }
 
+  // TODO Ticks.
+
 #ifdef USE_STATIC
   scheduler->prev_task = scheduler->queue.curr_task_index;
   scheduler->force_prev = false;

@@ -1,4 +1,4 @@
-# Fedora has a much more up to date version of avr-gcc.
+# More to date version of avr-gcc than ubuntu.
 FROM fedora:33 
 
 RUN dnf install -y avr-gcc avr-libc scons clang-tools-extra

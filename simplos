@@ -34,6 +34,7 @@ flash)
 
 sim)
   sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug=1
+  avr-size --mcu=$uP -C src/simplos.out
   simavr -g -m $uP src/simplos.out
   ;;
 

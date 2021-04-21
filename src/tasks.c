@@ -18,9 +18,8 @@ void test_fn1(void) {
 void test_fn2(void) {
   printf("fn2\n");
   for (;;) {
-    DISABLE_MT();
     printf("2:: x = %d\n", shared_x);
-    DISABLE_MT();
+    // yield();
   }
 }
 
@@ -33,17 +32,18 @@ void test_fn3(void) {
 }
 
 void idle_fn(volatile Scheduler* schedule) {
+  // printf("old sp %u\n", sp);
   printf("In idle loop!\n");
   ENABLE_MT();
   // main_sp = *STACK_POINTER;
   // printf("Starting task 1\n");
   // SPAWN_TASK(test_fn1, 1, schedule);
 
-  printf("starting task 2\n");
-  SPAWN_TASK(test_fn2, 1, schedule);
+  printf("idle fn starting task 2\n");
+  spawn_task(test_fn2, 1, schedule);
 
-  printf("Starting task 3\n");
-  SPAWN_TASK(test_fn3, 1, schedule);
+  printf("idle fn starting task 3\n");
+  spawn_task(test_fn3, 1, schedule);
 
   for (;;) {
     printf("Yielding from idle loop!\n");

@@ -8,8 +8,14 @@
 
 #include "tasks.h"
 
+// TODO stack check function.
+
 uint16_t task_default_sp(uint8_t task_memory_block) {
-  return RAMSTART + task_memory_block * TASK_MEMORY_BYTES;
+  // Stack grows toward smaller values.
+  size_t const sp_adr =
+      RAMSTART + 0x500 + (task_memory_block + 1) * TASK_MEMORY_BYTES - 1;
+  printf("Giving task: %d stack adr: %u \n", task_memory_block, sp_adr);
+  return sp_adr;
 }
 
 void init_empty_queue(volatile Task_Queue* queue)
@@ -32,8 +38,9 @@ void init_empty_queue(volatile Task_Queue* queue)
     task->task_sp = task_default_sp(task->task_memory_block);
   }
 }
+
+// NOT TS
 uint8_t add_task_to_queue(uint8_t priority, volatile Task_Queue* queue) {
-  DISABLE_MT();
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     Simplos_Task* task = (Simplos_Task*)&queue->task_queue[i];
     // Take if available
@@ -42,7 +49,6 @@ uint8_t add_task_to_queue(uint8_t priority, volatile Task_Queue* queue) {
       task->empty = false;
       task->priority = priority;
       task->status = READY;
-      ENABLE_MT();
       return i;
     }
   }
@@ -54,6 +60,24 @@ uint8_t add_task_to_queue(uint8_t priority, volatile Task_Queue* queue) {
   return 0;
 }
 
+/*
+void create_task(void (*fn)(void), uint8_t priority,
+                 volatile Scheduler* schedule) {
+  // New task
+  uint8_t const new_task_index =
+      add_task_to_queue(priority, &((Scheduler*)schedule)->queue);
+  volatile Simplos_Task* new_task = &schedule->queue.task_queue[new_task_index];
+
+  SAVE_SP();
+  size_t const old_task_sp = task_sp;
+  task_sp = new_task->task_sp;
+  asm volatile("");
+   new_task->task_sp
+
+  ENABLE_MT();
+}
+*/
+
 void create_task(void (*fn)(void), uint8_t priority,
                  volatile Scheduler* schedule) {
   // New task
@@ -62,7 +86,11 @@ void create_task(void (*fn)(void), uint8_t priority,
   volatile Simplos_Task* new_task = &schedule->queue.task_queue[new_task_index];
   // Just to be sure this does not mess things up.
   SAVE_SP();
-  uint16_t const old_task_sp = task_sp;
+  size_t const old_task_sp = task_sp;
+  task_sp = new_task->task_sp;
+  SET_SP();
+  task_sp = old_task_sp;
+  SET_SP();
 
   // Yield to let the context switch happen.
   printf("yielding...\n");
@@ -77,9 +105,8 @@ void create_task(void (*fn)(void), uint8_t priority,
     // counter to 0.
     TCNT1 = 0;
 
-    ENABLE_MT();
-    fn();
-    DISABLE_MT();
+    NO_MT({ fn(); });
+
     printf("Task %ul done!\n", new_task_index);
     kill_task(schedule, new_task_index);
   } else {

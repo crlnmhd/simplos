@@ -4,6 +4,7 @@ src_files = Split('''main.c
                      scheduler.c
                      serial.c
                      simplos.c
+                     interupts.c
                      tasks.c''')
 
 header_files = Glob('*.h')

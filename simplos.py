@@ -63,39 +63,18 @@ def main(baud, build_docker, flash, build, simulate, debug, clean):
     if clean:
         commands = ['rm -f src/*.o src/*.hex']
 
-    # print('These are the commands:')
-    # for command in commands:
-    #     print(command)
-    # print('Formatting commands')
     formatted_commands = [command.split() for command in commands]
-
-    # print('These are the formatted commands:')
-    # print(formatted_commands)
 
     # Run command and raise error if return code is not 0.
     for command_series in formatted_commands:
+        terminal_emulator = ['/usr/bin/alacritty', '-e']
+        command_series = terminal_emulator + command_series
         print('trying to execute:', command_series)
 
         term_command = ' '.join(command_series)
-        proc = subprocess.Popen(term_command, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE, text=True, shell=True)
-        while proc.poll() is None:
-            outs, errs = proc.communicate()
-            print(outs)
-            print(errs)
-        # except subprocess.TimeoutExpired:
-        #     proc.kill()
-        #     print('TIMEOUT')
-        #     outs, errs = proc.communicate()
-
-        # result = subprocess.run(command_series, stdout=subprocess.PIPE,
-        #                         stderr=subprocess.PIPE, text=True)
-        # for line in result.stdout:
-        #     print(line, end='')  # process line here
-
-        # if result.returncode != 0:
-        #     print("Error code:", result.returncode)
-
+        proc = subprocess.run(command_series, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, text=True)
+        
 
 if __name__ == '__main__':
     argv = get_args()
@@ -107,6 +86,3 @@ if __name__ == '__main__':
          simulate=argv.simulate,
          debug=argv.debug,
          clean=argv.clean)
-
-
-

@@ -8,18 +8,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "interupts.h"
 #include "scheduler.h"
 #include "simplos_types.h"
 #include "tasks.h"
-
-#define ENABLE_MT()        \
-  TIMSK1 |= (1 << OCIE2A); \
-  sei();                   \
-  printf("enabling MT\n");
-
-#define DISABLE_MT()        \
-  TIMSK1 &= ~(1 << OCIE2A); \
-  printf("disabling MT\n");
 
 extern volatile uint16_t task_sp;
 extern volatile Scheduler simplos_schedule;
@@ -86,6 +78,16 @@ uint16_t task_default_sp(uint8_t);
       "in    r0, __SP_H__           \n\t"     \
       "st    x+, r0                 \n\t");
 
+#define SET_SP()                             \
+  printf("Setting SP to %u\n", task_sp);     \
+  asm volatile(                              \
+      "lds  r26, task_sp               \n\t" \
+      "lds  r27, task_sp + 1           \n\t" \
+      "ld   r28, x+                \n\t"     \
+      "out  __SP_L__, r28          \n\t"     \
+      "ld   r29, x+                \n\t"     \
+      "out  __SP_H__, r29          \n\t");
+
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
       "pop  r31                    \n\t" \
@@ -123,15 +125,6 @@ uint16_t task_default_sp(uint8_t);
       "out  __SREG__, r0           \n\t" \
       "pop  r0                     \n\t");
 
-#define SET_SP()                             \
-  asm volatile(                              \
-      "lds  r26, task_sp               \n\t" \
-      "lds  r27, task_sp + 1           \n\t" \
-      "ld   r28, x+                \n\t"     \
-      "out  __SP_L__, r28          \n\t"     \
-      "ld   r29, x+                \n\t"     \
-      "out  __SP_H__, r29          \n\t");
-
 #define FATAL_ERROR(msg)            \
   cli();                            \
   printf("FATAL ERROR: %s\n", msg); \
@@ -144,8 +137,9 @@ void init_empty_queue(volatile Task_Queue*);
 // Must be run when multitasking is off
 uint8_t add_task_to_queue(uint8_t, volatile Task_Queue*);
 
-void create_task(void (*fn)(void), uint8_t, volatile Scheduler*);
+// void create_task(void (*fn)(void), uint8_t, volatile Scheduler*);
 
+/*
 #define SPAWN_TASK(fn, priority, schedule)                                     \
   {                                                                            \
     DISABLE_MT();                                                              \
@@ -158,6 +152,55 @@ void create_task(void (*fn)(void), uint8_t, volatile Scheduler*);
     create_task(fn, priority, (volatile Scheduler*)schedule);                  \
     ENABLE_MT();                                                               \
   }
+  */
+
+#define PUSH_PC() asm volatile("rcall 0");
+
+// NO MT
+INLINED
+void spawn_task(void (*fn)(void), uint8_t priority,
+                volatile Scheduler* schedule) {
+  DISABLE_MT();
+  uint8_t const new_task_index =
+      add_task_to_queue(priority, &((Scheduler*)schedule)->queue);
+
+  volatile Simplos_Task* new_task = &schedule->queue.task_queue[new_task_index];
+
+  volatile Simplos_Task* old_task =
+      (Simplos_Task*)&schedule->queue
+          .task_queue[schedule->queue.curr_task_index];
+
+  SAVE_CONTEXT();
+  SAVE_SP();
+  PUSH_PC();
+
+  // Check if the first task has been restored?
+  if (old_task->status == READY) {
+    printf("Restoring calling task by returning from spawn_task()\n");
+    task_sp = old_task->task_sp;
+    SET_SP();
+    RESTORE_CONTEXT();
+    return;
+  } else {
+    printf("Preparing to run functino provided to spawn_task()\n");
+  }
+
+  old_task->status = READY;
+  old_task->task_sp = task_sp;
+
+  task_sp = new_task->task_sp;
+
+  SET_SP();
+
+  printf("Running function\n");
+  ENABLE_MT();
+  fn();
+  DISABLE_MT();
+  printf("Task %u done!\n", new_task_index);
+  kill_task(schedule, new_task_index);
+
+  schedule->prev_task = schedule->queue.curr_task_index;
+}
 
 INLINED
 void save_running_task(void) {
@@ -203,6 +246,7 @@ void yield(void) {
   ENABLE_MT();
   // Call the interupt routine to simulate an "ordinary" fiering of the
   // interupt.
+  PUSH_PC();
   context_switch();
 }
 
