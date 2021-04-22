@@ -34,6 +34,7 @@ void test_fn3(void) {
 void idle_fn(volatile Scheduler* schedule) {
   // printf("old sp %u\n", sp);
   printf("In idle loop!\n");
+  shared_x = 42;
   ENABLE_MT();
   // main_sp = *STACK_POINTER;
   // printf("Starting task 1\n");
@@ -45,16 +46,21 @@ void idle_fn(volatile Scheduler* schedule) {
   printf("idle fn starting task 3\n");
   spawn_task(test_fn3, 1, schedule);
 
-  for (;;) {
-    printf("Yielding from idle loop!\n");
-    yield();
-  }
+  printf("Idle fn killing itself\n");
 
-  // Finally let the scheduler run!
-  for (;;) {
-    for (uint16_t i = 0; i < 0xFFFF; ++i) {
-      ;
-    }
-    printf("i");
-  }
+  kill_current_task(schedule);
+  FATAL_ERROR("UNREACHABLE END OF IDLE LOOP");
+
+  // for (;;) {
+  //   printf("Yielding from idle loop!\n");
+  //   yield();
+  // }
+
+  // // Finally let the scheduler run!
+  // for (;;) {
+  //   for (uint16_t i = 0; i < 0xFFFF; ++i) {
+  //     ;
+  //   }
+  //   printf("i");
+  // }
 }

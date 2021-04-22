@@ -54,7 +54,6 @@ volatile Simplos_Task* select_next_task(volatile Scheduler* scheduler) {
   scheduler->force_prev = false;
   scheduler->queue.curr_task_index = next_to_run_index;
 #endif  // USE STATIC
-
   return &scheduler->queue.task_queue[scheduler->queue.curr_task_index];
 }
 

@@ -11,7 +11,10 @@ volatile Scheduler simplos_schedule;
 // Extern global variable to modify the stack pointer using macros from
 // simplos.h
 
-volatile uint16_t task_sp = 0;
+volatile uint16_t _task_sp_adr = 0;
+volatile uint16_t* task_sp = &_task_sp_adr;
+
+bool debug_queu_is_initialised = false;
 
 int main(void) {
   // Initialite serial communication.
@@ -42,16 +45,13 @@ int main(void) {
   simplos_schedule.queue.curr_task_index = index;
 
   // Jump to the new task.
-  task_sp = (uint16_t)simplos_schedule.queue.task_queue[index].task_sp;
 
-  printf("Main setting stack pointer to that of task %d: %u\n", index, task_sp);
-
-  SET_SP();
-  PUSH_PC();
-  printf("hi!\n");
+  *task_sp = simplos_schedule.queue.task_queue[index].task_sp_adr;
   // Run idle function. Should never leave this.
-
+  SET_SP();
+  // asm volatile("nop");
   idle_fn(&simplos_schedule);
+  FATAL_ERROR("UNREACHABLE END OF MAIN");
 
   // Should not be reached!
   printf("Should not happen!!!!\n");
@@ -61,4 +61,7 @@ int main(void) {
 }
 
 // Timer interupt for context switching
-ISR(TIMER1_COMPA_vect, ISR_NAKED) { context_switch(); }
+ISR(TIMER1_COMPA_vect, ISR_NAKED) {
+  context_switch();
+  asm volatile("reti");
+}

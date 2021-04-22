@@ -18,9 +18,13 @@ uint16_t task_default_sp(uint8_t task_memory_block) {
   return sp_adr;
 }
 
+extern bool debug_queu_is_initialised;
 void init_empty_queue(volatile Task_Queue* queue)
 
 {
+  if (debug_queu_is_initialised) {
+    FATAL_ERROR("QUEUE APPEARS TO ALREADY BE INITIALISED!");
+  }
   // queue->curr_new_task_index = 0;
   // Simplos_Task* idle_task = queue->task_queue;
   // // Idle task
@@ -35,8 +39,9 @@ void init_empty_queue(volatile Task_Queue* queue)
     Simplos_Task* task = (Simplos_Task*)&queue->task_queue[i];
     task->empty = true;
     task->task_memory_block = i;
-    task->task_sp = task_default_sp(task->task_memory_block);
+    task->task_sp_adr = task_default_sp(task->task_memory_block);
   }
+  debug_queu_is_initialised = true;
 }
 
 // NOT TS
@@ -67,29 +72,12 @@ void create_task(void (*fn)(void), uint8_t priority,
   uint8_t const new_task_index =
       add_task_to_queue(priority, &((Scheduler*)schedule)->queue);
   volatile Simplos_Task* new_task = &schedule->queue.task_queue[new_task_index];
-
-  SAVE_SP();
-  size_t const old_task_sp = task_sp;
-  task_sp = new_task->task_sp;
-  asm volatile("");
-   new_task->task_sp
-
-  ENABLE_MT();
-}
-*/
-
-void create_task(void (*fn)(void), uint8_t priority,
-                 volatile Scheduler* schedule) {
-  // New task
-  uint8_t const new_task_index =
-      add_task_to_queue(priority, &((Scheduler*)schedule)->queue);
-  volatile Simplos_Task* new_task = &schedule->queue.task_queue[new_task_index];
   // Just to be sure this does not mess things up.
   SAVE_SP();
-  size_t const old_task_sp = task_sp;
-  task_sp = new_task->task_sp;
+  volatile size_t old_task_sp = *task_sp;
+  *task_sp = new_task->task_sp_adr;
   SET_SP();
-  task_sp = old_task_sp;
+  *task_sp = old_task_sp;
   SET_SP();
 
   // Yield to let the context switch happen.
@@ -111,12 +99,13 @@ void create_task(void (*fn)(void), uint8_t priority,
     kill_task(schedule, new_task_index);
   } else {
     printf("Returning to caller.\n");
-    task_sp = old_task_sp;
+    *task_sp = old_task_sp;
     SET_SP();
     // FIXME do things here!
   }
   ENABLE_MT();
 }
+*/
 
 void kill_task(volatile Scheduler* schedule, uint8_t task) {
   DISABLE_MT();
@@ -124,5 +113,11 @@ void kill_task(volatile Scheduler* schedule, uint8_t task) {
   Simplos_Task* victim = (Simplos_Task*)&schedule->queue.task_queue[task];
   victim->status = DONE;
   victim->empty = true;
-  victim->task_sp = task_default_sp(task);
+  victim->task_sp_adr = task_default_sp(task);
+}
+
+void kill_current_task(volatile Scheduler* schedule) {
+  uint8_t const curr_task_index = schedule->queue.curr_task_index;
+  kill_task(schedule, curr_task_index);
+  yield();
 }

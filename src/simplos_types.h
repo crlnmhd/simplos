@@ -16,21 +16,21 @@ enum Task_Status {
   RUNNING,
 };
 
-typedef struct {
+typedef struct Simplos_Task {
   bool empty;
-  uint16_t task_sp;
+  uint16_t task_sp_adr;
   uint8_t task_memory_block;
   uint8_t priority;
   enum Task_Status status;
   uint32_t sleep_until;  // ticks
 } Simplos_Task;
 
-typedef struct {
+typedef struct Task_Queue {
   Simplos_Task task_queue[TASKS_MAX];
   uint8_t curr_task_index;
 } Task_Queue;
 
-typedef struct {
+typedef struct Scheduler {
   bool force_prev;
   uint8_t prev_task;
   Task_Queue queue;

@@ -13,7 +13,8 @@
 #include "simplos_types.h"
 #include "tasks.h"
 
-extern volatile uint16_t task_sp;
+extern volatile uint16_t* task_sp;
+extern volatile uint16_t _task_sp_adr;
 extern volatile Scheduler simplos_schedule;
 
 #define INLINED static inline __attribute__((always_inline))
@@ -24,6 +25,7 @@ extern volatile Scheduler simplos_schedule;
 uint8_t add_task_to_queue(uint8_t priority, volatile Task_Queue* queue);
 
 void kill_task(volatile Scheduler*, uint8_t);
+void kill_current_task(volatile Scheduler*);
 
 uint16_t task_default_sp(uint8_t);
 
@@ -79,7 +81,7 @@ uint16_t task_default_sp(uint8_t);
       "st    x+, r0                 \n\t");
 
 #define SET_SP()                             \
-  printf("Setting SP to %u\n", task_sp);     \
+  printf("Setting SP to %X\n", *task_sp);    \
   asm volatile(                              \
       "lds  r26, task_sp               \n\t" \
       "lds  r27, task_sp + 1           \n\t" \
@@ -137,23 +139,6 @@ void init_empty_queue(volatile Task_Queue*);
 // Must be run when multitasking is off
 uint8_t add_task_to_queue(uint8_t, volatile Task_Queue*);
 
-// void create_task(void (*fn)(void), uint8_t, volatile Scheduler*);
-
-/*
-#define SPAWN_TASK(fn, priority, schedule)                                     \
-  {                                                                            \
-    DISABLE_MT();                                                              \
-    SAVE_SP();                                                                 \
-    schedule->prev_task = schedule->queue.curr_task_index;                     \
-    Simplos_Task* old_task = (Simplos_Task*)&schedule->queue                   \
-                                 .task_queue[schedule->queue.curr_task_index]; \
-    old_task->status = READY;                                                  \
-    old_task->task_sp = task_sp;                                               \
-    create_task(fn, priority, (volatile Scheduler*)schedule);                  \
-    ENABLE_MT();                                                               \
-  }
-  */
-
 #define PUSH_PC() asm volatile("rcall 0");
 
 // NO MT
@@ -177,7 +162,7 @@ void spawn_task(void (*fn)(void), uint8_t priority,
   // Check if the first task has been restored?
   if (old_task->status == READY) {
     printf("Restoring calling task by returning from spawn_task()\n");
-    task_sp = old_task->task_sp;
+    *task_sp = old_task->task_sp_adr;
     SET_SP();
     RESTORE_CONTEXT();
     return;
@@ -186,11 +171,14 @@ void spawn_task(void (*fn)(void), uint8_t priority,
   }
 
   old_task->status = READY;
-  old_task->task_sp = task_sp;
+  old_task->task_sp_adr = *task_sp;
 
-  task_sp = new_task->task_sp;
+  schedule->queue.curr_task_index = new_task_index;
+
+  *task_sp = new_task->task_sp_adr;
 
   SET_SP();
+  PUSH_PC();
 
   printf("Running function\n");
   ENABLE_MT();
@@ -198,8 +186,6 @@ void spawn_task(void (*fn)(void), uint8_t priority,
   DISABLE_MT();
   printf("Task %u done!\n", new_task_index);
   kill_task(schedule, new_task_index);
-
-  schedule->prev_task = schedule->queue.curr_task_index;
 }
 
 INLINED
@@ -210,7 +196,7 @@ void save_running_task(void) {
 
   Simplos_Task* prev = (Simplos_Task*)&simplos_schedule.queue
                            .task_queue[simplos_schedule.queue.curr_task_index];
-  prev->task_sp = task_sp;
+  prev->task_sp_adr = *task_sp;
   prev->status = READY;
 }
 
@@ -220,7 +206,7 @@ void prepare_next_task(Simplos_Task* task) {
   INTERNAL_LED_PORT &= ~(1 << INTERNAL_LED);
 
   task->status = RUNNING;
-  task_sp = task->task_sp;
+  *task_sp = task->task_sp_adr;
   SET_SP();
   RESTORE_CONTEXT();
 }
@@ -233,6 +219,7 @@ void context_switch(void) {
   Simplos_Task* new_task = (Simplos_Task*)select_next_task(
       &simplos_schedule);  // Updates curr_task_index
   prepare_next_task(new_task);
+  printf("End of context switch\n");
 }
 
 /*
@@ -246,8 +233,9 @@ void yield(void) {
   ENABLE_MT();
   // Call the interupt routine to simulate an "ordinary" fiering of the
   // interupt.
-  PUSH_PC();
+  // PUSH_PC();
   context_switch();
+  asm volatile("ret");
 }
 
 #endif  // SIMPLOS_H_
