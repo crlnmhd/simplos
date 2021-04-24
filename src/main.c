@@ -29,6 +29,7 @@ int main(void) {
   puts("");
 
   init_timer_interupts();
+  sei();
 
   // disable timer compare interrupt for now
   DISABLE_MT();

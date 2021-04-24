@@ -33,10 +33,10 @@ void test_fn3(void) {
 
 void test_fn4(void) {
   for (;;) {
-    printf("fn4: HERE I AM!\n");
-    for (int = 0; i < 10; ++i) {
-      ++shared_x;
+    for (int i = 0; i < 10; ++i) {
+      printf("fn4: HERE I AM!\n");
     }
+    ++shared_x;
   }
 }
 
@@ -53,15 +53,15 @@ void idle_fn(volatile Scheduler* schedule) {
   dprint("idle fn starting task 2\n");
   spawn_task(test_fn2, 1, schedule);
 
-  // dprint("idle fn starting task 3\n");
-  // spawn_task(test_fn3, 1, schedule);
+  dprint("idle fn starting task 3\n");
+  spawn_task(test_fn3, 1, schedule);
 
-    dprint("idle fn starting task 4\n");
+  dprint("idle fn starting task 4\n");
   spawn_task(test_fn4, 1, schedule);
 
-  for (;;) {
-    printf("Idle fn goes round and round\n");
-  }
+  // for (;;) {
+  //   printf("Idle fn goes round and round\n");
+  // }
 
   dprint("Idle fn killing itself\n");
 

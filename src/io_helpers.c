@@ -39,18 +39,19 @@ void print_task(Simplos_Task* task, bool use_debug) {
                              : task_default_sp(task->task_memory_block - 1);
   task_default_sp(task->task_memory_block - 1);
 
-  char const* out_of_bounds =
-      (lower_bound <= task->task_sp_adr && task->task_sp_adr <= upper_bound)
-          ? ""
-          : "OUT OF BOUND";
-
   int chars = snprintf(buf, buf_max_size,
                        "Task at block %d: SP=0x%X,\t: %s,\t%s: "
-                       "\tPRIORITY: %d, \t%s, \t%s#\n",
+                       "\tPRIORITY: %d, \t%s#\n",
                        task->task_memory_block, task->task_sp_adr, status,
-                       empty, task->priority, spawning, out_of_bounds);
+                       empty, task->priority, spawning);
   if (chars < 0 || chars > buf_max_size) {
     fatal_error("Error, print_task failed to write to buffer");
+  }
+  bool const sp_within_bounds =
+      (lower_bound <= task->task_sp_adr && task->task_sp_adr <= upper_bound);
+
+  if (!sp_within_bounds) {
+    fatal_error("Stack out of bounds!");
   }
   if (use_debug) {
     dprint(buf);

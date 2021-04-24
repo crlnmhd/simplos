@@ -65,3 +65,17 @@ void kill_current_task(Scheduler* schedule) {
   kill_task(schedule, curr_task_index);
   yield();
 }
+
+void yield(void) {
+  // "Reset" timer
+  // Ensure MT is enabled.
+  // Call the interupt routine to simulate an "ordinary" fiering of the
+  // interupt.
+  cli();
+  DISABLE_MT();
+  TCNT1 = 0;  // FIXME
+  context_switch();
+  ENABLE_MT();
+  sei();
+  asm volatile("ret");
+}

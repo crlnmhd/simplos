@@ -5,9 +5,10 @@
 
 #include "io_helpers.h"
 
-#define SCILENT_ENABLE_MT() \
-  TIMSK1 |= (1 << OCIE2A);  \
-  sei();
+#define TIMER_COMPARE_MATCH \
+  7812;  // = (16*10^6) / (2*1024) - 1 (must be <65536) //FIXME
+
+#define SCILENT_ENABLE_MT() TIMSK1 |= (1 << OCIE2A);
 
 #define SCILENT_DISABLE_MT() TIMSK1 &= ~(1 << OCIE2A);
 

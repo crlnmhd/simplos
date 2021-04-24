@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <util/atomic.h>
+#include <util/delay.h>
 
 #include "interupts.h"
 #include "io_helpers.h"
@@ -29,7 +31,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue);
 void kill_task(Scheduler*, uint8_t);
 void kill_current_task(Scheduler*);
 
-// void yield(void) __attribute__((naked));
+void yield(void) __attribute__((naked));
 
 // More or less borrowed from
 // https://www.freertos.org/kernel/secondarydocs.html
@@ -71,7 +73,8 @@ void kill_current_task(Scheduler*);
       "push  r28                    \n\t" \
       "push  r29                    \n\t" \
       "push  r30                    \n\t" \
-      "push  r31                    \n\t");
+      "push  r31                    \n\t" \
+      "sei                          \n\t");
 
 #define SAVE_SP()                             \
   asm volatile(                               \
@@ -208,7 +211,6 @@ void save_running_task(void) {
 INLINED
 void prepare_next_task(Simplos_Task* task) {
   dprint("Switching to new task: ");
-  print_task(task, true);
 
   INTERNAL_LED_PORT &= ~(1 << INTERNAL_LED);
   task->status = RUNNING;
@@ -233,21 +235,23 @@ void context_switch(void) {
   prepare_next_task(new_task);
 }
 
-/*
-  Yield current task.
-*/
-INLINED
-void yield(void) {
-  // "Reset" timer
-  TCNT1 = 0;
-  // Ensure MT is enabled.
-  ENABLE_MT();
-  // Call the interupt routine to simulate an "ordinary" fiering of the
-  // interupt.
-  // PUSH_PC();
-  context_switch();
-  sei();
-  asm volatile("ret");
-}
+// INLINED
+// void yield(void) {
+//   // ATOMIC_BLOCK(ATOMIC_FORCEON) { TIMER1_COMPA_vect(); }
+//   // "Reset" timer
+//   // TCNT1 = TIMER_COMPARE_MATCH;  // FIXME
+//   // PUSH_PC();
+//   TCNT1 = 0;
+//   test_isr()
+// }
+// context_switch();
+// asm volatile("ret");
+
+//   // asm volatile("call 0xE");
+//   // TIMER0_COMPA_vect();
+//   // asm volatile()
+//   // ENABLE_MT();
+//   // asm volatile("ret");
+// }
 
 #endif  // SIMPLOS_H_
