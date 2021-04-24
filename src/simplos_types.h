@@ -16,26 +16,28 @@ enum Task_Status {
   RUNNING,
 };
 
-typedef struct Simplos_Task {
+typedef struct Simplos_Task_t {
   bool empty;
+  bool spawning;
   uint16_t task_sp_adr;
   uint8_t task_memory_block;
   uint8_t priority;
   enum Task_Status status;
   uint32_t sleep_until;  // ticks
-} Simplos_Task;
+} Simplos_Task_t;
+typedef Simplos_Task_t volatile Simplos_Task;
 
-typedef struct Task_Queue {
-  Simplos_Task task_queue[TASKS_MAX];
+typedef struct Task_Queue_t {
+  Simplos_Task_t volatile task_queue[TASKS_MAX];
   uint8_t curr_task_index;
-} Task_Queue;
+} Task_Queue_t;
+typedef Task_Queue_t volatile Task_Queue;
 
-typedef struct Scheduler {
-  bool force_prev;
-  uint8_t prev_task;
+typedef struct Scheduler_t {
   Task_Queue queue;
   // uint8_t processes;
   bool enabled;
-} Scheduler;
+} Scheduler_t;
+typedef Scheduler_t volatile Scheduler;
 
 #endif  // SIMPLOS_TYPES_H_

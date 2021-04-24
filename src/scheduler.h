@@ -5,8 +5,8 @@
 /*
   Set curr_task_index and return a pointer to that task.
 */
-volatile Simplos_Task* select_next_task(volatile Scheduler* scheduler);
+uint8_t select_next_task(Scheduler* scheduler);
 
-void print_tasks(volatile Scheduler* scheduler);
+void print_tasks(Scheduler* scheduler);
 
 #endif  // SCHEDULER_H_

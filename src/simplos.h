@@ -9,25 +9,27 @@
 #include <stdio.h>
 
 #include "interupts.h"
+#include "io_helpers.h"
 #include "scheduler.h"
+#include "serial.h"
 #include "simplos_types.h"
 #include "tasks.h"
 
-extern volatile uint16_t* task_sp;
+extern volatile uint16_t* volatile task_sp;
 extern volatile uint16_t _task_sp_adr;
-extern volatile Scheduler simplos_schedule;
+extern Scheduler simplos_schedule;
 
 #define INLINED static inline __attribute__((always_inline))
 
 #define INTERNAL_LED_PORT PORTB
 #define INTERNAL_LED PORTB5
 
-uint8_t add_task_to_queue(uint8_t priority, volatile Task_Queue* queue);
+uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue);
 
-void kill_task(volatile Scheduler*, uint8_t);
-void kill_current_task(volatile Scheduler*);
+void kill_task(Scheduler*, uint8_t);
+void kill_current_task(Scheduler*);
 
-uint16_t task_default_sp(uint8_t);
+// void yield(void) __attribute__((naked));
 
 // More or less borrowed from
 // https://www.freertos.org/kernel/secondarydocs.html
@@ -81,7 +83,6 @@ uint16_t task_default_sp(uint8_t);
       "st    x+, r0                 \n\t");
 
 #define SET_SP()                             \
-  printf("Setting SP to %X\n", *task_sp);    \
   asm volatile(                              \
       "lds  r26, task_sp               \n\t" \
       "lds  r27, task_sp + 1           \n\t" \
@@ -127,48 +128,50 @@ uint16_t task_default_sp(uint8_t);
       "out  __SREG__, r0           \n\t" \
       "pop  r0                     \n\t");
 
-#define FATAL_ERROR(msg)            \
-  cli();                            \
-  printf("FATAL ERROR: %s\n", msg); \
-  for (;;)                          \
-    ;
-
 // void create_task(void (*fn)(void), uint8_t priority, Task_Queue* task_queue);
-void init_empty_queue(volatile Task_Queue*);
+void init_empty_queue(Task_Queue*);
 
 // Must be run when multitasking is off
-uint8_t add_task_to_queue(uint8_t, volatile Task_Queue*);
+uint8_t add_task_to_queue(uint8_t, Task_Queue*);
 
-#define PUSH_PC() asm volatile("rcall 0");
+#define PUSH_PC() asm volatile("rcall .+0")
 
 // NO MT
 INLINED
-void spawn_task(void (*fn)(void), uint8_t priority,
-                volatile Scheduler* schedule) {
+void spawn_task(void (*fn)(void), uint8_t priority, Scheduler* schedule) {
   DISABLE_MT();
-  uint8_t const new_task_index =
-      add_task_to_queue(priority, &((Scheduler*)schedule)->queue);
+  uint8_t const new_task_index = add_task_to_queue(priority, &schedule->queue);
 
-  volatile Simplos_Task* new_task = &schedule->queue.task_queue[new_task_index];
+  Simplos_Task* new_task = &schedule->queue.task_queue[new_task_index];
 
   volatile Simplos_Task* old_task =
-      (Simplos_Task*)&schedule->queue
-          .task_queue[schedule->queue.curr_task_index];
+      &schedule->queue.task_queue[schedule->queue.curr_task_index];
+  printf("old task index in spawn_task(): %d\n",
+         schedule->queue.curr_task_index);
+
+  old_task->spawning = true;
+
+  PUSH_PC();
 
   SAVE_CONTEXT();
   SAVE_SP();
-  PUSH_PC();
 
-  // Check if the first task has been restored?
-  if (old_task->status == READY) {
-    printf("Restoring calling task by returning from spawn_task()\n");
-    *task_sp = old_task->task_sp_adr;
+  // Return point. This variable is set to true later by the current task.
+  if (!old_task->spawning) {
     SET_SP();
     RESTORE_CONTEXT();
+    dprint("Restoring calling task by returning from spawn_task()\n");
     return;
-  } else {
-    printf("Preparing to run functino provided to spawn_task()\n");
   }
+
+  // // Check if the first task has been restored?
+  // if (old_task->status == READY) {
+  //   SET_SP();
+  //   RESTORE_CONTEXT();
+  //   return;
+  // } eltask_default_spe {
+  //   dprint("Preparing to run functino provided to spawn_task()\n");
+  // }
 
   old_task->status = READY;
   old_task->task_sp_adr = *task_sp;
@@ -177,14 +180,14 @@ void spawn_task(void (*fn)(void), uint8_t priority,
 
   *task_sp = new_task->task_sp_adr;
 
+  // PUSH_PC();
   SET_SP();
-  PUSH_PC();
 
-  printf("Running function\n");
+  dprint("Running function\n");
   ENABLE_MT();
   fn();
   DISABLE_MT();
-  printf("Task %u done!\n", new_task_index);
+  dprint("Task %u done!\n", new_task_index);
   kill_task(schedule, new_task_index);
 }
 
@@ -194,19 +197,26 @@ void save_running_task(void) {
   SAVE_CONTEXT();
   SAVE_SP();
 
-  Simplos_Task* prev = (Simplos_Task*)&simplos_schedule.queue
-                           .task_queue[simplos_schedule.queue.curr_task_index];
+  Simplos_Task* prev = &simplos_schedule.queue
+                            .task_queue[simplos_schedule.queue.curr_task_index];
   prev->task_sp_adr = *task_sp;
   prev->status = READY;
+  dprint("saving task %d's SP 0x%X\n", prev->task_memory_block,
+         prev->task_sp_adr);
 }
 
 INLINED
 void prepare_next_task(Simplos_Task* task) {
-  printf("Restoring context to task: %d\n", task->task_memory_block);
-  INTERNAL_LED_PORT &= ~(1 << INTERNAL_LED);
+  dprint("Switching to new task: ");
+  print_task(task, true);
 
+  INTERNAL_LED_PORT &= ~(1 << INTERNAL_LED);
   task->status = RUNNING;
+  // If the thread was spawning a new thread it is now ready to continue.
+  task->spawning = false;
+
   *task_sp = task->task_sp_adr;
+  print_task(task, true);
   SET_SP();
   RESTORE_CONTEXT();
 }
@@ -216,10 +226,11 @@ void context_switch(void) {
   printf("Context switch!\n");
   save_running_task();
 
-  Simplos_Task* new_task = (Simplos_Task*)select_next_task(
-      &simplos_schedule);  // Updates curr_task_index
+  uint8_t const task_nr =
+      select_next_task(&simplos_schedule);  // Updates curr_task_index
+  Simplos_Task* new_task = &simplos_schedule.queue.task_queue[task_nr];
+  print_task(new_task, true);
   prepare_next_task(new_task);
-  printf("End of context switch\n");
 }
 
 /*
@@ -235,6 +246,7 @@ void yield(void) {
   // interupt.
   // PUSH_PC();
   context_switch();
+  sei();
   asm volatile("ret");
 }
 

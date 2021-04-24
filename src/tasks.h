@@ -18,6 +18,6 @@ void test_fn1(void);
 void test_fn2(void);
 void test_fn3(void);
 
-void idle_fn(volatile Scheduler* schedule);
+void idle_fn(Scheduler* schedule);
 
 #endif

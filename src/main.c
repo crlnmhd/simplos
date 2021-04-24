@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <util/delay.h>
 
+#include "interupts.h"
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"
@@ -12,7 +13,7 @@ volatile Scheduler simplos_schedule;
 // simplos.h
 
 volatile uint16_t _task_sp_adr = 0;
-volatile uint16_t* task_sp = &_task_sp_adr;
+volatile uint16_t* volatile task_sp = &_task_sp_adr;
 
 bool debug_queu_is_initialised = false;
 
@@ -32,14 +33,16 @@ int main(void) {
   // disable timer compare interrupt for now
   DISABLE_MT();
 
-  printf("Starting!\n");
-  printf("Starting2!\n");
-  printf("Starting3!\n");
+  dprint("Starting!\n");
+  dprint("Starting2!\n");
+  dprint("Starting3!\n");
+
+  dprint("hello world!\n");
 
   init_empty_queue(&simplos_schedule.queue);
 
   uint8_t const index = add_task_to_queue(0, &simplos_schedule.queue);
-  volatile Simplos_Task* new_task = &simplos_schedule.queue.task_queue[index];
+  Simplos_Task* new_task = &simplos_schedule.queue.task_queue[index];
   new_task->status = RUNNING;
   new_task->empty = false;
   simplos_schedule.queue.curr_task_index = index;
@@ -51,12 +54,12 @@ int main(void) {
   SET_SP();
   // asm volatile("nop");
   idle_fn(&simplos_schedule);
-  FATAL_ERROR("UNREACHABLE END OF MAIN");
+  fatal_error("UNREACHABLE END OF MAIN");
 
   // Should not be reached!
-  printf("Should not happen!!!!\n");
+  dprint("Should not happen!!!!\n");
   for (;;) {
-    printf("This is very odd\n");
+    dprint("This is very odd\n");
   }
 }
 

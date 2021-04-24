@@ -5,6 +5,8 @@ src_files = Split('''main.c
                      serial.c
                      simplos.c
                      interupts.c
+                     io_helpers.c
+                     memory.c
                      tasks.c''')
 
 header_files = Glob('*.h')
@@ -17,6 +19,7 @@ env = Environment(CC='avr-gcc',
                                     -fshort-enums
                                     -mmcu=atmega2560
                                     -DF_CPU=16000000
+                                    -DDEBUG_OUTPUT
                                     -Os'''))
 
 # User environment terminal may support features like colored output (e.g. warnings and errors)

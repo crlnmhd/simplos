@@ -29,10 +29,8 @@ int uart_putchar(char c, FILE *stream) {
   if (c == '\n') {
     uart_putchar('\r', stream);
   }
-  SCILENT_DISABLE_MT();
   loop_until_bit_is_set(UCSR0A, UDRE0);
   UDR0 = c;
-  SCILENT_ENABLE_MT();
   return 0;
 }
 

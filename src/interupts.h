@@ -3,11 +3,7 @@
 
 #include <avr/interrupt.h>
 
-// I known, I know
-#define NO_MT(code) \
-  DISABLE_MT();     \
-  code;             \
-  ENABLE_MT();
+#include "io_helpers.h"
 
 #define SCILENT_ENABLE_MT() \
   TIMSK1 |= (1 << OCIE2A);  \
@@ -17,11 +13,17 @@
 
 #define ENABLE_MT()    \
   SCILENT_ENABLE_MT(); \
-  printf("enabling MT\n");
+  dprint("enabling MT\n");
 
 #define DISABLE_MT()   \
   SCILENT_DISABLE_MT() \
-  printf("disabling MT\n");
+  dprint("disabling MT\n");
+
+// I known, I know
+#define NO_MT(code) \
+  DISABLE_MT();     \
+  code;             \
+  ENABLE_MT();
 
 void init_timer_interupts(void);
 

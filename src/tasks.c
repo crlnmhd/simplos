@@ -12,7 +12,7 @@ void test_fn1(void) {
   printf("Running fn1\n");
   ENABLE_MT();
 
-  shared_x = 10;
+  shared_x = 11;
 }
 
 void test_fn2(void) {
@@ -31,25 +31,42 @@ void test_fn3(void) {
   }
 }
 
+void test_fn4(void) {
+  for (;;) {
+    printf("fn4: HERE I AM!\n");
+    for (int = 0; i < 10; ++i) {
+      ++shared_x;
+    }
+  }
+}
+
 void idle_fn(volatile Scheduler* schedule) {
   // printf("old sp %u\n", sp);
-  printf("In idle loop!\n");
   shared_x = 42;
+
+  dprint("In idle loop. shared x = %d\n", shared_x);
   ENABLE_MT();
   // main_sp = *STACK_POINTER;
   // printf("Starting task 1\n");
   // SPAWN_TASK(test_fn1, 1, schedule);
 
-  printf("idle fn starting task 2\n");
+  dprint("idle fn starting task 2\n");
   spawn_task(test_fn2, 1, schedule);
 
-  printf("idle fn starting task 3\n");
-  spawn_task(test_fn3, 1, schedule);
+  // dprint("idle fn starting task 3\n");
+  // spawn_task(test_fn3, 1, schedule);
 
-  printf("Idle fn killing itself\n");
+    dprint("idle fn starting task 4\n");
+  spawn_task(test_fn4, 1, schedule);
+
+  for (;;) {
+    printf("Idle fn goes round and round\n");
+  }
+
+  dprint("Idle fn killing itself\n");
 
   kill_current_task(schedule);
-  FATAL_ERROR("UNREACHABLE END OF IDLE LOOP");
+  fatal_error("UNREACHABLE END OF IDLE LOOP");
 
   // for (;;) {
   //   printf("Yielding from idle loop!\n");
