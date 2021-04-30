@@ -1,17 +1,11 @@
 import os
 
-src_files = Split('''main.c
-                     scheduler.c
-                     serial.c
-                     simplos.c
-                     interupts.c
-                     io_helpers.c
-                     memory.c
-                     tasks.c''')
-
-header_files = Glob('*.h')
+uP = "atmega2560"
+src_files = Glob('src/*.c')
+header_files = Glob('src/*.h')
 
 env = Environment(CC='avr-gcc',
+                  CPATH='src',
                   CFLAGS=Split(''' -Wall
                                     -pedantic
                                     -Wextra
@@ -20,14 +14,16 @@ env = Environment(CC='avr-gcc',
                                     -mmcu=atmega2560
                                     -DF_CPU=16000000
                                     -DDEBUG_OUTPUT
+                                    -flto
                                     -Os'''))
 
-# User environment terminal may support features like colored output (e.g. warnings and errors)
+# User environment terminal may support features like colored output
+# (e.g. warnings and errors)
 env['ENV']['TERM'] = os.environ['TERM']
 
 # Builder to format source code.
-clang_format = env.Command('format_code', src_files + header_files,
-                           'clang-format -i -style=Google $SOURCES')
+clang_format = env.Command('target', src_files + header_files,
+                           'clang-format -i -style=Google $SOURCES && echo "FORMATING DONE!"')
 
 baud_rate = ARGUMENTS.get('baud', 115200)
 
@@ -45,7 +41,22 @@ if debug_mode:
     env.Append(CFLAGS='-g')
     env.Append(LINKFLAGS='-g')
 
+# formatted_sources =
+
 simplos = env.Program(target='simplos.out', source=src_files)
 
 
-Default(clang_format, simplos)
+print("BUILD_TARGETS is %s" % [str(t) for t in BUILD_TARGETS])
+
+env.AddPreAction(simplos, clang_format)
+
+# simulator = env.Command(''
+#     'avr-size --mcu=$uP -C src/simplos.out && simavr -g -m ' + uP + 'src/simplos.out')
+
+# avr_gdb = '/home/cgn/prog/external/avr-gdb/avr-gdb/bin/avr-gdb'
+# debug = env.Command('avr-size --mcu=$uP -C src/simplos.out && ' + avr_gdb + 'src/simplos.out -ex "target remote :1234" -ex "directory src/"')
+
+
+# env.Alias('sim', [simplos, simulator])
+
+Default(simplos)

@@ -28,7 +28,7 @@ extern Scheduler simplos_schedule;
 
 uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue);
 
-void kill_task(Scheduler*, uint8_t);
+void kill_task(Scheduler*, uint8_t const);
 void kill_current_task(Scheduler*);
 
 void yield(void) __attribute__((naked));
@@ -141,7 +141,7 @@ uint8_t add_task_to_queue(uint8_t, Task_Queue*);
 
 // NO MT
 INLINED
-void spawn_task(void (*fn)(void), uint8_t priority, Scheduler* schedule) {
+void spawn_task(void (*fn)(void), uint8_t const priority, Scheduler* schedule) {
   DISABLE_MT();
   uint8_t const new_task_index = add_task_to_queue(priority, &schedule->queue);
 
@@ -182,7 +182,6 @@ void spawn_task(void (*fn)(void), uint8_t priority, Scheduler* schedule) {
   schedule->queue.curr_task_index = new_task_index;
 
   *task_sp = new_task->task_sp_adr;
-
   // PUSH_PC();
   SET_SP();
 
@@ -191,7 +190,7 @@ void spawn_task(void (*fn)(void), uint8_t priority, Scheduler* schedule) {
   fn();
   DISABLE_MT();
   dprint("Task %u done!\n", new_task_index);
-  kill_task(schedule, new_task_index);
+  kill_current_task(schedule);
 }
 
 INLINED
@@ -225,7 +224,8 @@ void prepare_next_task(Simplos_Task* task) {
 
 INLINED
 void context_switch(void) {
-  printf("Context switch!\n");
+  char const* msg = "############## Context switch ##############\n";
+  printf(msg);
   save_running_task();
 
   uint8_t const task_nr =

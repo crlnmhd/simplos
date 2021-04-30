@@ -20,3 +20,16 @@ addition.
 A more advanced, probably priority bases scheduler would be cool! Perhaps combined with some other technique
 to choose amongst those with the same priority?
 
+
+
+IDEAS:
+
+* RT scheduler as well as non-RT
+* Optimize for size.
+* "User level" interface for spawning / killing tasks.
+* Assert macro / function.
+* Use progmem for strings.
+* More functions? 
+
+
+

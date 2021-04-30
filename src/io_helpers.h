@@ -15,6 +15,8 @@
 #endif
 
 void print_task(Simplos_Task *, bool);
-void fatal_error(char const *);
+void fatal_error(char const *fmt, ...);
+
+void print_schedule(Scheduler *);
 
 #endif  // IO_HELPERS

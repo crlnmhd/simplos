@@ -13,9 +13,7 @@
 // TODO stack check function.
 
 extern bool debug_queu_is_initialised;
-void init_empty_queue(Task_Queue* queue)
-
-{
+void init_empty_queue(Task_Queue* queue) {
   if (debug_queu_is_initialised) {
     fatal_error("QUEUE APPEARS TO ALREADY BE INITIALISED!");
   }
@@ -51,18 +49,23 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue) {
   return 0;
 }
 
-void kill_task(Scheduler* schedule, uint8_t task) {
+void kill_task(Scheduler* schedule, uint8_t const task) {
   DISABLE_MT();
   dprint("killing task: %d\n", task);
   Simplos_Task* victim = (Simplos_Task*)&schedule->queue.task_queue[task];
   victim->status = DONE;
   victim->empty = true;
+  victim->spawning = false;
   victim->task_sp_adr = task_default_sp(task);
+  dprint("Task %d killed\n", task);
+  ENABLE_MT();
 }
 
 void kill_current_task(Scheduler* schedule) {
+  DISABLE_MT();
   uint8_t const curr_task_index = schedule->queue.curr_task_index;
   kill_task(schedule, curr_task_index);
+  print_schedule(schedule);
   yield();
 }
 

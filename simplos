@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 BAUD=115200
+AVR_GDB='/home/cgn/prog/external/avr-gdb/avr-gdb/bin/avr-gdb'
+
 
 if [[ $# -ne 1 ]]; then
   echo "Please supply a parameter of {build, flash, sim, debug, rebuild_container ,clean}."
@@ -11,20 +13,31 @@ uP="atmega2560"
 
 case $1 in
 scons)
-  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug
+  # podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker 
+  cd src
+  scons baud=$BAUD debug
+  cd ../
   avr-size --mcu=$uP -C src/simplos.out
   ;;
 build)
-  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
+  #podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker 
+  cd src
+  scons baud=$BAUD
+  cd ../
   avr-size --mcu=$uP -C src/simplos.out
   ;;
 
 flash)
-  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
+  #podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker 
+  cd src
   BAUD=115200
+  scons baud=$BAUD
+  cd ../
+
   avr-size --mcu=$uP -C src/simplos.out
   avr-objcopy -O ihex -R .eeprom src/simplos.out out.hex
-  avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf -c wiring \
+  # avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf -c wiring \
+  avrdude -c wiring \
     -p $uP \
     -D -P /dev/ttyUSB0 \
     -b $BAUD \
@@ -33,17 +46,21 @@ flash)
   ;;
 
 sim)
-  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug=1
+  # podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker
+  cd src
+  scons baud=$BAUD debug=1
+  cd ../
   avr-size --mcu=$uP -C src/simplos.out
   simavr -g -m $uP src/simplos.out
   ;;
 
 debug)
-  avr-gdb src/simplos.out -ex "target remote :1234" -ex "directory src/"
+  #podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker avr-gdb src/simplos.out -ex "target remote :1234" -ex "directory src/"
+  ${AVR_GDB} src/simplos.out -ex "target remote :1234" -ex "directory src/"
   ;;
 
 rebuild_container)
-  sudo docker build --rm -t avr_docker \
+  podman build --rm -t avr_docker \
     --build-arg USER_ID=$(id -u) \
     --build-arg GROUP_ID=$(id -g) .
   ;;
@@ -51,6 +68,7 @@ rebuild_container)
 clean)
   rm -f src/*.o
   rm -f src/*.hex
+  rm src/simplos
   ;;
 
 esac

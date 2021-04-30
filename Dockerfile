@@ -1,7 +1,7 @@
 # More to date version of avr-gcc than ubuntu.
-FROM fedora:33 
+FROM ubuntu:20.04 
 
-RUN dnf install -y avr-gcc avr-libc scons clang-tools-extra
+RUN dnf install -y avr-gdb
 
 ARG USER_ID
 ARG GROUP_ID

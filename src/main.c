@@ -67,5 +67,5 @@ int main(void) {
 // Timer interupt for context switching
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   context_switch();
-  asm volatile("reti");
+  reti();
 }

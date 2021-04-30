@@ -9,10 +9,15 @@
 
 uint16_t ram_start = RAMSTART + 0x500;
 
-uint16_t task_default_sp(uint8_t task_memory_block) {
+uint16_t task_default_sp(uint8_t const task_memory_block) {
+  if (task_memory_block >= TASKS_MAX) {
+    fatal_error("(task_default_sp()): Memory block '%d' is INVALID!",
+                task_memory_block);
+  }
   // Stack grows toward smaller values.
   uint16_t const sp_adr =
       ram_start + (task_memory_block + 1) * TASK_MEMORY_BYTES - 1;
+  dprint("Giving task %d SP 0x%X\n", task_memory_block, sp_adr);
   return sp_adr;
 }
 

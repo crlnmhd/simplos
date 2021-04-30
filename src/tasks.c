@@ -8,9 +8,7 @@
 volatile uint8_t shared_x = 5;
 
 void test_fn1(void) {
-  DISABLE_MT();
   printf("Running fn1\n");
-  ENABLE_MT();
 
   shared_x = 11;
 }
@@ -46,9 +44,10 @@ void idle_fn(volatile Scheduler* schedule) {
 
   dprint("In idle loop. shared x = %d\n", shared_x);
   ENABLE_MT();
-  // main_sp = *STACK_POINTER;
-  // printf("Starting task 1\n");
-  // SPAWN_TASK(test_fn1, 1, schedule);
+  print_schedule(schedule);
+
+  printf("Starting task 1\n");
+  spawn_task(test_fn1, 1, schedule);
 
   dprint("idle fn starting task 2\n");
   spawn_task(test_fn2, 1, schedule);

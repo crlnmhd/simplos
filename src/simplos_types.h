@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define TASKS_MAX 5
-#define TASK_MEMORY_BYTES 512
+#define TASK_MEMORY_BYTES 800
 #define ALLOCABLE_MEMORY_BYTES 1024
 
 // TODO place "empty" in this enum.

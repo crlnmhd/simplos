@@ -12,7 +12,7 @@
 
 uint8_t select_next_task(Scheduler* scheduler) {
   // This defaults to the idle task.
-  print_tasks(scheduler);
+  print_schedule(scheduler);
 
   dprint("At block: %d\n", scheduler->queue.curr_task_index);
   for (uint8_t i = 1; i <= TASKS_MAX; ++i) {
@@ -29,12 +29,4 @@ uint8_t select_next_task(Scheduler* scheduler) {
     }
   }
   return scheduler->queue.curr_task_index;
-}
-
-void print_tasks(Scheduler* scheduler) {
-  for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    volatile Simplos_Task* task = &scheduler->queue.task_queue[i];
-    dprint("Task at block %d : ", i);
-    print_task(task, true);
-  }
 }

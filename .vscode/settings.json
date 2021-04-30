@@ -1,0 +1,18 @@
+// {
+//   "C_Cpp.clang_format_fallbackStyle": "Google",
+//   "C_Cpp.default.compilerPath": "/usr/bin/avr-gcc",
+//   "C_Cpp.default.intelliSenseMode": "gcc-x64",
+//   "C_Cpp.default.includePath": [
+//     "/usr/avr/include"
+//   ],
+//   "C_Cpp.default.cStandard": "c17",
+//   "C_Cpp.default.compilerArgs": [
+//     "-Wall",
+//     "-pedantic",
+//     "-Os",
+//     "-mmcu=atmega2560",
+//     "-DF_CPU=16000000",
+//     "-DBAUD=115200"
+//   ],
+//   "workbench.colorTheme": "Default Light+"
+// }
