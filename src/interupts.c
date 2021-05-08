@@ -5,7 +5,7 @@
 #include "io_helpers.h"
 
 void init_timer_interupts(void) {
-  dprint("Setting up interupts\n");
+  cprint("Setting up interupts\n");
   // set timer1 interrupt at 2 Hz
   TCCR1A = 0;  // set entire TCCR1A register to 0
   TCCR1B = 0;  // same for TCCR1B

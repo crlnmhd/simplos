@@ -1,13 +1,7 @@
 import os
 
-src_files = Split('''main.c
-                     scheduler.c
-                     serial.c
-                     simplos.c
-                     interupts.c
-                     io_helpers.c
-                     memory.c
-                     tasks.c''')
+src_files = Glob('*.c')
+
 
 header_files = Glob('*.h')
 

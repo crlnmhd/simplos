@@ -5,8 +5,8 @@
 /*
   Set curr_task_index and return a pointer to that task.
 */
-uint8_t select_next_task(Scheduler* scheduler);
+uint8_t select_next_task(void);
 
-void print_tasks(Scheduler* scheduler);
+// void print_tasks(void);
 
 #endif  // SCHEDULER_H_

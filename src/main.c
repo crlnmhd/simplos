@@ -7,7 +7,8 @@
 #include "serial.h"
 #include "simplos.h"
 
-volatile Scheduler simplos_schedule;
+Scheduler volatile _simplos_schedule;
+Scheduler volatile* volatile simplos_schedule = &_simplos_schedule;
 
 // Extern global variable to modify the stack pointer using macros from
 // simplos.h
@@ -34,33 +35,31 @@ int main(void) {
   // disable timer compare interrupt for now
   DISABLE_MT();
 
-  dprint("Starting!\n");
-  dprint("Starting2!\n");
-  dprint("Starting3!\n");
+  cprint("Starting1!\n");
+  cprint("Starting2!\n");
+  cprint("Starting3!\n");
 
-  dprint("hello world!\n");
+  init_empty_queue(&simplos_schedule->queue);
 
-  init_empty_queue(&simplos_schedule.queue);
-
-  uint8_t const index = add_task_to_queue(0, &simplos_schedule.queue);
-  Simplos_Task* new_task = &simplos_schedule.queue.task_queue[index];
+  uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
+  Simplos_Task* new_task = &simplos_schedule->queue.task_queue[index];
   new_task->status = RUNNING;
   new_task->empty = false;
-  simplos_schedule.queue.curr_task_index = index;
+  simplos_schedule->queue.curr_task_index = index;
 
   // Jump to the new task.
 
-  *task_sp = simplos_schedule.queue.task_queue[index].task_sp_adr;
+  *task_sp = simplos_schedule->queue.task_queue[index].task_sp_adr;
   // Run idle function. Should never leave this.
   SET_SP();
   // asm volatile("nop");
-  idle_fn(&simplos_schedule);
+  idle_fn();
   fatal_error("UNREACHABLE END OF MAIN");
 
   // Should not be reached!
-  dprint("Should not happen!!!!\n");
+  cprint("Should not happen!!!!\n");
   for (;;) {
-    dprint("This is very odd\n");
+    cprint("This is very odd\n");
   }
 }
 

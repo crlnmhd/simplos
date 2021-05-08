@@ -2,28 +2,29 @@
 
 #include <stdio.h>
 
-#include "simplos.h"
+#include "os.h"
 
 // extern
 volatile uint8_t shared_x = 5;
 
 void test_fn1(void) {
-  printf("Running fn1\n");
+  print("Running fn1\n");
 
   shared_x = 11;
+  // yield();
 }
 
 void test_fn2(void) {
-  printf("fn2\n");
+  print("fn2\n");
   for (;;) {
-    printf("2:: x = %d\n", shared_x);
+    print("2:: x = %d\n", shared_x);
     // yield();
   }
 }
 
 void test_fn3(void) {
   for (;;) {
-    printf("3 touch and go!\n");
+    print("3 touch and go!\n");
     ++shared_x;
     yield();
   }
@@ -32,43 +33,46 @@ void test_fn3(void) {
 void test_fn4(void) {
   for (;;) {
     for (int i = 0; i < 10; ++i) {
-      printf("fn4: HERE I AM!\n");
+      print("fn4: HERE I AM!\n");
     }
     ++shared_x;
   }
 }
 
-void idle_fn(volatile Scheduler* schedule) {
-  // printf("old sp %u\n", sp);
+void idle_fn() {
   shared_x = 42;
 
-  dprint("In idle loop. shared x = %d\n", shared_x);
-  ENABLE_MT();
-  print_schedule(schedule);
+  print("In idle loop. shared x = %d\n", shared_x);
 
-  printf("Starting task 1\n");
-  spawn_task(test_fn1, 1, schedule);
+  // print("Starting task 1\n");
+  // spawn(test_fn1, 1);
 
-  dprint("idle fn starting task 2\n");
-  spawn_task(test_fn2, 1, schedule);
+  print("idle fn starting task 2\n");
+  spawn(test_fn2, 1);
 
-  dprint("idle fn starting task 3\n");
-  spawn_task(test_fn3, 1, schedule);
+  print("r0 I (task %d) RETURNED FROM SPAWNING TASK 2 !!!!!\n", pid());
+  print("r1 I (task %d) RETURNED FROM SPAWNING TASK 2 !!!!!\n", pid());
+  print("r2 I (task %d) RETURNED FROM SPAWNING TASK 2 !!!!!\n", pid());
+  print("r3 I (task %d) RETURNED FROM SPAWNING TASK 2 !!!!!\n", pid());
+  print("r4 I (task %d) RETURNED FROM SPAWNING TASK 2 !!!!!\n", pid());
 
-  dprint("idle fn starting task 4\n");
-  spawn_task(test_fn4, 1, schedule);
+  print("idle fn starting task 3\n");
+  spawn(test_fn3, 1);
+
+  print("idle fn starting task 4\n");
+  spawn(test_fn4, 1);
 
   // for (;;) {
-  //   printf("Idle fn goes round and round\n");
+  //   print("Idle fn goes round and round\n");
   // }
 
-  dprint("Idle fn killing itself\n");
+  print("Idle fn killing itself\n");
 
-  kill_current_task(schedule);
-  fatal_error("UNREACHABLE END OF IDLE LOOP");
+  kill_curr_task();
+  terminate();
 
   // for (;;) {
-  //   printf("Yielding from idle loop!\n");
+  //   print("Yielding from idle loop!\n");
   //   yield();
   // }
 

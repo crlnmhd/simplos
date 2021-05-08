@@ -14,11 +14,11 @@
 
 #define ENABLE_MT()    \
   SCILENT_ENABLE_MT(); \
-  dprint("enabling MT\n");
+  cprint("enabling MT\n");
 
 #define DISABLE_MT()   \
   SCILENT_DISABLE_MT() \
-  dprint("disabling MT\n");
+  cprint("disabling MT\n");
 
 // I known, I know
 #define NO_MT(code) \

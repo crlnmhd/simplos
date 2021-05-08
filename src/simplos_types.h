@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define TASKS_MAX 5
-#define TASK_MEMORY_BYTES 800
+#define TASK_MEMORY_BYTES 600
 #define ALLOCABLE_MEMORY_BYTES 1024
 
 // TODO place "empty" in this enum.
@@ -29,7 +29,7 @@ typedef Simplos_Task_t volatile Simplos_Task;
 
 typedef struct Task_Queue_t {
   Simplos_Task_t volatile task_queue[TASKS_MAX];
-  uint8_t curr_task_index;
+  uint8_t volatile curr_task_index;
 } Task_Queue_t;
 typedef Task_Queue_t volatile Task_Queue;
 
