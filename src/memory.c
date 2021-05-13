@@ -7,7 +7,7 @@
 #include "io_helpers.h"
 #include "simplos_types.h"
 
-uint16_t ram_start = 1500;  // RAMSTART + 0x500;
+uint16_t ram_start = RAMSTART + 0x100;  // RAMSTART + 0x500;
 
 uint16_t task_default_sp(uint8_t const task_memory_block) {
   if (task_memory_block >= TASKS_MAX) {

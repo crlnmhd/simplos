@@ -16,8 +16,6 @@ Scheduler volatile* volatile simplos_schedule = &_simplos_schedule;
 volatile uint16_t _task_sp_adr = 0;
 volatile uint16_t* volatile task_sp = &_task_sp_adr;
 
-bool debug_queu_is_initialised = false;
-
 int main(void) {
   // Initialite serial communication.
   uart_init();
@@ -44,7 +42,6 @@ int main(void) {
   uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
   Simplos_Task* new_task = &simplos_schedule->queue.task_queue[index];
   new_task->status = RUNNING;
-  new_task->empty = false;
   simplos_schedule->queue.curr_task_index = index;
 
   // Jump to the new task.
@@ -61,10 +58,4 @@ int main(void) {
   for (;;) {
     cprint("This is very odd\n");
   }
-}
-
-// Timer interupt for context switching
-ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-  context_switch();
-  reti();
 }

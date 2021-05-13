@@ -9,16 +9,9 @@
 #define ALLOCABLE_MEMORY_BYTES 1024
 
 // TODO place "empty" in this enum.
-enum Task_Status {
-  SLEEPING,
-  READY,
-  DONE,
-  RUNNING,
-};
+enum Task_Status { SLEEPING, READY, RUNNING, EMPTY };
 
 typedef struct Simplos_Task_t {
-  bool empty;
-  bool spawning;
   uint16_t task_sp_adr;
   uint8_t task_memory_block;
   uint8_t priority;

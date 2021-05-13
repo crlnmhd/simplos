@@ -39,13 +39,51 @@ void test_fn4(void) {
   }
 }
 
+void test_context_switch(void) {
+  SAVE_SP();
+  SAVE_SP();
+  for (uint8_t i = 0; i < 20; ++i) {
+    print("$$$$  %d yielding $$$\n", i);
+    SAVE_SP();
+    print("Hello! I'm not supposed to tell you this, but my sp is 0x%X\n",
+          *task_sp);
+    yield();
+    SAVE_SP();
+    print("The sp is 0x%X. Oops I did it again.\n", *task_sp);
+    print("hi there!\n");
+    ++shared_x;
+
+    print("%d is a number\n", shared_x);
+    print("%d --- reincarnated\n", i);
+  }
+  print("All done!\n");
+}
+
+void test_fn5(void) {
+  print("fn 5\n");
+  print("x = %d\n", ++shared_x);
+  // for (;;)
+  //   ;
+  yield();
+  print("hi there!\n");
+}
+
 void idle_fn() {
-  shared_x = 42;
+  shared_x = 41;
 
   print("In idle loop. shared x = %d\n", shared_x);
 
-  // print("Starting task 1\n");
-  // spawn(test_fn1, 1);
+  test_context_switch();
+  print("Test of context switch passed!\n");
+
+  // spawn(test_fn5, 2);
+  // for (;;) {
+  //   print("Idle task yielding\n");
+  //   yield();
+  // };
+
+  print("Starting task 1\n");
+  spawn(test_fn1, 1);
 
   print("idle fn starting task 2\n");
   spawn(test_fn2, 1);
@@ -62,25 +100,8 @@ void idle_fn() {
   print("idle fn starting task 4\n");
   spawn(test_fn4, 1);
 
-  // for (;;) {
-  //   print("Idle fn goes round and round\n");
-  // }
-
   print("Idle fn killing itself\n");
 
   kill_curr_task();
   terminate();
-
-  // for (;;) {
-  //   print("Yielding from idle loop!\n");
-  //   yield();
-  // }
-
-  // // Finally let the scheduler run!
-  // for (;;) {
-  //   for (uint16_t i = 0; i < 0xFFFF; ++i) {
-  //     ;
-  //   }
-  //   printf("i");
-  // }
 }

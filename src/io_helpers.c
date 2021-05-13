@@ -14,24 +14,22 @@ void print_task(Simplos_Task* task, bool const checks) {
   cprint("Task at block %d:", task->task_memory_block);
   cprint("  Priority %d", task->priority);
   cprint("  SP = 0x%X", task->task_sp_adr);
-  if (task->empty) {
-    cprint("  EMPTY");
-  }
-  if (task->spawning) {
-    cprint("  SPAWNING");
-  }
+
   switch (task->status) {
     case READY:
       cprint("  READY");
       break;
-    case DONE:
-      cprint("  DONE");
+    case EMPTY:
+      cprint("  EMPTY");
       break;
     case RUNNING:
       cprint("  RUNNING");
       break;
+    case SLEEPING:
+      cprint("  SLEEPING");
+      break;
     default:
-      cprint("  OTHER");
+      cprint("  STATUS UNKNOWN");
   }
   cprint("\n");
 
@@ -61,3 +59,14 @@ void print_schedule(Scheduler* scheduler) {
     print_task(task, true);
   }
 }
+
+// void print_task_stack(Simplos_Task * task){
+//   size_t const stack_start = task_default_sp(task->task_memory_block);
+//   DISABLE_MT();
+//   cprint("Stack of task %d (in hexadecimal):",task->task_memory_block)
+
+//   for(size_t s = stack_start; s >= stack_start - TASK_MEMORY_BYTES; -s){
+//     cprint("0x%X ")
+//   }
+
+// }

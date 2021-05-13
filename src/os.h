@@ -4,7 +4,11 @@
 #include <avr/pgmspace.h>
 #include <stdint.h>
 
-void yield(void);
+#include "simplos.h"
+
+#define yield() k_yield();
+
+// void yield(void);
 // uint8_t fork(void);
 uint8_t pid(void);
 void spawn(void (*fn)(void), uint8_t const priority);

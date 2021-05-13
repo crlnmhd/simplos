@@ -2,9 +2,9 @@
 
 #include "simplos.h"
 
-void yield(void) { k_yield(); }
+// void yield(void) { k_yield(); }
 
-// uint8_t fork();
+// FIXME give each task a unique id.
 uint8_t pid(void) { return simplos_schedule->queue.curr_task_index; }
 
 void spawn(void (*fn)(void), uint8_t const priority) {

@@ -1,6 +1,13 @@
+TODOs:
+  * unique task pids
+  * alternative scheduling
+  * inter task message passing / communication?
+  * clean up code 
+  * FIX THE BUILD SCRIPT MESS!!!!
+
+
+
 How simplos (hopefully works)
-
-
 
 Interrupt driven
 
@@ -25,10 +32,7 @@ to choose amongst those with the same priority?
 IDEAS:
 
 * RT scheduler as well as non-RT
-* Optimize for size.
-* "User level" interface for spawning / killing tasks.
 * Assert macro / function.
-* Use progmem for strings.
 * More functions? 
 
 

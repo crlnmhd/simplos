@@ -4,9 +4,8 @@
 #include <avr/interrupt.h>
 
 #include "io_helpers.h"
-
-#define TIMER_COMPARE_MATCH \
-  7812;  // = (16*10^6) / (2*1024) - 1 (must be <65536) //FIXME
+// 781210 = (16*10^6) / (2*1024) - 1 (must be <65536) //FIXME
+#define TIMER_COMPARE_MATCH 781  // aprox 100 ms
 
 #define SCILENT_ENABLE_MT() TIMSK1 |= (1 << OCIE2A);
 
@@ -27,5 +26,7 @@
   ENABLE_MT();
 
 void init_timer_interupts(void);
+
+void TIMER1_COMPA_vect(void);
 
 #endif  // INTERUPTS_H_
