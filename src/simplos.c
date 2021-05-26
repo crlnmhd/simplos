@@ -45,30 +45,6 @@ void init_schedule(void) {
   init_empty_queue(&simplos_schedule->queue);
 }
 
-// void kill_task(uint8_t const task, bool reinable_mt) {
-//   DISABLE_MT();
-//   cprint("killing task: %d\n", task);
-//   Simplos_Task* victim = &simplos_schedule->queue.task_queue[task];
-//   cprint("Murder victim:");
-//   victim->status = EMPTY;
-//   print_task(victim, true);
-//   victim->task_sp_adr = task_default_sp(task);
-//   cprint("Task %d killed\n", task);
-//   if (reinable_mt) {
-//     ENABLE_MT();
-//   }
-// }
-
-// void kill_current_task() {
-//   DISABLE_MT();
-//   uint8_t const curr_task_index = simplos_schedule->queue.curr_task_index;
-//   kill_task(curr_task_index, false);
-//   // k_yield();  // enables MT.
-//   uint8_t const task_nr = select_next_task();  // Updates curr_task_index
-//   Simplos_Task* new_task = &simplos_schedule->queue.task_queue[task_nr];
-//   prepare_next_task(new_task);
-// }
-
 __attribute__((noinline, naked)) void k_yield(void) {
   cli();
   // INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
@@ -85,8 +61,8 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   reti();
 }
 
-__attribute__((noinline)) void spawn_task(void (*fn)(void),
-                                          uint8_t const priority) {
+__attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
+                                              uint8_t const priority) {
   DISABLE_MT();
 
   uint8_t const new_task_index =
@@ -162,9 +138,6 @@ __attribute__((noinline)) void spawn_task(void (*fn)(void),
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
 
-  // cprint("Before yielding : \n");
-  // print_schedule();
-
   k_yield();  // reinables interupts.
 
   cprint("Task killed");
@@ -172,12 +145,13 @@ __attribute__((noinline)) void spawn_task(void (*fn)(void),
   asm volatile(
       "RETPOINT:        \n\t"
       " nop             \n\t");
+  return new_task_pid;
 }
 
-// void kill_current_task(void) {
-//   ENABLE_MT();
-//   cli();
-//   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
-//       .status = EMPTY;
-//   k_yield();  // reinables interupts.
-// }
+void kill_current_task(void) {
+  cli();
+  ENABLE_MT();
+  simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
+      .status = EMPTY;
+  k_yield();  // reinables interupts.
+}

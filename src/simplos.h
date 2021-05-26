@@ -32,14 +32,14 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue);
 void init_schedule(void);
 
 // INLINED
-// void kill_current_task(void);
+void kill_current_task(void);
 
 // void kill_task(uint8_t const, bool);
 // void kill_current_task(void);
 
 __attribute__((noinline, naked)) void k_yield(void);
-__attribute__((noinline)) void spawn_task(void (*fn)(void),
-                                          uint8_t const priority);
+__attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
+                                              uint8_t const priority);
 
 // More or less borrowed from
 // https://www.freertos.org/kernel/secondarydocs.html
@@ -198,18 +198,5 @@ void context_switch(void) {
   // select_next_task();  // Updates curr_task_index
   // prepare_next_task();
 }
-
-INLINED
-void kill_current_task(void) {
-  cli();
-  ENABLE_MT();
-  simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
-      .status = EMPTY;
-  k_yield();  // reinables interupts.
-}
-
-// INLINED
-
-// __attribute__((noinline))
 
 #endif  // SIMPLOS_H_

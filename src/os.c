@@ -13,16 +13,15 @@ uint16_t pid(void) {
 }
 
 uint16_t spawn(void (*fn)(void), uint8_t const priority) {
-  spawn_task(fn, priority);
+  uint16_t const pid = spawn_task(fn, priority);
+
   // dprint(PSTR("done spawning task ----\n"));
   // dprint(PSTR("1 done spawning task ----\n"));
   // dprint(PSTR("2 done spawning task ----\n"));
   // dprint(PSTR("3 done spawning task ----\n"));
   // dprint(PSTR("4 done spawning task ----\n"));
-  uint16_t const pid = simplos_schedule->queue
-                           .task_queue[simplos_schedule->queue.curr_task_index]
-                           .pid;
-  cprint("done spawning task ----\n");
+
+  cprint("done spawning task ----. new pis is %d\n", pid);
   return pid;
 }
 

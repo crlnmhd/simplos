@@ -8,7 +8,7 @@
 // extern
 volatile uint8_t shared_x = 5;
 
-#if 0
+#if 1
 void sum_to_ten(void) {
   uint8_t res = 0;
   for (uint8_t i = 0; i < 10; ++i) {
@@ -30,7 +30,7 @@ void idle_fn(void) {
   while (shared_x != 45 * 2) {
     ;
   }
-  print("pids are p1: %d and p2 : %d. My PID is : \n", p1, p2, pid());
+  print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());
   print("Heavy duty shared memory calculations performed!\n");
   terminate();
 }

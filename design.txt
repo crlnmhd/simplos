@@ -1,8 +1,10 @@
 TODOs:
   * unique task pids
   * alternative scheduling
+  * check on tasks
+  * sleep 
   * inter task message passing / communication?
-  * clean up code 
+  * Dynamic memory allocation! 
   * FIX THE BUILD SCRIPT MESS!!!!
 
 
