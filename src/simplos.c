@@ -31,6 +31,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue) {
       task->priority = priority;
       task->status = READY;
       task->task_sp_adr = task_default_sp(task->task_memory_block);
+      task->pid = UINT16_MAX;
       return i;
     }
   }
@@ -86,7 +87,6 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
 
 __attribute__((noinline)) void spawn_task(void (*fn)(void),
                                           uint8_t const priority) {
-  cprint("Spawning task\n");
   DISABLE_MT();
 
   uint8_t const new_task_index =
@@ -94,6 +94,9 @@ __attribute__((noinline)) void spawn_task(void (*fn)(void),
 
   // Simplos_Task* volatile new_task =
   simplos_schedule->queue.task_queue[new_task_index].status = RUNNING;
+  uint16_t const new_task_pid = pid_cnt++;
+  cprint("Spawning task with PID %d\n", new_task_pid);
+  simplos_schedule->queue.task_queue[new_task_index].pid = new_task_pid;
 
   taskptr_t old_task =
       &simplos_schedule->queue

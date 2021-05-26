@@ -23,6 +23,7 @@ typedef struct Simplos_Task_t {
   uint8_t priority;
   enum Task_Status status;
   uint32_t sleep_until;  // ticks
+  uint16_t pid;
 } Simplos_Task_t;
 typedef Simplos_Task_t volatile Simplos_Task;
 

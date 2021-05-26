@@ -15,6 +15,7 @@ Scheduler volatile* volatile simplos_schedule = &_simplos_schedule;
 
 volatile uint16_t _task_sp_adr = 0;
 volatile uint16_t* volatile task_sp = &_task_sp_adr;
+uint16_t volatile pid_cnt = 0;
 
 int main(void) {
   // Initialite serial communication.
@@ -28,7 +29,7 @@ int main(void) {
   puts("");
 
   init_timer_interupts();
-  sei();
+  cli();
 
   // disable timer compare interrupt for now
   DISABLE_MT();
@@ -42,6 +43,7 @@ int main(void) {
   uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
   Simplos_Task* new_task = &simplos_schedule->queue.task_queue[index];
   new_task->status = RUNNING;
+  new_task->pid = pid_cnt++;
   simplos_schedule->queue.curr_task_index = index;
 
   // Jump to the new task.
@@ -50,6 +52,7 @@ int main(void) {
   // Run idle function. Should never leave this.
   SET_SP();
   // asm volatile("nop");
+  sei();
   ENABLE_MT();
   idle_fn();
   fatal_error("UNREACHABLE END OF MAIN");

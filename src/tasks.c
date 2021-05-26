@@ -8,6 +8,34 @@
 // extern
 volatile uint8_t shared_x = 5;
 
+#if 0
+void sum_to_ten(void) {
+  uint8_t res = 0;
+  for (uint8_t i = 0; i < 10; ++i) {
+    res += i;
+  }
+  for (uint16_t i = 0; i < UINT16_MAX; ++i) {
+    // do nothing
+    ;
+  }
+  // tmp
+  shared_x += res;
+}
+
+void idle_fn(void) {
+  shared_x = 0;
+  print("Starting idle function\n");
+  uint16_t p1 = spawn(sum_to_ten, 1);
+  uint16_t p2 = spawn(sum_to_ten, 1);
+  while (shared_x != 45 * 2) {
+    ;
+  }
+  print("pids are p1: %d and p2 : %d. My PID is : \n", p1, p2, pid());
+  print("Heavy duty shared memory calculations performed!\n");
+  terminate();
+}
+#else
+
 void test_fn1(void) {
   print("Running fn1\n");
 
@@ -209,3 +237,5 @@ void idle_fn() {
   kill_curr_task();
   terminate();
 }
+
+#endif
