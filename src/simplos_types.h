@@ -1,12 +1,18 @@
 #ifndef SIMPLOS_TYPES_H_
 #define SIMPLOS_TYPES_H_
 
+#include <avr/io.h>
 #include <stdbool.h>
 #include <stdint.h>
 
 #define TASKS_MAX 5
 #define TASK_MEMORY_BYTES 600
 #define ALLOCABLE_MEMORY_BYTES 1024
+
+// OS task memory for use within constext switches and alike. Aprox 50 bytes).
+// RAMSTART = 0x200
+#define OS_RAM_START (0x200 + 0x149)
+#define TASK_RAM_END (0x200 + 0x150)
 
 // TODO place "empty" in this enum.
 enum Task_Status { SLEEPING, READY, RUNNING, EMPTY };
@@ -30,6 +36,8 @@ typedef struct Scheduler_t {
   Task_Queue queue;
   // uint8_t processes;
   bool enabled;
+  uint16_t volatile* volatile os_task_sp;
+
 } Scheduler_t;
 typedef Scheduler_t volatile Scheduler;
 

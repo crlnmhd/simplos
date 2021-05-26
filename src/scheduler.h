@@ -5,7 +5,9 @@
 /*
   Set curr_task_index for the schedule and return it.
 */
-uint8_t select_next_task(void);
+void select_next_task(void);
+
+extern Scheduler volatile* volatile simplos_schedule;
 
 // void print_tasks(void);
 

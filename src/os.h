@@ -22,4 +22,10 @@ void terminate(void);
   printf_P(PSTR(fmt), ##__VA_ARGS__); \
   asm volatile("sei");
 
+#define HALT_EXEC()  \
+  print("Halting!"); \
+  cli();             \
+  for (;;)           \
+    ;
+
 #endif  // OS_H_

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "io_helpers.h"
 #include "os.h"
 
 // extern
@@ -39,17 +40,17 @@ void test_fn4(void) {
   }
 }
 
-void test_context_switch(void) {
-  SAVE_SP();
-  SAVE_SP();
+void set_shared_to(uint8_t const val) { shared_x = val; }
+
+void test_yield(void) {
   for (uint8_t i = 0; i < 20; ++i) {
     print("$$$$  %d yielding $$$\n", i);
-    SAVE_SP();
-    print("Hello! I'm not supposed to tell you this, but my sp is 0x%X\n",
-          *task_sp);
+    // print("Hello! I'm not supposed to tell you this, but my sp is 0x%X\n",
+    //       *task_sp);
+
     yield();
-    SAVE_SP();
-    print("The sp is 0x%X. Oops I did it again.\n", *task_sp);
+
+    // print("The sp is 0x%X. Oops I did it again.\n", *task_sp);
     print("hi there!\n");
     ++shared_x;
 
@@ -59,28 +60,131 @@ void test_context_switch(void) {
   print("All done!\n");
 }
 
+void test_context_switch(void) {
+  uint8_t v = 0;
+  print("Doing realy long work") for (uint16_t i = 0; i < 10; ++i) {
+    for (uint16_t j = 0; j < 500; ++j) {
+      print("@");
+      ++v;
+    }
+    print("\n%d\n", i);
+  }
+  print("I survived the constext switch test!!\n");
+}
+
+void test_set_to_10(void) {
+  print("in test_set_to_10\n");
+  shared_x = 10;
+}
+
 void test_fn5(void) {
   print("fn 5\n");
   print("x = %d\n", ++shared_x);
   // for (;;)
   //   ;
-  yield();
+  // yield();
   print("hi there!\n");
 }
 
+void test_fn_x_5_to_50(void) {
+  while (shared_x != 5) {
+    ;
+  }
+  shared_x = 50;
+}
+
+void test_fn_x_to_5(void) {
+  for (uint16_t i = 0; i < UINT16_MAX; ++i) {
+    ;
+  }
+  shared_x = 5;
+}
+
+void wait_test(void) {
+  shared_x = 123;
+  for (int i = 0; i < 255; ++i) {
+    ;
+  }
+  shared_x = 255;
+}
+
+void tests(void) {
+  print("Trying waiting\n");
+  // test_context_switch();
+
+  print(
+      "Beginning of tests\nTest 1: Testing stack integrity by calling an "
+      "ordinary "
+      "function.\n");
+  int const expted = 123;
+  set_shared_to(expted);
+  if (shared_x != expted) {
+    print("Error! Test 1 failed. Ordinary function call did not work!");
+    HALT_EXEC();
+  }
+  shared_x = 0;
+  print("Test 2: Spawning a task that sets shared_x \n");
+  print_schedule();
+  print("Schedule printed\n");
+  spawn(test_set_to_10, 4);
+  print("After: %d\n", shared_x);
+  if (shared_x != 10) {
+    print("Error! Test 2 failed. Spawning did not work");
+    HALT_EXEC();
+  }
+
+  // Test creating many tasks that are quickly killed.
+  print("Test 3 Testing spawning multiple task that die instantly\n");
+
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  spawn(test_fn1, 1);
+  print("First spawn test PASSED\n");
+
+  print("Testing shared variables\n");
+  shared_x = 10;
+  spawn(test_fn_x_5_to_50, 1);
+  spawn(test_fn_x_to_5, 1);
+  while (shared_x != 50) {
+    ;
+  }
+  print("Tests passed!");
+}
+
 void idle_fn() {
+  // print("In idle loop. Running tests.\n");
+  // tests();
   shared_x = 41;
+  // print("In idle loop. shared x = %d\n", shared_x);
+  // print("Testing context switches\n");
+  // test_context_switch();
+  // print("Test of context switch passed!\n");
 
-  print("In idle loop. shared x = %d\n", shared_x);
-
-  test_context_switch();
-  print("Test of context switch passed!\n");
+  // print("Testing yields\n");
+  // test_yield();
 
   // spawn(test_fn5, 2);
   // for (;;) {
   //   print("Idle task yielding\n");
   //   yield();
   // };
+  print("Running tests\n");
+  tests();
 
   print("Starting task 1\n");
   spawn(test_fn1, 1);

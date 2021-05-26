@@ -12,7 +12,7 @@
 
 // TODO better scheduling. This is just a placeholder.
 
-uint8_t select_next_task() {
+void select_next_task() {
   // This defaults to the idle task.
   // print_schedule(simplos_schedule);
 
@@ -37,5 +37,4 @@ uint8_t select_next_task() {
           .status == EMPTY) {
     fatal_error("No task ready to run!\n");
   }
-  return simplos_schedule->queue.curr_task_index;
 }

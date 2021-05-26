@@ -8,7 +8,7 @@
 
 #define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
 
-#ifndef DEBUG_OUTPUT
+#ifdef DEBUG_OUTPUT
 #define cprint(fmt, ...)                  \
   SCILENT_DISABLE_MT();                   \
   print_from_prg_mem(fmt, ##__VA_ARGS__); \
@@ -27,8 +27,14 @@ void print_task(Simplos_Task *, bool);
     ;
 void fatal_error_internal(void);
 
-void print_schedule(Scheduler *);
+void print_schedule(void);
 
 void print_task_stack(uint8_t const pid);
+
+// Safe print from the os task
+#define os_safe_print(fmt, ...) \
+  uint16_t old_sp = *SP();      \
+  SP = *os_task_sp;             \
+  cprint(fmt, ##__VA_ARGS__);
 
 #endif  // IO_HELPERS

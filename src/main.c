@@ -37,7 +37,7 @@ int main(void) {
   cprint("Starting2!\n");
   cprint("Starting3!\n");
 
-  init_empty_queue(&simplos_schedule->queue);
+  init_schedule();
 
   uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
   Simplos_Task* new_task = &simplos_schedule->queue.task_queue[index];
@@ -50,6 +50,7 @@ int main(void) {
   // Run idle function. Should never leave this.
   SET_SP();
   // asm volatile("nop");
+  ENABLE_MT();
   idle_fn();
   fatal_error("UNREACHABLE END OF MAIN");
 
