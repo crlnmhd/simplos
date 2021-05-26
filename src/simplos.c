@@ -155,3 +155,22 @@ void kill_current_task(void) {
       .status = EMPTY;
   k_yield();  // reinables interupts.
 }
+
+Simplos_Task* get_task(pid_t pid) {
+  DISABLE_MT();
+  for (uint8_t t = 0; t < TASKS_MAX; ++t) {
+    if (simplos_schedule->queue.task_queue[t].pid == pid) {
+      return &simplos_schedule->queue.task_queue[t];
+    }
+  }
+  ENABLE_MT();
+  return NULL;
+}
+
+enum Task_Status task_status(pid_t pid) {
+  taskptr_t task = get_task(pid);
+  if (task == NULL) {
+    return EMPTY;
+  }
+  return task->status;
+}

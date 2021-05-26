@@ -21,7 +21,7 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority) {
   // dprint(PSTR("3 done spawning task ----\n"));
   // dprint(PSTR("4 done spawning task ----\n"));
 
-  cprint("done spawning task ----. new pis is %d\n", pid);
+  cprint("done spawning task ----. new pid is %d\n", pid);
   return pid;
 }
 
@@ -30,6 +30,12 @@ void kill_curr_task(void) { kill_current_task(); }
 void set_priority(uint8_t const priority) {
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .priority = priority;
+}
+
+void wait_for_task_finnish(pid_t pid) {
+  while (task_status(pid) != EMPTY) {
+    yield();
+  }
 }
 
 void terminate(void) {

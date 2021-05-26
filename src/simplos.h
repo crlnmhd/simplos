@@ -26,10 +26,14 @@ extern volatile uint16_t _task_sp_adr;
 #define INTERNAL_LED PORTB5
 
 typedef Simplos_Task volatile* volatile taskptr_t;
+typedef uint16_t pid_t;
 extern uint16_t volatile pid_cnt;
 
 uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue);
 void init_schedule(void);
+
+Simplos_Task* get_task(pid_t pid);
+enum Task_Status task_status(pid_t pid);
 
 // INLINED
 void kill_current_task(void);

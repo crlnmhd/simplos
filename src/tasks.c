@@ -22,16 +22,36 @@ void sum_to_ten(void) {
   shared_x += res;
 }
 
+void wait_for_me(void) {
+  for (uint16_t i = 0; i < 100; ++i) {
+    print(".\n");
+    for (uint16_t j = 0; j < UINT16_MAX; ++j) {
+      ;
+    }
+  }
+}
+
+void wait_for_other(void) {
+  print("Spawning worker function\n");
+  pid_t const pid = spawn(wait_for_me, 1);
+  print("Waiting for other task to finnish\n");
+  wait_for_task_finnish(pid);
+  print("It's finnished!\n");
+}
+
 void idle_fn(void) {
   shared_x = 0;
   print("Starting idle function\n");
-  uint16_t p1 = spawn(sum_to_ten, 1);
-  uint16_t p2 = spawn(sum_to_ten, 1);
+  pid_t p1 = spawn(sum_to_ten, 1);
+  pid_t p2 = spawn(sum_to_ten, 1);
   while (shared_x != 45 * 2) {
     ;
   }
   print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());
   print("Heavy duty shared memory calculations performed!\n");
+
+  wait_for_other();
+
   terminate();
 }
 #else
