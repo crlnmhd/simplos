@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 #define TASKS_MAX 5
-#define TASK_MEMORY_BYTES 600
+#define TASK_MEMORY_BYTES 512
 #define ALLOCABLE_MEMORY_BYTES 1024
 
 // OS task memory for use within constext switches and alike. Aprox 50 bytes).
@@ -41,5 +41,8 @@ typedef struct Scheduler_t {
 
 } Scheduler_t;
 typedef Scheduler_t volatile Scheduler;
+
+typedef Simplos_Task volatile* volatile taskptr_t;
+typedef uint16_t pid_t;
 
 #endif  // SIMPLOS_TYPES_H_

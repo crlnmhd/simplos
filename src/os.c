@@ -4,7 +4,6 @@
 
 void yield(void) { k_yield(); }
 
-// FIXME give each task a unique id.
 uint8_t rank(void) { return simplos_schedule->queue.curr_task_index; }
 uint16_t pid(void) {
   return simplos_schedule->queue

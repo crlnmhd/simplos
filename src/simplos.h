@@ -12,6 +12,7 @@
 
 #include "interupts.h"
 #include "io_helpers.h"
+#include "memory.h"
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos_types.h"
@@ -25,8 +26,6 @@ extern volatile uint16_t _task_sp_adr;
 #define INTERNAL_LED_PORT PORTB
 #define INTERNAL_LED PORTB5
 
-typedef Simplos_Task volatile* volatile taskptr_t;
-typedef uint16_t pid_t;
 extern uint16_t volatile pid_cnt;
 
 uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue);
@@ -35,8 +34,9 @@ void init_schedule(void);
 Simplos_Task* get_task(pid_t pid);
 enum Task_Status task_status(pid_t pid);
 
-// INLINED
 void kill_current_task(void);
+
+INLINED void reset_timer(void) { TCNT1 = 0; }
 
 // void kill_task(uint8_t const, bool);
 // void kill_current_task(void);
@@ -174,13 +174,16 @@ void context_switch(void) {
   // Use OS stack location
   SP = OS_RAM_START;
   {
-    cprint("Context switch\n");
+    // cprint("Context switch\n");
     taskptr_t prev = &simplos_schedule->queue
                           .task_queue[simplos_schedule->queue.curr_task_index];
     if (prev->status == RUNNING) {
       // The previous task has been killed.
       prev->task_sp_adr = *task_sp;
       prev->status = READY;
+      assert_stack_integrity(prev);  // FIXME put this check eralier so
+      print_schedule();
+      // errors will be easier to detect.
 
       cprint("saving task %d's SP 0x%X\n", prev->task_memory_block,
              prev->task_sp_adr);
@@ -193,7 +196,7 @@ void context_switch(void) {
     task->status = RUNNING;
     *task_sp = task->task_sp_adr;
   }
-
+  reset_timer();
   RESTORE_CONTEXT();
   //   // PORTB = 0x00;
   sei();

@@ -29,13 +29,16 @@ void wait_for_me(void) {
       ;
     }
   }
+
+  print("I'm done!\n");
 }
 
 void wait_for_other(void) {
   print("Spawning worker function\n");
-  pid_t const pid = spawn(wait_for_me, 1);
+  pid_t const p = spawn(wait_for_me, 1);
+
   print("Waiting for other task to finnish\n");
-  wait_for_task_finnish(pid);
+  wait_for_task_finnish(p);
   print("It's finnished!\n");
 }
 

@@ -13,7 +13,7 @@
 
 void init_empty_queue(Task_Queue* queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    taskptr_t task = (Simplos_Task*)&queue->task_queue[i];
+    taskptr_t task = (taskptr_t)&queue->task_queue[i];
     task->task_memory_block = i;
     task->task_sp_adr = task_default_sp(task->task_memory_block);
     cprint("Initiating mem block %d with SP 0x%X\n", i, task->task_sp_adr);
@@ -61,8 +61,7 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   reti();
 }
 
-__attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
-                                              uint8_t const priority) {
+pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   DISABLE_MT();
 
   uint8_t const new_task_index =
@@ -80,9 +79,6 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
   // .status = READY;
 
   old_task->status = READY;
-  // old_task->spawning = true;
-
-  // new_task->status = RUNNING;
 
   simplos_schedule->queue.curr_task_index = new_task_index;
 

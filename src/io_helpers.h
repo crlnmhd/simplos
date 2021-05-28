@@ -18,7 +18,7 @@
 #define cprint(...) ;
 #endif
 
-void print_task(Simplos_Task *, bool);
+void print_task(taskptr_t, bool);
 #define fatal_error(str, ...)             \
   cli();                                  \
   print_from_prg_mem("FATAL ERROR!\n");   \

@@ -33,3 +33,22 @@ uint16_t os_stack_end(void) {
   uint16_t const margin = 0x10;
   return last_start + margin;
 }
+
+void assert_stack_integrity(taskptr_t task) {
+  uint16_t const upper_bound = task_default_sp(task->task_memory_block);
+  uint16_t const lower_bound =
+      task->task_memory_block == 0
+          ? stack_end()
+          : task_default_sp(task->task_memory_block - 1);
+  cprint("Current task sp: 0x%X and block: %d\nUpper: 0x%Xd, lower: 0x%Xn",
+         task->task_sp_adr, task->task_memory_block, upper_bound, lower_bound);
+  bool const sp_within_bounds =
+      (lower_bound <= task->task_sp_adr && task->task_sp_adr <= upper_bound);
+
+  if (!sp_within_bounds) {
+    fatal_error("STACK OVERFLOW DETECTED!\nTask %d SP = 0x%X is of bounds.",
+                task->task_memory_block, task->task_sp_adr);
+  } else {
+    cprint("STACK LOOKS FINE\n");
+  }
+}

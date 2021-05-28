@@ -1,7 +1,7 @@
 TODOs:
-  * unique task pids
   * alternative scheduling
   * check on tasks
+  * check stack overflows 
   * sleep 
   * inter task message passing / communication?
   * Dynamic memory allocation! 
