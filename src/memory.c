@@ -52,3 +52,5 @@ void assert_stack_integrity(taskptr_t task) {
     cprint("STACK LOOKS FINE\n");
   }
 }
+
+uint16_t init_heap(void) {}

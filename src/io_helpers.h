@@ -2,6 +2,7 @@
 #define IO_HELPERS_
 
 #include <avr/pgmspace.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "simplos_types.h"
@@ -17,6 +18,12 @@
 // #define dprint(...) ;
 #define cprint(...) ;
 #endif
+
+#define assert(cond, msg)                     \
+  if (!(bool)(cond)) {                        \
+    print_from_prg_mem("ASSERTION ERROR!\n"); \
+    print_from_prg_mem(msg);                  \
+  }
 
 void print_task(taskptr_t, bool);
 #define fatal_error(str, ...)             \

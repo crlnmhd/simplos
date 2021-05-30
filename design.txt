@@ -1,7 +1,8 @@
 TODOs:
+  * mutexes
   * alternative scheduling
   * check on tasks
-  * check stack overflows 
+  * check stack overflows DONE
   * sleep 
   * inter task message passing / communication?
   * Dynamic memory allocation! 
