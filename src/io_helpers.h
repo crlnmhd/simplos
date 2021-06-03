@@ -16,7 +16,7 @@
   SCILENT_ENABLE_MT();
 #else
 // #define dprint(...) ;
-#define cprint(...) ;
+#define cprint(fmt, ...) ;
 #endif
 
 #define assert(cond, msg)                     \

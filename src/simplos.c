@@ -41,7 +41,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue) {
 }
 
 void init_schedule(void) {
-  *simplos_schedule->os_task_sp = os_stack_start();
+  simplos_schedule->os_task_sp = os_stack_start();
   init_empty_queue(&simplos_schedule->queue);
 }
 
@@ -57,7 +57,9 @@ __attribute__((noinline, naked)) void k_yield(void) {
 
 // Timer interupt for context switching
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
+  PORTA |= (1 << PORTA0);
   context_switch();
+  PORTA &= ~(1 << PORTA0);
   reti();
 }
 

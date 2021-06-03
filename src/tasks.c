@@ -9,6 +9,22 @@
 volatile uint8_t shared_x = 5;
 
 #if 1
+void worker_1_fn(void) {
+  for (uint16_t i = 0; i < 100; ++i) {
+    for (uint16_t j = 0; j < UINT16_MAX; ++j) {
+      ;
+    }
+  }
+}
+
+void worker_2_fn(void) {
+  for (uint16_t i = 0; i < 100; ++i) {
+    for (uint16_t j = 0; j < UINT16_MAX; ++j) {
+      ;
+    }
+  }
+}
+
 void sum_to_ten(void) {
   uint8_t res = 0;
   for (uint8_t i = 0; i < 10; ++i) {
@@ -43,6 +59,12 @@ void wait_for_other(void) {
 }
 
 void idle_fn(void) {
+  // print("Testing context switch ratio");
+  // spawn(worker_1_fn, 1);
+  // spawn(worker_2_fn, 1);
+  // for (;;)
+  //   ;
+
   shared_x = 0;
   print("Starting idle function\n");
   pid_t p1 = spawn(sum_to_ten, 1);

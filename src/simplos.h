@@ -172,7 +172,7 @@ void context_switch(void) {
   SAVE_CONTEXT();
 
   // Use OS stack location
-  SP = OS_RAM_START;
+  SP = simplos_schedule->os_task_sp;
   {
     // cprint("Context switch\n");
     taskptr_t prev = &simplos_schedule->queue

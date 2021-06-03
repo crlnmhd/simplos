@@ -15,7 +15,7 @@ Scheduler volatile* volatile simplos_schedule = &_simplos_schedule;
 
 volatile uint16_t _task_sp_adr = 0;
 volatile uint16_t* volatile task_sp = &_task_sp_adr;
-uint16_t volatile pid_cnt = 0;
+volatile uint16_t pid_cnt = 0;
 
 int main(void) {
   // Initialite serial communication.
@@ -34,9 +34,7 @@ int main(void) {
   // disable timer compare interrupt for now
   DISABLE_MT();
 
-  cprint("Starting1!\n");
-  cprint("Starting2!\n");
-  cprint("Starting3!\n");
+  cprint("Starting!\n");
 
   init_schedule();
 
@@ -45,10 +43,10 @@ int main(void) {
   new_task->status = RUNNING;
   new_task->pid = pid_cnt++;
   simplos_schedule->queue.curr_task_index = index;
-
   // Jump to the new task.
-  printf("At main: SP is 0x%X\n", SP);
+  cprint("At main: SP is 0x%X\n", SP);
   assert(SP > HEAP_START, "main() has overflowed heap memory");
+  cprint("OS PC is 0x%X\n", simplos_schedule->os_task_sp);
   *task_sp = simplos_schedule->queue.task_queue[index].task_sp_adr;
   // Run idle function. Should never leave this.
   SET_SP();
@@ -57,10 +55,4 @@ int main(void) {
   ENABLE_MT();
   idle_fn();
   fatal_error("UNREACHABLE END OF MAIN");
-
-  // Should not be reached!
-  cprint("Should not happen!!!!\n");
-  for (;;) {
-    cprint("This is very odd\n");
-  }
 }

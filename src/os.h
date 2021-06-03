@@ -9,6 +9,10 @@
 // #define yield() k_yield();
 typedef uint16_t pid_t;
 
+// typedef struct mutex {
+//   volatile
+// } mutex;
+
 void yield(void);
 // uint8_t fork(void);
 uint8_t rank(void);
@@ -20,6 +24,10 @@ void kill_curr_task(void);
 void wait_for_task_finnish(pid_t);
 
 void terminate(void);
+
+// mutex* mutex_create(void);
+// void mutex_lock(mutex* mtx);
+// void mutex_unlock(mutex* mtx);
 
 #define print(fmt, ...)               \
   asm volatile("cli");                \
