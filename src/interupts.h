@@ -27,6 +27,11 @@
 
 void init_timer_interupts(void);
 
+/*
+  Set ticks to occur at 'frequency' (in kHz) intervals. 
+*/
+void init_ticks(int const frequency_kHz);
+
 void TIMER1_COMPA_vect(void);
 
 #endif  // INTERUPTS_H_

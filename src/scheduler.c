@@ -12,7 +12,7 @@
 
 // TODO better scheduling. This is just a placeholder.
 
-void select_next_task() {
+void static_cyclic_scheduler(void) {
   // This defaults to the idle task.
   // print_schedule(simplos_schedule);
 
@@ -37,4 +37,16 @@ void select_next_task() {
           .status == EMPTY) {
     fatal_error("No task ready to run!\n");
   }
+}
+
+void prioity_scheduler(void) {
+  assert(false, "Priority schduling is not implemented!\n");
+}
+
+void select_next_task(void) {
+#ifdef PRIORITY_SCHEDULING
+  prioity_scheduler();
+#else
+  static_cyclic_scheduler();
+#endif
 }

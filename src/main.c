@@ -37,6 +37,8 @@ int main(void) {
   cprint("Starting!\n");
 
   init_schedule();
+  int const ticks_kHz = 10;
+  init_ticks(ticks_kHz);
 
   uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
   Simplos_Task* new_task = &simplos_schedule->queue.task_queue[index];
