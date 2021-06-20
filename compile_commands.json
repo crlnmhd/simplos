@@ -1,0 +1,7 @@
+[
+  {
+    "directory" : "/home/prog/Arduino/simplos/src/",
+    "command": "avr-gcc -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -Os -DBAUD= -g",
+    "file": "*.c", "*.h"
+  },
+]

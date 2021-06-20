@@ -1,0 +1,8 @@
+*.o
+*.hex
+*.git
+.vscode
+.cache
+*.dblite
+*.out
+tags
