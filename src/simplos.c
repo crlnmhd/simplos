@@ -41,7 +41,8 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue) {
 }
 
 void init_schedule(void) {
-  simplos_schedule->os_task_sp = os_stack_start();  init_empty_queue(&simplos_schedule->queue);
+  simplos_schedule->os_task_sp = os_stack_start();
+  init_empty_queue(&simplos_schedule->queue);
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
@@ -101,7 +102,7 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
                                          // stack.
       "push %[tmpM]              \n\t"
       "push %[tmpH]              \n\t"
-      "cpse r1, r1               \n\t"    // Skip next instruction 
+      "cpse r1, r1               \n\t"  // Skip next instruction
       "jmp RETPOINT              \n\t"
       "nop                       \n\t"
       :

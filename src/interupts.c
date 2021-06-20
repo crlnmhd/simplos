@@ -4,7 +4,6 @@
 
 #include "io_helpers.h"
 
-
 void init_timer_interupts(void) {
   cprint("Setting up interupts\n");
   TCCR1A = 0;  // set entire TCCR1A register to 0
@@ -18,8 +17,7 @@ void init_timer_interupts(void) {
   TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
-TODO: thins
-void init_ticks(int const frequency_kHz){
+void init_ticks(int const frequency_kHz) {
   cprint("Setting up ticks\n");
   TCCR2A = 0;  // set entire TCCR1A register to 0
   TCCR2B = 0;  // same for TCCR1B
@@ -31,4 +29,3 @@ void init_ticks(int const frequency_kHz){
   // Set CS10 and CS12 bits for 1024 prescaler
   TCCR2B |= (1 << CS12) | (1 << CS10);
 }
-
