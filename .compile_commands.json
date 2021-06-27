@@ -1,0 +1,47 @@
+{
+  "src/interupts.c:": {
+    "command": "avr-gcc -o src/interupts.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/interupts.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/interupts.c"
+  },
+  "src/io_helpers.c:": {
+    "command": "avr-gcc -o src/io_helpers.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/io_helpers.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/io_helpers.c"
+  },
+  "src/main.c:": {
+    "command": "avr-gcc -o src/main.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/main.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/main.c"
+  },
+  "src/memory.c:": {
+    "command": "avr-gcc -o src/memory.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/memory.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/memory.c"
+  },
+  "src/os.c:": {
+    "command": "avr-gcc -o src/os.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/os.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/os.c"
+  },
+  "src/scheduler.c:": {
+    "command": "avr-gcc -o src/scheduler.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/scheduler.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/scheduler.c"
+  },
+  "src/serial.c:": {
+    "command": "avr-gcc -o src/serial.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/serial.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/serial.c"
+  },
+  "src/simplos.c:": {
+    "command": "avr-gcc -o src/simplos.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/simplos.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/simplos.c"
+  },
+  "src/tasks.c:": {
+    "command": "avr-gcc -o src/tasks.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -mmcu=atmega2560 -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -Os -DBAUD=115200 /usr/avr/include -g src/tasks.c",
+    "directory": "/home/cgn/prog/Arduino/simplos",
+    "file": "src/tasks.c"
+  }
+}

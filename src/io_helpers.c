@@ -44,7 +44,7 @@ void print_task(taskptr_t task, bool const checks) {
 void print_schedule(void) {
   cprint(" -- Schedule --\n");
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    Simplos_Task* task = &simplos_schedule->queue.task_queue[i];
+    Simplos_Task *task = &simplos_schedule->queue.task_queue[i];
     // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
     print_task(task, false);
   }

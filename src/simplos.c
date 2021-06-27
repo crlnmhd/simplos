@@ -9,9 +9,7 @@
 #include "io_helpers.h"
 #include "memory.h"
 
-// TODO stack check function.
-
-void init_empty_queue(Task_Queue* queue) {
+void init_empty_queue(Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_t task = (taskptr_t)&queue->task_queue[i];
     task->task_memory_block = i;
@@ -22,9 +20,9 @@ void init_empty_queue(Task_Queue* queue) {
 }
 
 // NOT TS
-uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue) {
+uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    taskptr_t task = (Simplos_Task*)&queue->task_queue[i];
+    taskptr_t task = (Simplos_Task *)&queue->task_queue[i];
     // Take if available
     if (task->status == EMPTY) {
       cprint("Initiating space for new function at block %d\n", i);
@@ -153,7 +151,7 @@ void kill_current_task(void) {
   k_yield();  // reinables interupts.
 }
 
-Simplos_Task* get_task(pid_t pid) {
+Simplos_Task *get_task(pid_t pid) {
   DISABLE_MT();
   for (uint8_t t = 0; t < TASKS_MAX; ++t) {
     if (simplos_schedule->queue.task_queue[t].pid == pid) {

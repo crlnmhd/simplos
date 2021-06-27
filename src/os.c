@@ -14,12 +14,6 @@ uint16_t pid(void) {
 uint16_t spawn(void (*fn)(void), uint8_t const priority) {
   uint16_t const pid = spawn_task(fn, priority);
 
-  // dprint(PSTR("done spawning task ----\n"));
-  // dprint(PSTR("1 done spawning task ----\n"));
-  // dprint(PSTR("2 done spawning task ----\n"));
-  // dprint(PSTR("3 done spawning task ----\n"));
-  // dprint(PSTR("4 done spawning task ----\n"));
-
   cprint("done spawning task ----. new pid is %d\n", pid);
   return pid;
 }
@@ -42,4 +36,10 @@ void terminate(void) {
   cprint("Simplos terminating...\n");
   for (;;)
     ;
+}
+
+void *s_malloc(size_t bytes) {
+  if (bytes == 0) {
+    return NULL;
+  }
 }
