@@ -10,15 +10,18 @@ env = Environment(
     CPATH="src",
     CFLAGS=Split(
         """ -Wall
-                                    -pedantic
-                                    -Wextra
-                                    -Wstrict-prototypes
-                                    -fshort-enums
-                                    -mmcu=atmega2560
-                                    -DF_CPU=16000000
-                                    -DDEBUG_OUTPUT
-                                    -flto
-                                    -Os"""
+            -pedantic
+            -Wextra
+            -Wstrict-prototypes
+            -fshort-enums
+            -std=gnu17
+            -mmcu=atmega2560
+            -Wno-unknown-attributes
+            -DF_CPU=16000000
+            -DDEBUG_OUTPUT
+            -flto
+            -I/usr/avr/include
+            -Os"""
     ),
 )
 # Setup a compilation database with the --compiledb option
@@ -50,7 +53,7 @@ SetOption("num_jobs", num_cpu)
 debug_mode = ARGUMENTS.get("debug", None)
 
 # Make avr path explicit to help clang-tidy
-env.Append(CFLAGS='/usr/avr/include')
+env.Append(C_INCLUDE_PATH="/usr/avr/include")
 
 if debug_mode:
     env.Append(CFLAGS="-g")

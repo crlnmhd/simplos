@@ -5,7 +5,7 @@ AVR_GDB='/home/cgn/prog/external/avr-gdb/avr-gdb/bin/avr-gdb'
 
 
 if [[ $# -ne 1 ]]; then
-  echo "Please supply a parameter of {build, flash, sim, debug, rebuild_container ,clean}."
+  echo "Please supply a parameter of {build, flash, sim, debug, rebuild-container, generate-compile-commands, clean}."
   exit
 fi
 
@@ -13,14 +13,14 @@ uP="atmega2560"
 
 case $1 in
 scons)
-  # podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker 
+  # podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker
   cd src
   scons baud=$BAUD debug
   cd ../
   avr-size --mcu=$uP -C src/simplos.out
   ;;
 build)
-  #podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker 
+  #podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker
   cd src
   scons baud=$BAUD
   cd ../
@@ -28,7 +28,7 @@ build)
   ;;
 
 flash)
-  #podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker 
+  #podman run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker
   cd src
   BAUD=115200
   scons baud=$BAUD
@@ -59,11 +59,18 @@ debug)
   ${AVR_GDB} src/simplos.out -ex "target remote :1234" -ex "directory src/"
   ;;
 
-rebuild_container)
+rebuild-container)
   podman build --rm -t avr_docker \
     --build-arg USER_ID=$(id -u) \
     --build-arg GROUP_ID=$(id -g) .
   ;;
+
+generate-compile-commands)
+    echo "generating compile_commands.json"
+    scons -c
+    scons baud=115200 debug=1 --compiledb=
+  ;;
+
 
 clean)
   rm -f src/*.o

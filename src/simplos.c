@@ -35,7 +35,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
   }
   fatal_error("Can't create new task! Queue if full!");
 
-  return 0;  // Never reached
+  return 0; // Never reached
 }
 
 void init_schedule(void) {
@@ -85,22 +85,22 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   register uint8_t tmpH, tmpM, tmpL, tmp;
   cli();
   asm volatile(
-      "rcall .+0                  \n\t"  // pushes PC (3 bytes) onto the
-                                         // stack
+      "rcall .+0                  \n\t" // pushes PC (3 bytes) onto the
+                                        // stack
       "pop %[tmpH]                \n\t"
       "pop %[tmpM]                \n\t"
-      "pop %[tmpL]                \n\t"  // MSB
+      "pop %[tmpL]                \n\t" // MSB
       "ldi %[tmp], 12             \n\t"
-      "add %[tmpL], %[tmp]        \n\t"  // Offset to call OLD_TASK_RET
-      "ldi %[tmp], 0              \n\t"  // This may not be nessesary with
-                                         // __zero_reg__
-      "adc %[tmpM], %[tmp]       \n\t"   // Carry from LSB. tmp = 0
-      "adc %[tmpH], %[tmp]       \n\t"   // Carry from Middle byte
-      "push %[tmpL]              \n\t"   // PUSH LS byte of PC back onto the
-                                         // stack.
+      "add %[tmpL], %[tmp]        \n\t" // Offset to call OLD_TASK_RET
+      "ldi %[tmp], 0              \n\t" // This may not be nessesary with
+                                        // __zero_reg__
+      "adc %[tmpM], %[tmp]       \n\t"  // Carry from LSB. tmp = 0
+      "adc %[tmpH], %[tmp]       \n\t"  // Carry from Middle byte
+      "push %[tmpL]              \n\t"  // PUSH LS byte of PC back onto the
+                                        // stack.
       "push %[tmpM]              \n\t"
       "push %[tmpH]              \n\t"
-      "cpse r1, r1               \n\t"  // Skip next instruction
+      "cpse r1, r1               \n\t" // Skip next instruction
       "jmp RETPOINT              \n\t"
       "nop                       \n\t"
       :
@@ -133,13 +133,12 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
 
-  k_yield();  // reinables interupts.
+  k_yield(); // reinables interupts.
 
   cprint("Task killed");
 
-  asm volatile(
-      "RETPOINT:        \n\t"
-      " nop             \n\t");
+  asm volatile("RETPOINT:        \n\t"
+               " nop             \n\t");
   return new_task_pid;
 }
 
@@ -148,7 +147,7 @@ void kill_current_task(void) {
   ENABLE_MT();
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
-  k_yield();  // reinables interupts.
+  k_yield(); // reinables interupts.
 }
 
 Simplos_Task *get_task(pid_t pid) {
