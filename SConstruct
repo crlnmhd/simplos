@@ -21,6 +21,8 @@ env = Environment(
             -DDEBUG_OUTPUT
             -flto
             -I/usr/avr/include
+            -Wnonewline-eof
+            -Wnolanguage-extension-token
             -Os"""
     ),
 )
@@ -34,11 +36,11 @@ scons_compiledb.enable_with_cmdline(env)
 env["ENV"]["TERM"] = os.environ["TERM"]
 
 # Builder to format source code.
-clang_format = env.Command(
-    "target",
-    src_files + header_files,
-    'clang-format -i -style=Google $SOURCES && echo "FORMATING DONE!"',
-)
+# clang_format = env.Command(
+#     "target",
+#     src_files + header_files,
+#     'clang-format -i -style=Google $SOURCES && echo "FORMATING DONE!"',
+# )
 
 baud_rate = ARGUMENTS.get("baud", 115200)
 
@@ -66,7 +68,7 @@ simplos = env.Program(target="simplos.out", source=src_files)
 
 print("BUILD_TARGETS is %s" % [str(t) for t in BUILD_TARGETS])
 
-env.AddPreAction(simplos, clang_format)
+# env.AddPreAction(simplos, clang_format)
 
 # simulator = env.Command(''
 #     'avr-size --mcu=$uP -C src/simplos.out && simavr -g -m ' + uP + 'src/simplos.out')
