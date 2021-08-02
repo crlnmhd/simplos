@@ -35,12 +35,17 @@ extern volatile uint16_t *volatile task_sp;
 extern volatile uint16_t internal_task_sp_adr;
 
 #if defined(__clang__)
-#define CLANG_IGNORE(code, warning)                       \
-  _Pragma("clang diagnostic push")                        \
-      _Pragma("clang diagnostic ignored \"" warning "\"") \
-          code _Pragma("clang diagnostic pop")
-#else
-#define CLANG_IGNORE(code, warning) code
+#define CLANG_IGNORE_BEGIN(warning) \
+  _Pragma("clang diagnostic push")  \
+      _Pragma("clang diagnostic ignored \"" warning "\"")
+
+#define CLANG_IGNORE_END() _Pragma("clang diagnostic pop")
+
+#else  // GCC
+
+#define CLANG_IGNORE_BEGIN(warning)
+#define CLANG_IGNORE_END()
+
 #endif
 
 /*

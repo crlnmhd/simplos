@@ -48,8 +48,10 @@ __attribute__((noinline, naked)) void k_yield(void) {
   // TODO do blinking in asm.
   // INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
   // PORTB = 0xFF;  // turn on led, and whatever else happen to be there...
-  CLANG_IGNORE({ context_switch(); },
-               "Wno-everything");  // disable C with naked attribute (the stack
+
+  CLANG_IGNORE_BEGIN("-w");
+  context_switch();
+  CLANG_IGNORE_END();  // disable C with naked attribute (the stack
   // is handled manually).
   // asm volatile("ret" ::: "memory");
   sei();
@@ -58,9 +60,9 @@ __attribute__((noinline, naked)) void k_yield(void) {
 
 // Timer interupt for context switching
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-  PORTA |= (1 << PORTA0);
+  // PORTA |= (1 << PORTA0);
   context_switch();
-  PORTA &= ~(1 << PORTA0);
+  // PORTA &= ~(1 << PORTA0);
   reti();
 }
 
@@ -181,8 +183,7 @@ void assert_heap_valid(void) { return; }
 void verify_heap_config(void) {
   assert_heap_valid();
 
-  /*
-  ASSERT_EQ(os_stack_start(), 0x349, "%u",
+  ASSERT_EQ(os_stack_start(), 0x34F, "%u",
             "Heap configuration error: Incorrect os stack start");
   ASSERT_EQ(stack_end(), 0x350, "%u",
             "Heap configuration error: Incorrect stack end");
@@ -195,7 +196,6 @@ void verify_heap_config(void) {
          "Heap configuration error. Zero heap pages configured.");
   ASSERT(HEAP_PAGE_SIZE < UINT16_MAX,
          "Heap configuration error. To many heap pages for integer type.");
-         */
 }
 
 uint16_t init_heap(void) {

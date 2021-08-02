@@ -5,9 +5,11 @@
 #include "stdint.h"
 
 /*
- *   0x0-1FF  #  0x200 - 0x2FF # 0x300 - 0x349 #  0x350 - 0xD49 # 0xD50 -
- * HEAP_MAP-1 # HEAP_MAP - 0x2000 Registers # Static ram*    #   os stack    #
- * 5 task stacks #     heap           #      heap_map
+ * 0x0-1FF            # Registers
+ * 0x200 - 0x2FF      # Static ram
+ * 0x300 - 0x34F      # OS stack
+ * 0x350 - 0xD4F      # (5) task stack
+ * 0xD50 - 0x2000     # heap
  */
 
 #define TASK_MEMORY_BYTES 512
