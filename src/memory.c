@@ -65,10 +65,10 @@ enum MEM_REGION memory_region(taskptr_t adr) {
     case 0x200 ... 0x2FF:
       region = STATIC_RAM;
       break;
-    case 0x300 ... 0x349:
+    case 0x300 ... 0x34F:
       region = OS_STACK;
       break;
-    case 0x350 ... 0xD49:
+    case 0x350 ... 0xD4F:
       region = TASK_RAM;
       break;
     case 0xD50 ... HEAP_START:
