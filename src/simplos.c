@@ -72,7 +72,6 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   uint8_t const new_task_index =
       add_task_to_queue(priority, &simplos_schedule->queue);
 
-  // Simplos_Task* volatile new_task =
   simplos_schedule->queue.task_queue[new_task_index].status = RUNNING;
   uint16_t const new_task_pid = pid_cnt++;
   cprint("Spawning task with PID %d\n", new_task_pid);
@@ -81,7 +80,6 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   taskptr_t old_task =
       &simplos_schedule->queue
            .task_queue[simplos_schedule->queue.curr_task_index];
-  // .status = READY;
 
   old_task->status = READY;
 
@@ -113,32 +111,22 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   sei();
 
   SAVE_CONTEXT();
-  // cprint("Setting task %d sp adr to 0x%X\n", old_task->task_memory_block,
-  //        *task_sp);
 
   old_task->task_sp_adr = *task_sp;
-  // Simplos_Task* volatile new_task =
-  //     &simplos_schedule->queue
-  //          .task_queue[simplos_schedule->queue.curr_task_index];
 
   *task_sp = simplos_schedule->queue
                  .task_queue[simplos_schedule->queue.curr_task_index]
                  .task_sp_adr;
   SET_SP();
-
-  // cprint("Before calling function\n");
-  // print_schedule();
   cprint("Calling function\n");
   ENABLE_MT();
   fn();
   DISABLE_MT();
   cprint("Function finnished\n");
-  // cprint("Setting task %d to empty\n",
-  // simplos_schedule->queue.curr_task_index);
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
 
-  k_yield();  // reinables interupts.
+  k_yield();  // re-enable interrupts.
 
   cprint("Task killed");
 
@@ -153,7 +141,7 @@ void kill_current_task(void) {
   ENABLE_MT();
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
-  k_yield();  // reinables interupts.
+  k_yield();  // re-enables interrupts.
 }
 
 Simplos_Task *get_task(pid_t pid) {
@@ -175,14 +163,9 @@ enum Task_Status task_status(pid_t pid) {
   return task->status;
 }
 
-// FIXME implement...
-void assert_heap_valid(void) { return; }
-
 // Verify the heap configuration.
 // TODO add more checks.
 void verify_heap_config(void) {
-  assert_heap_valid();
-
   ASSERT_EQ(os_stack_start(), 0x34F, "%u",
             "Heap configuration error: Incorrect os stack start");
   ASSERT_EQ(stack_end(), 0x350, "%u",

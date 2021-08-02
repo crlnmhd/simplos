@@ -20,7 +20,6 @@ _Pragma("clang diagnostic push")
   print_from_prg_mem(fmt, ##__VA_ARGS__); \
   SCILENT_ENABLE_MT();
 #else
-// #define dprint(...);
 #endif
 
 #if defined(__clang__)
@@ -47,23 +46,24 @@ _Pragma("clang diagnostic push")
       ;                                         \
   }
 
-            void print_task(taskptr_t, bool);
 #define fatal_error(str, ...)             \
   cli();                                  \
   print_from_prg_mem("FATAL ERROR!\n");   \
   print_from_prg_mem(str, ##__VA_ARGS__); \
   for (;;)                                \
     ;
-void fatal_error_internal(void);
-
-void print_schedule(void);
-
-void print_task_stack(uint8_t const pid);
 
 // Safe print from the os task
 #define os_safe_print(fmt, ...) \
   uint16_t old_sp = *SP();      \
   SP = *os_task_sp;             \
   cprint(fmt, ##__VA_ARGS__);
+
+            void fatal_error_internal(void);
+
+void print_task(taskptr_t, bool);
+void print_schedule(void);
+
+void print_task_stack(uint8_t const pid);
 
 #endif  // IO_HELPERS
