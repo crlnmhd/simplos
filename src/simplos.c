@@ -35,7 +35,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
   }
   fatal_error("Can't create new task! Queue if full!");
 
-  return 0; // Never reached
+  return 0;  // Never reached
 }
 
 void init_schedule(void) {
@@ -45,9 +45,12 @@ void init_schedule(void) {
 
 __attribute__((noinline, naked)) void k_yield(void) {
   cli();
+  // TODO do blinking in asm.
   // INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
   // PORTB = 0xFF;  // turn on led, and whatever else happen to be there...
-  context_switch();
+  CLANG_IGNORE({ context_switch(); },
+               "Wno-everything");  // disable C with naked attribute (the stack
+  // is handled manually).
   // asm volatile("ret" ::: "memory");
   sei();
   asm volatile("ret");
@@ -85,22 +88,22 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   register uint8_t tmpH, tmpM, tmpL, tmp;
   cli();
   asm volatile(
-      "rcall .+0                  \n\t" // pushes PC (3 bytes) onto the
-                                        // stack
+      "rcall .+0                  \n\t"  // pushes PC (3 bytes) onto the
+      // stack
       "pop %[tmpH]                \n\t"
       "pop %[tmpM]                \n\t"
-      "pop %[tmpL]                \n\t" // MSB
+      "pop %[tmpL]                \n\t"  // MSB
       "ldi %[tmp], 12             \n\t"
-      "add %[tmpL], %[tmp]        \n\t" // Offset to call OLD_TASK_RET
-      "ldi %[tmp], 0              \n\t" // This may not be nessesary with
-                                        // __zero_reg__
+      "add %[tmpL], %[tmp]        \n\t"  // Offset to call OLD_TASK_RET
+      "ldi %[tmp], 0              \n\t"  // This may not be nessesary with
+      // __zero_reg__
       "adc %[tmpM], %[tmp]       \n\t"  // Carry from LSB. tmp = 0
       "adc %[tmpH], %[tmp]       \n\t"  // Carry from Middle byte
       "push %[tmpL]              \n\t"  // PUSH LS byte of PC back onto the
-                                        // stack.
+      // stack.
       "push %[tmpM]              \n\t"
       "push %[tmpH]              \n\t"
-      "cpse r1, r1               \n\t" // Skip next instruction
+      "cpse r1, r1               \n\t"  // Skip next instruction
       "jmp RETPOINT              \n\t"
       "nop                       \n\t"
       :
@@ -133,12 +136,13 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
 
-  k_yield(); // reinables interupts.
+  k_yield();  // reinables interupts.
 
   cprint("Task killed");
 
-  asm volatile("RETPOINT:        \n\t"
-               " nop             \n\t");
+  asm volatile(
+      "RETPOINT:        \n\t"
+      " nop             \n\t");
   return new_task_pid;
 }
 
@@ -147,7 +151,7 @@ void kill_current_task(void) {
   ENABLE_MT();
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
-  k_yield(); // reinables interupts.
+  k_yield();  // reinables interupts.
 }
 
 Simplos_Task *get_task(pid_t pid) {
@@ -167,4 +171,40 @@ enum Task_Status task_status(pid_t pid) {
     return EMPTY;
   }
   return task->status;
+}
+
+// FIXME implement...
+void assert_heap_valid(void) { return; }
+
+// Verify the heap configuration.
+// TODO add more checks.
+void verify_heap_config(void) {
+  assert_heap_valid();
+
+  /*
+  ASSERT_EQ(os_stack_start(), 0x349, "%u",
+            "Heap configuration error: Incorrect os stack start");
+  ASSERT_EQ(stack_end(), 0x350, "%u",
+            "Heap configuration error: Incorrect stack end");
+  ASSERT_EQ(HEAP_RAM_END, 0xD50, "%u",
+            "Heap configuration error: Incorrect heap low");
+
+  ASSERT(HEAP_CHUNKS < UINT8_MAX,
+         "Heap configuration error: To many heap chunks for integer type");
+  ASSERT(HEAP_PAGE_SIZE > 0,
+         "Heap configuration error. Zero heap pages configured.");
+  ASSERT(HEAP_PAGE_SIZE < UINT16_MAX,
+         "Heap configuration error. To many heap pages for integer type.");
+         */
+}
+
+uint16_t init_heap(void) {
+  /*
+  verify_heap_config();
+  for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i)
+  {
+    kernel->heap_mapping[i] = 0xFF;
+  }
+  */
+  return 0;
 }

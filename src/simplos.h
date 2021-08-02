@@ -1,5 +1,9 @@
-#ifndef SIMPLOS_H_
+#if !defined(SIMPLOS_H_)
 #define SIMPLOS_H_
+
+#if defined(__clang__)
+_Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
+#endif
 
 // #define  STACK_POINTER ((volatile uint16_t * const) 0x5E)
 
@@ -18,20 +22,43 @@
 #include "simplos_types.h"
 #include "tasks.h"
 
-extern uint16_t volatile* volatile task_sp;
-extern volatile uint16_t _task_sp_adr;
-
 #define INLINED static inline __attribute__((always_inline))
 
 #define INTERNAL_LED_PORT PORTB
 #define INTERNAL_LED PORTB5
 
-extern uint16_t volatile pid_cnt;
+    extern uint16_t volatile pid_cnt;
 
-uint8_t add_task_to_queue(uint8_t priority, Task_Queue* queue);
+extern volatile Kernel kernel;
+
+extern volatile uint16_t *volatile task_sp;
+extern volatile uint16_t internal_task_sp_adr;
+
+#if defined(__clang__)
+#define CLANG_IGNORE(code, warning)                       \
+  _Pragma("clang diagnostic push")                        \
+      _Pragma("clang diagnostic ignored \"" warning "\"") \
+          code _Pragma("clang diagnostic pop")
+#else
+#define CLANG_IGNORE(code, warning) code
+#endif
+
+/*
+ * Add a task to the task queue. This is needed to let the the task execute.
+ * */
+uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue);
+
+/*
+ * Set up the scheduler.
+ * */
 void init_schedule(void);
 
-Simplos_Task* get_task(pid_t pid);
+/*
+ * Initialise heap mapping. Sets free chunks to 0xFF (U8).
+ */
+uint16_t init_heap(void);
+
+Simplos_Task *get_task(pid_t pid);
 enum Task_Status task_status(pid_t pid);
 
 void kill_current_task(void);
@@ -167,8 +194,7 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "out  __SREG__, r0           \n\t" \
       "pop  r0                     \n\t");
 
-INLINED
-void context_switch(void) {
+static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
 
   // Use OS stack location

@@ -3,7 +3,11 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include <util/delay.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcpp"
 #include <util/setbaud.h>
+#pragma GCC diagnostic pop
 
 #include "interupts.h"
 
@@ -34,7 +38,7 @@ int uart_putchar(char c, FILE *stream) {
   return 0;
 }
 
-int uart_getchar(FILE *stream) {
+int uart_getchar(__attribute__((unused)) FILE *stream) {
   loop_until_bit_is_set(UCSR0A, RXC0);
   return UDR0;
 }

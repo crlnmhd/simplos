@@ -38,8 +38,14 @@ void terminate(void) {
     ;
 }
 
-void *s_malloc(size_t bytes) {
+void *malloc(size_t bytes) {
   if (bytes == 0) {
     return NULL;
   }
+  // dprint("Heap map located at: %p\n", kernel->heap_mapping);
+  uint8_t rem = bytes % HEAP_PAGE_SIZE;
+  uint8_t div = bytes / HEAP_PAGE_SIZE;
+  uint8_t chunks_needed = 1;
+
+  return NULL;
 }

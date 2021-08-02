@@ -7,25 +7,47 @@
 
 #include "simplos_types.h"
 
-#define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
+// Disable clang warning
+#if defined(__clang__)
+_Pragma("clang diagnostic push")
+    _Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
+#endif  // __clang__
 
-#ifdef DEBUG_OUTPUT
+#define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
+#if defined(DEBUG_OUTPUT)
 #define cprint(fmt, ...)                  \
   SCILENT_DISABLE_MT();                   \
   print_from_prg_mem(fmt, ##__VA_ARGS__); \
   SCILENT_ENABLE_MT();
 #else
-// #define dprint(...) ;
-#define cprint(fmt, ...) ;
+// #define dprint(...);
 #endif
 
-#define assert(cond, msg)                     \
-  if (!(bool)(cond)) {                        \
-    print_from_prg_mem("ASSERTION ERROR!\n"); \
-    print_from_prg_mem(msg);                  \
+#if defined(__clang__)
+        _Pragma("clang diagnostic pop")
+#endif
+
+#define ASSERT(cond, msg)                    \
+  if (!(bool)(cond)) {                       \
+    print_from_prg_mem("ASSERTION ERROR! "); \
+    print_from_prg_mem(msg);                 \
+    print_from_prg_mem("\n");                \
+    for (;;)                                 \
+      ;                                      \
   }
 
-void print_task(taskptr_t, bool);
+#define ASSERT_EQ(expected, recieved, fmt, msg) \
+  if ((expected) != (recieved)) {               \
+    print_from_prg_mem(                         \
+        "ASSERT_EQUAL ERROR!"                   \
+        "Expected: " fmt ", Got: " fmt "\n",    \
+        expected, recieved);                    \
+    print_from_prg_mem(msg);                    \
+    for (;;)                                    \
+      ;                                         \
+  }
+
+            void print_task(taskptr_t, bool);
 #define fatal_error(str, ...)             \
   cli();                                  \
   print_from_prg_mem("FATAL ERROR!\n");   \

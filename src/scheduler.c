@@ -40,11 +40,11 @@ void static_cyclic_scheduler(void) {
 }
 
 void prioity_scheduler(void) {
-  assert(false, "Priority schduling is not implemented!\n");
+  ASSERT(false, "Priority schduling is not implemented!\n");
 }
 
 void select_next_task(void) {
-#ifdef PRIORITY_SCHEDULING
+#if defined(PRIORITY_SCHEDULING)
   prioity_scheduler();
 #else
   static_cyclic_scheduler();

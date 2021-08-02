@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "memory.h"
 
 #include <avr/io.h>
@@ -6,8 +7,6 @@
 #include "interupts.h"
 #include "io_helpers.h"
 #include "simplos_types.h"
-
-uint8_t heap_mapping[ALLOCABLE_MEMORY_BYTES / HEAP_PAGE_SIZE];
 
 uint16_t task_default_sp(uint8_t const task_memory_block) {
   if (task_memory_block >= TASKS_MAX) {
@@ -35,7 +34,7 @@ uint16_t os_stack_end(void) {
 }
 
 void assert_stack_integrity(taskptr_t task) {
-  assert(memory_region(task) == TASK_RAM,
+  ASSERT(memory_region(task) == TASK_RAM,
          "MEMORY ERROR! Task pointer outside task pointer region!");
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
   uint16_t const lower_bound =
@@ -58,6 +57,8 @@ enum MEM_REGION memory_region(taskptr_t adr) {
   enum MEM_REGION region;
   // Switch on range is a very usefull GCC extension :-)
   switch ((uint16_t)adr->task_sp_adr) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
     case 0 ... 0x1FF:
       region = REGISTERS;
       break;
@@ -70,18 +71,15 @@ enum MEM_REGION memory_region(taskptr_t adr) {
     case 0x350 ... 0xD49:
       region = TASK_RAM;
       break;
-    case 0xD50 ... 0x2000:
+    case 0xD50 ... HEAP_START:
       region = HEAP;
+      break;
+    case HEAP_START + 1 ... 0x2000:
+      region = HEAP_MAP;
       break;
     default:
       region = UNKNOWN;
+#pragma GCC diagnostic pop
   }
   return region;
-}
-
-uint16_t init_heap(void) {
-  assert(os_stack_start() == 0x349, "Incorrect os stack start");
-  assert(stack_end() == 0x350, "Incorrect stack end");
-  assert(HEAP_RAM_END == 0xD50, "Incorrect heap low");
-  return 0;
 }

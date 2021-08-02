@@ -11,12 +11,12 @@
 enum Task_Status { SLEEPING, READY, RUNNING, EMPTY };
 
 typedef struct Simplos_Task_t {
+  uint32_t sleep_until;  // ticks
   uint16_t task_sp_adr;
+  uint16_t pid;
   uint8_t task_memory_block;
   uint8_t priority;
   enum Task_Status status;
-  uint32_t sleep_until;  // ticks
-  uint16_t pid;
 } Simplos_Task_t;
 typedef Simplos_Task_t volatile Simplos_Task;
 
@@ -28,14 +28,19 @@ typedef Task_Queue_t volatile Task_Queue;
 
 typedef struct Scheduler_t {
   Task_Queue queue;
-  // uint8_t processes;
-  bool enabled;
   volatile uint16_t os_task_sp;
+  bool enabled;
 
 } Scheduler_t;
 typedef Scheduler_t volatile Scheduler;
 
 typedef Simplos_Task volatile *volatile taskptr_t;
 typedef uint16_t pid_t;
+
+// TODO use this for all global variables.
+typedef struct Kernel_t {
+  uint8_t *heap_mapping;
+} Kernel_t;
+typedef Kernel_t volatile *volatile Kernel;
 
 #endif  // SIMPLOS_TYPES_H_

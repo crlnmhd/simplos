@@ -47,7 +47,7 @@ int main(void) {
   simplos_schedule->queue.curr_task_index = index;
   // Jump to the new task.
   cprint("At main: SP is 0x%X\n", SP);
-  assert(SP > HEAP_START, "main() has overflowed heap memory");
+  ASSERT(SP > HEAP_START, "main() has overflowed heap memory");
   cprint("OS PC is 0x%X\n", simplos_schedule->os_task_sp);
   *task_sp = simplos_schedule->queue.task_queue[index].task_sp_adr;
   // Run idle function. Should never leave this.
