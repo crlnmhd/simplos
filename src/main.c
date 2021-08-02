@@ -7,15 +7,18 @@
 #include "serial.h"
 #include "simplos.h"
 
-Scheduler volatile _simplos_schedule;
-Scheduler volatile *volatile simplos_schedule = &_simplos_schedule;
+volatile Scheduler internal_simplos_schedule;
+volatile Scheduler *volatile simplos_schedule = &internal_simplos_schedule;
 
 // Extern global variable to modify the stack pointer using macros from
 // simplos.h
 
-volatile uint16_t _task_sp_adr = 0;
-volatile uint16_t *volatile task_sp = &_task_sp_adr;
+volatile uint16_t internal_task_sp_adr = 0;
+volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
 volatile uint16_t pid_cnt = 0;
+
+// External variables
+volatile Kernel kernel;
 
 int main(void) {
   // Initialite serial communication.
@@ -24,15 +27,14 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  // FIXME this hides a bug? where some characters from the first serial message
-  // are repeated in the begining.
-  puts("");
+  // &(kernel->heap_mapping) = HEAP_START + 1;
 
   init_timer_interupts();
   cli();
 
   // disable timer compare interrupt for now
   DISABLE_MT();
+  init_heap();
 
   cprint("Starting!\n");
 
