@@ -16,6 +16,7 @@
   ],
   "files.associations": {
     "io_helpers.h": "c",
-    "pgmspace.h": "c"
+    "pgmspace.h": "c",
+    "io.h": "c"
   },
 }
