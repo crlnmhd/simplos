@@ -1,47 +1,47 @@
 [
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/interupts.c",
-    "command": "avr-gcc -o src/interupts.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/interupts.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/io_helpers.c",
-    "command": "avr-gcc -o src/io_helpers.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/io_helpers.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/main.c",
-    "command": "avr-gcc -o src/main.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/main.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/memory.c",
-    "command": "avr-gcc -o src/memory.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/memory.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/os.c",
-    "command": "avr-gcc -o src/os.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/os.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/scheduler.c",
-    "command": "avr-gcc -o src/scheduler.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/scheduler.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/serial.c",
-    "command": "avr-gcc -o src/serial.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/serial.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/simplos.c",
-    "command": "avr-gcc -o src/simplos.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/simplos.c"
-  },
-  {
-    "directory": "/home/cgn/prog/Arduino/simplos",
-    "file": "src/tasks.c",
-    "command": "avr-gcc -o src/tasks.o -c -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560 -Wno-unknown-attributes -DF_CPU=16000000 -DDEBUG_OUTPUT -flto -I/usr/avr/include -Os -DBAUD=115200 -g src/tasks.c"
-  }
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/interupts.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/interupts.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/io_helpers.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/io_helpers.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/main.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/main.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/memory.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/memory.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/os.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/os.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/scheduler.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/scheduler.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/serial.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/serial.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/simplos.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/simplos.c"
+    },
+    {
+        "command": "avr-gcc  -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=atmega2560  -Wno-unknown-attributes -I/usr/avr/include -DF_CPU=16000000 -flto -Os -DBAUD=115200 -g -DDEBUG_OUTPUT  -c src/tasks.c",
+        "directory": "/home/cgn/prog/Arduino/simplos",
+        "file": "src/tasks.c"
+    }
 ]
