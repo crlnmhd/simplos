@@ -5,3 +5,7 @@
 .cache
 *.dblite
 *.out
+build
+.compile_commands.json
+package-lock.json
+src/*.compdb_entry
