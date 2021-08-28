@@ -43,6 +43,7 @@ compile_commands.json: $(COMPDB_ENTRIES)
 	@echo "    }" >> $@
 	@echo "]" >> $@
 	@rm $@.tmp
+	@rm $^
 
 
 # Create build directory only if it doesn't exits.
