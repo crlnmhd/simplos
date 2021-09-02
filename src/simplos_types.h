@@ -7,6 +7,10 @@
 
 #define TASKS_MAX 5
 
+#if defined(HW_TIME_MEASSUREMENTS)
+#define OS_TASK_BLOCK 0x0F
+#define EXEC_FINNISHED 0x0E
+#endif
 // TODO place "empty" in this enum.
 enum Task_Status { SLEEPING, READY, RUNNING, EMPTY };
 

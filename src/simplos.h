@@ -6,7 +6,6 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #endif
 
 // #define  STACK_POINTER ((volatile uint16_t * const) 0x5E)
-
 #include <avr/interrupt.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -14,6 +13,7 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #include <util/atomic.h>
 #include <util/delay.h>
 
+#include "defines.h"
 #include "interupts.h"
 #include "io_helpers.h"
 #include "memory.h"
@@ -201,11 +201,13 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 
 static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
-
   // Use OS stack location
   SP = simplos_schedule->os_task_sp;
+#if defined(HW_TIME_MEASSUREMENTS)
+  output_curr_task(OS_TASK_BLOCK);
+#endif
+
   {
-    // cprint("Context switch\n");
     taskptr_t prev = &simplos_schedule->queue
                           .task_queue[simplos_schedule->queue.curr_task_index];
     if (prev->status == RUNNING) {
@@ -215,26 +217,27 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
       assert_stack_integrity(prev);  // FIXME put this check eralier so
       print_schedule();
       // errors will be easier to detect.
-
+#if defined(VERBOSE_OUTPUT)
       cprint("saving task %d's SP 0x%X\n", prev->task_memory_block,
              prev->task_sp_adr);
+#endif
     }
     select_next_task();
+#if defined(VERBOSE_OUTPUT)
     cprint("Next task selected : %d\n",
            simplos_schedule->queue.curr_task_index);
+#endif
     taskptr_t task = &simplos_schedule->queue
                           .task_queue[simplos_schedule->queue.curr_task_index];
     task->status = RUNNING;
     *task_sp = task->task_sp_adr;
+#if defined(HW_TIME_MEASSUREMENTS)
+    output_curr_task(simplos_schedule->queue.curr_task_index);
+#endif
   }
   reset_timer();
   RESTORE_CONTEXT();
-  //   // PORTB = 0x00;
   sei();
-
-  // save_running_task();
-  // select_next_task();  // Updates curr_task_index
-  // prepare_next_task();
 }
 
 #endif  // SIMPLOS_H_

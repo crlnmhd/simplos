@@ -8,8 +8,6 @@
 #include "serial.h"
 #include "simplos.h"
 
-#define USE_STATIC
-
 // TODO better scheduling. This is just a placeholder.
 
 void static_cyclic_scheduler(void) {

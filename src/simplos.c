@@ -49,9 +49,7 @@ __attribute__((noinline, naked)) void k_yield(void) {
   // INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
   // PORTB = 0xFF;  // turn on led, and whatever else happen to be there...
 
-  CLANG_IGNORE_BEGIN("-w");
   context_switch();
-  CLANG_IGNORE_END();  // disable C with naked attribute (the stack
   // is handled manually).
   // asm volatile("ret" ::: "memory");
   sei();
@@ -94,7 +92,7 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
       "pop %[tmpM]                \n\t"
       "pop %[tmpL]                \n\t"  // MSB
       "ldi %[tmp], 12             \n\t"
-      "add %[tmpL], %[tmp]        \n\t"  // Offset to call OLD_TASK_RET
+      "add %[tmpL], %[tmp]        \n\t"  // Offset to jmp RETPOINT
       "ldi %[tmp], 0              \n\t"  // This may not be nessesary with
       // __zero_reg__
       "adc %[tmpM], %[tmp]       \n\t"  // Carry from LSB. tmp = 0

@@ -59,7 +59,15 @@ _Pragma("clang diagnostic push")
   SP = *os_task_sp;             \
   cprint(fmt, ##__VA_ARGS__);
 
-            void fatal_error_internal(void);
+#if defined(HW_TIME_MEASSUREMENTS)
+            static inline
+    __attribute__((always_inline,
+                   unused)) void output_curr_task(__attribute__((unused))
+                                                  uint8_t task) {
+  PORTB = task;
+}
+#endif
+void fatal_error_internal(void);
 
 void print_task(taskptr_t, bool);
 void print_schedule(void);

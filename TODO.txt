@@ -1,43 +1,49 @@
 TODOs:
-  * put as much of the context switch as possible outside interupts or allow ticking inside context switches (somehow).
-  * mutexes
-  * alternative scheduling
-  * check on tasks
-  * check stack overflows DONE
-  * sleep 
-  * inter task message passing / communication?
-  * Dynamic memory allocation! 
-  * FIX THE BUILD SCRIPT MESS!!!!
+* mutexes
+* alternative scheduling
+* check on tasks
+* check stack overflows DONE
+* sleep
+* inter task message passing / communication?
+* Dynamic memory allocation!
+* OO-like struct collecting OS functions and attributes? Probably a good idea.
 
+Other possible improvements:
+Move context switches out of interupts.
++ Ticking within context switches.
++ Easier memory managment (use more of OS task and priviliges).
++ Allow unrelated interupts in CS.
+- Overhead? Complexity?
+* put as much of the context switch as possible outside interupts or allow ticking inside context switches.
 
 
 How simplos (hopefully works)
 
-Interrupt driven
+  Interrupt driven
 
-Simplos uses a timer interrupt to trigger a task switching ISR. The ISR will save the content call the scheduler
-and then restore the content at the possibly changed SP location. 
+  Simplos uses a timer interrupt to trigger a task switching ISR. The ISR will save the content call the scheduler
+  and then restore the content at the possibly changed SP location.
 
-Scheduler
-For now, simplos just uses a cyclic scheduler until the other parts of the OS have matured.
+  Scheduler
+  For now, simplos just uses a cyclic scheduler until the other parts of the OS have matured.
 
 ## Ideas:
 
 # Dynamic memory allocation
-Though admittedly truly useless and more of a hinderance than a help in many circumstances it would be a cool
-addition.
+  Though admittedly truly useless and more of a hinderance than a help in many circumstances it would be a cool
+  addition.
 
 # More advanced scheduler.
-A more advanced, probably priority bases scheduler would be cool! Perhaps combined with some other technique
-to choose amongst those with the same priority?
+  A more advanced, probably priority bases scheduler would be cool! Perhaps combined with some other technique
+  to choose amongst those with the same priority?
 
 
 
-IDEAS:
+  IDEAS:
 
-* RT scheduler as well as non-RT
-* Assert macro / function.
-* More functions? 
+  * RT scheduler as well as non-RT
+  * Assert macro / function.
+  * More functions?
 
 
 
