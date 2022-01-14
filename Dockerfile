@@ -1,23 +1,20 @@
-# More to date version of avr-gcc than ubuntu.
-FROM ubuntu:20.04 
+# Build avr-gdb from source.
+# Requires an empty directory to be bind mounted to /out_dir and a directory named gdb-8.3.1 contaning the source code of gdb.
 
-RUN dnf install -y avr-gdb
+FROM ubuntu:20.04
 
-ARG USER_ID
-ARG GROUP_ID
+# source directory and output directory. The latter should be bind-mounted to the host.
+RUN mkdir /gdb_src&& mkdir /out_dir
+RUN apt-get update -y && apt-get install make gcc g++ gawk -y
 
-RUN groupadd --gid $GROUP_ID user
-RUN  useradd --uid $USER_ID --gid $GROUP_ID user
-USER user
+# Create a regular user to minimise security exposure.
+RUN groupadd -r duser && useradd -s /bin/false -d /gdb_src -g duser duser && chown -R duser /gdb_src && chown -R duser /out_dir
+USER duser
+WORKDIR /gdb_src
+RUN echo "Building gdb 8.3.1..."
+COPY --chown=duser gdb-8.3.1 .
 
-WORKDIR build
+# out_dir should be bind mounted to the host.
 
-# Install AVR toolchain
-#ARG AVR_TOOLCHAIN_TARBALL=avr8-gnu-toolchain-3.6.2.1759-linux.any.x86_64.tar.gz
-#ARG AVR_TOOLCHAIN_PATH=${TOOLS_PATH}/avr-toolchain
-#COPY ${TARBALLS_PATH}/${AVR_TOOLCHAIN_TARBALL} .
-#RUN tar -xvf ${AVR_TOOLCHAIN_TARBALL} \
-#        && mv `tar -tf ${AVR_TOOLCHAIN_TARBALL} | head -1` ${AVR_TOOLCHAIN_PATH} \
-#        && rm ${AVR_TOOLCHAIN_TARBALL}
-
-
+  RUN ./configure --target=avr --prefix=/out_dir
+CMD make -j$(nproc)

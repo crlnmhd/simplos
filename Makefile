@@ -7,6 +7,7 @@ uP := atmega2560 #  (e.g. atmega328p, atmega2560)
 BAUD := 115200
 CPU_FREQ := 16000000UL
 SERIAL := /dev/ttyUSB0
+DOCKER :=podman
 ############# End of configuration ##################
 
 
@@ -15,7 +16,6 @@ OBJ := build
 
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
-
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -82,9 +82,11 @@ sim:
 debug:
 	$(AVR_GDB) build/simplos.out -ex "target remote :1234" -ex "directory src/"
 
-
 rebuild_container:
-	sudo docker build --rm -t avr_docker
+	$(DOCKER) build --rm -t avr_docker .
+
+build_gdb:
+	$(DOCKER) run -it --rm --mount type=bind,source=$(PWD)/gdb_build,target=/out_dir avr_docker
 
 
 #scons)

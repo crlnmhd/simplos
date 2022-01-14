@@ -10,5 +10,5 @@ compile_commands.json
 .clang-tidy
 .compile_commands.json
 package-lock.json
-
+gdb-8.3.1
 src/*.compdb_entry
