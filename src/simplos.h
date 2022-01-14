@@ -14,13 +14,13 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #include <util/delay.h>
 
 #include "defines.h"
-#include "interupts.h"
 #include "io_helpers.h"
 #include "memory.h"
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos_types.h"
 #include "tasks.h"
+#include "timers.h"
 
 #define INLINED static inline __attribute__((always_inline))
 
@@ -203,6 +203,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
   // Use OS stack location
   SP = simplos_schedule->os_task_sp;
+
 #if defined(HW_TIME_MEASSUREMENTS)
   output_curr_task(OS_TASK_BLOCK);
 #endif
@@ -210,6 +211,16 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   {
     taskptr_t prev = &simplos_schedule->queue
                           .task_queue[simplos_schedule->queue.curr_task_index];
+
+#if defined(SW_TIME_MEASSREMENTS)
+    // Increment CPU time counter for previous task
+    prev->time_counter += GET_TICK_COUNTER();
+
+    // TODO: improve this! Make the measurements more fair for task/os.
+    // Reset counter to get an approximate value for time spent in interupt.
+    RESET_TICK_COUNTER();
+#endif  // SW_TIME_MEASSREMENTS
+
     if (prev->status == RUNNING) {
       // The previous task has been killed.
       prev->task_sp_adr = *task_sp;
@@ -231,6 +242,14 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
                           .task_queue[simplos_schedule->queue.curr_task_index];
     task->status = RUNNING;
     *task_sp = task->task_sp_adr;
+
+#if defined(SW_TIME_MEASSREMENTS)
+    // Add this context switch (approx.) to time counters.
+    kernel->cs_time_counter += GET_TICK_COUNTER();
+    // Reset timer and "start" counting the rest as task CPU time.
+    RESET_TICK_COUNTER();
+#endif  // SW_TIME_MEASSREMENTS
+
 #if defined(HW_TIME_MEASSUREMENTS)
     output_curr_task(simplos_schedule->queue.curr_task_index);
 #endif

@@ -72,6 +72,9 @@ void fatal_error_internal(void);
 void print_task(taskptr_t, bool);
 void print_schedule(void);
 
-void print_task_stack(uint8_t const pid);
+// void print_task_stack(uint8_t const pid);
+
+// Print timing data (preferably after execution has finished).
+void print_timing_data(void);
 
 #endif  // IO_HELPERS

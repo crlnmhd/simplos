@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "interupts.h"
 #include "memory.h"
 #include "scheduler.h"
+#include "simplos.h"
+#include "timers.h"
 
 void print_task(taskptr_t task, bool const checks) {
   if (task == NULL) {
@@ -50,6 +51,26 @@ void print_schedule(void) {
   }
 }
 
+void print_timing_data(void) {
+#if defined(SW_TIME_MEASSREMENTS)
+  cprint("Timing data:\nOS: %d\n", kernel->cs_time_counter);
+  // FIXME risk of overflow!
+  uint32_t running_total = 0;
+  for (uint8_t i = 0; i < TASKS_MAX; i++) {
+    Simplos_Task *task = &simplos_schedule->queue.task_queue[i];
+    if (task->status != EMPTY) {
+      cprint("Task %d: %d\n", i, task->time_counter);
+      running_total += task->time_counter;
+    }
+  }
+  float cs_time_fraction =
+      (float)kernel->cs_time_counter /
+      (float)(running_total + kernel->ended_task_time_counter);
+  cprint("Total fraction: %f\n", cs_time_fraction);
+#else
+  cprint("Printing timing data: DISABLED\n");
+#endif
+}
 // void print_task_stack(Simplos_Task * task){
 //   size_t const stack_start = task_default_sp(task->task_memory_block);
 //   DISABLE_MT();

@@ -9,7 +9,7 @@
 #include <util/setbaud.h>
 #pragma GCC diagnostic pop
 
-#include "interupts.h"
+#include "timers.h"
 
 /*
   Initiate serial communication, taken from

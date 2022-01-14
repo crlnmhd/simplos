@@ -4,9 +4,9 @@
 #include <avr/io.h>
 #include <stdint.h>
 
-#include "interupts.h"
 #include "io_helpers.h"
 #include "simplos_types.h"
+#include "timers.h"
 
 uint16_t task_default_sp(uint8_t const task_memory_block) {
   if (task_memory_block >= TASKS_MAX) {

@@ -20,7 +20,7 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 .DEFAULT_GOAL := build
 CC := avr-gcc
 AVRINC :=/usr/avr/include
-CFLAGS := -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -DF_CPU=$(CPU_FREQ) -flto -Os -DBAUD=$(BAUD) -g -DDEBUG_OUTPUT -DHW_TIME_MEASSUREMENTS
+CFLAGS := -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -flto -Os -DBAUD=$(BAUD) -g -DDEBUG_OUTPUT -DSW_TIME_MEASSREMENTS
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb
@@ -77,8 +77,33 @@ clean:
 	@echo "cleaning..."
 
 sim:
-	simavr -g -m $(uP) build/simplos.out
+	simavr -v -v -g -m $(uP) build/simplos.out
 
 debug:
 	$(AVR_GDB) build/simplos.out -ex "target remote :1234" -ex "directory src/"
 
+
+rebuild_container:
+	sudo docker build --rm -t avr_docker
+
+
+#scons)
+#  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug
+#  avr-size --mcu=$uP -C src/simplos.out
+#  ;;
+#build)
+#  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
+#  avr-size --mcu=$uP -C src/simplos.out
+#  ;;
+#
+#flash)
+#  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
+#  BAUD=115200
+#  avr-size --mcu=$uP -C src/simplos.out
+#  avr-objcopy -O ihex -R .eeprom src/simplos.out out.hex
+#  avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf -c wiring \
+	#    -p $uP \
+	#    -D -P /dev/ttyUSB0 \
+	#    -b $BAUD \
+	#    -U flash:w:out.hex \
+	#    /

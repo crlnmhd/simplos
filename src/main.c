@@ -2,10 +2,18 @@
 #include <stdio.h>
 #include <util/delay.h>
 
-#include "interupts.h"
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"
+#include "timers.h"
+
+/* DOES NOT APPEAR TO WORK
+// Allow simavr to keep track of interupts and other occurences and
+// generate a Value Change Dump (vcd) file that can be diplayed
+// in gtkwave or similar.
+#include <simavr/avr/avr_mcu_section.h>
+AVR_MCU(F_CPU, "atmega2560");
+*/
 
 volatile Scheduler internal_simplos_schedule;
 volatile Scheduler *volatile simplos_schedule = &internal_simplos_schedule;
@@ -39,8 +47,7 @@ int main(void) {
   cprint("Starting!\n");
 
   init_schedule();
-  int const ticks_kHz = 10;
-  init_ticks(ticks_kHz);
+  init_ticks();
 
   uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
   Simplos_Task *new_task = &simplos_schedule->queue.task_queue[index];

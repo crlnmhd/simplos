@@ -8,11 +8,13 @@
 
 #include "io_helpers.h"
 #include "memory.h"
+#include "timers.h"
 
 void init_empty_queue(Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_t task = (taskptr_t)&queue->task_queue[i];
     task->task_memory_block = i;
+    task->time_counter = 0;
     task->task_sp_adr = task_default_sp(task->task_memory_block);
     cprint("Initiating mem block %d with SP 0x%X\n", i, task->task_sp_adr);
     task->status = EMPTY;
@@ -41,6 +43,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
 void init_schedule(void) {
   simplos_schedule->os_task_sp = os_stack_start();
   init_empty_queue(&simplos_schedule->queue);
+  kernel->cs_time_counter = 0;
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
@@ -81,6 +84,10 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
 
   old_task->status = READY;
 
+#if defined(SW_TIME_MEASSREMENTS)
+  old_task->time_counter += GET_TICK_COUNTER();
+  RESET_TICK_COUNTER();
+#endif  // SW_TIME_MEASSREMNTS
   simplos_schedule->queue.curr_task_index = new_task_index;
 
   register uint8_t tmpH, tmpM, tmpL, tmp;
@@ -137,8 +144,12 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
 void kill_current_task(void) {
   cli();
   ENABLE_MT();
-  simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
-      .status = EMPTY;
+
+  Simplos_Task *task =
+      &simplos_schedule->queue
+           .task_queue[simplos_schedule->queue.curr_task_index];
+  task->status = EMPTY;
+  kernel->ended_task_time_counter += task->time_counter;
   k_yield();  // re-enables interrupts.
 }
 
