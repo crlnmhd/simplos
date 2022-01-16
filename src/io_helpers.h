@@ -14,6 +14,11 @@ _Pragma("clang diagnostic push")
 #endif  // __clang__
 
 #define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
+
+#define HALT \
+  for (;;)   \
+    ;
+
 #if defined(DEBUG_OUTPUT)
 #define cprint(fmt, ...)                  \
   SCILENT_DISABLE_MT();                   \
@@ -28,30 +33,29 @@ _Pragma("clang diagnostic push")
 
 #define ASSERT(cond, msg)                    \
   if (!(bool)(cond)) {                       \
+    cli();                                   \
     print_from_prg_mem("ASSERTION ERROR! "); \
     print_from_prg_mem(msg);                 \
     print_from_prg_mem("\n");                \
-    for (;;)                                 \
-      ;                                      \
+    HALT                                     \
   }
 
 #define ASSERT_EQ(expected, recieved, fmt, msg) \
   if ((expected) != (recieved)) {               \
+    cli();                                      \
     print_from_prg_mem(                         \
         "ASSERT_EQUAL ERROR!"                   \
         "Expected: " fmt ", Got: " fmt "\n",    \
         expected, recieved);                    \
     print_from_prg_mem(msg);                    \
-    for (;;)                                    \
-      ;                                         \
+    HALT                                        \
   }
 
 #define fatal_error(str, ...)             \
   cli();                                  \
   print_from_prg_mem("FATAL ERROR!\n");   \
   print_from_prg_mem(str, ##__VA_ARGS__); \
-  for (;;)                                \
-    ;
+  HALT
 
 // Safe print from the os task
 #define os_safe_print(fmt, ...) \
