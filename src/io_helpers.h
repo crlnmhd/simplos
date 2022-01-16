@@ -44,7 +44,7 @@ _Pragma("clang diagnostic push")
   if ((expected) != (recieved)) {               \
     cli();                                      \
     print_from_prg_mem(                         \
-        "ASSERT_EQUAL ERROR!"                   \
+        "ASSERT_EQUAL ERROR! "                  \
         "Expected: " fmt ", Got: " fmt "\n",    \
         expected, recieved);                    \
     print_from_prg_mem(msg);                    \

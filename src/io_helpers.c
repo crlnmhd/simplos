@@ -14,8 +14,9 @@ void print_task(taskptr_t task, bool const checks) {
     fatal_error("Error, task is NULL\n");
   }
   cprint("Task at block %d:", task->task_memory_block);
-  cprint("  Priority %d", task->priority);
-  cprint("  SP = 0x%X", task->task_sp_adr);
+  cprint(" PID: %d", task->pid);
+  cprint(" Priority %d", task->priority);
+  cprint(" SP = 0x%X", task->task_sp_adr);
 
   switch (task->status) {
     case READY:
