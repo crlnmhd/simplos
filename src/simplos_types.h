@@ -23,6 +23,7 @@ typedef struct Simplos_Task_t {
   enum Task_Status status;
 } Simplos_Task_t;
 typedef Simplos_Task_t volatile Simplos_Task;
+typedef Simplos_Task volatile *volatile taskptr_t;
 
 typedef struct Task_Queue_t {
   Simplos_Task_t volatile task_queue[TASKS_MAX];
@@ -37,7 +38,6 @@ typedef struct Scheduler_t {
 } Scheduler_t;
 typedef Scheduler_t volatile Scheduler;
 
-typedef Simplos_Task volatile *volatile taskptr_t;
 typedef uint16_t pid_t;
 
 // TODO use this for all global variables.

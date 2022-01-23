@@ -15,14 +15,15 @@ while getopts 't:' flag; do
   esac
 done
 
-DOCKER=podman
-
-echo "hi"
+DOCKER="podman"
 
 ${DOCKER} run \
   -it \
-  --mount type=bind,source="$(pwd)/playground",target=/simplos,readonly \
+  --rm \
+  -v "$(pwd)"/playground:/simplos:Z \
   ${extra_params} \
+  --workdir /simplos \
+  --user "$(id -u):$(id -g)" \
   avr_docker:latest \
   /bin/bash
 

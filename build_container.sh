@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DOCKER=podman
+DOCKER="podman"
 
 ${DOCKER} build \
   --build-arg USER_ID=$(id -u) \
