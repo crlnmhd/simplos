@@ -7,14 +7,6 @@
 #include "simplos.h"
 #include "timers.h"
 
-/* DOES NOT APPEAR TO WORK
-// Allow simavr to keep track of interupts and other occurences and
-// generate a Value Change Dump (vcd) file that can be diplayed
-// in gtkwave or similar.
-#include <simavr/avr/avr_mcu_section.h>
-AVR_MCU(F_CPU, "atmega2560");
-*/
-
 volatile Scheduler internal_simplos_schedule;
 volatile Scheduler *volatile simplos_schedule = &internal_simplos_schedule;
 
