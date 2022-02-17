@@ -25,6 +25,7 @@ _Pragma("clang diagnostic push")
   print_from_prg_mem(fmt, ##__VA_ARGS__); \
   SCILENT_ENABLE_MT();
 #else
+#define cprint(...) ;
 #endif
 
 #if defined(__clang__)
