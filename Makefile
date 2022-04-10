@@ -7,7 +7,6 @@ uP := atmega2560 #  (e.g. atmega328p, atmega2560)
 BAUD := 115200
 CPU_FREQ := 16000000UL
 SERIAL := /dev/ttyUSB0
-DOCKER :=podman
 ############# End of configuration ##################
 
 
@@ -20,7 +19,7 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 .DEFAULT_GOAL := build
 CC := avr-gcc
 AVRINC :=/usr/avr/include
-CFLAGS := -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -flto -Os -DBAUD=$(BAUD) -g -DDEBUG_OUTPUT -DSW_TIME_MEASSREMENTS
+CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -flto -Os -DBAUD=$(BAUD) -g
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb
