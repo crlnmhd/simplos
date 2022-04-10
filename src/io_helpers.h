@@ -48,7 +48,7 @@ _Pragma("clang diagnostic push")
         "ASSERT_EQUAL ERROR! "                  \
         "Expected: " fmt ", Got: " fmt "\n",    \
         expected, recieved);                    \
-    print_from_prg_mem(msg);                    \
+    print_from_prg_mem("%s\n", msg);            \
     HALT                                        \
   }
 

@@ -32,15 +32,16 @@
 #define RESET_TICK_COUNTER() TCNT3 = 0;
 #endif  // SW_TIME_MEASSREMENTS
 
-void print_cs_timing_data(void);
-
 void init_timer_interupts(void);
 
+void TIMER1_COMPA_vect(void);
+
+#if defined(SW_TIME_MEASSREMENTS)
 /*
   Enable timer ticks.
 */
 void init_ticks(void);
-
-void TIMER1_COMPA_vect(void);
+void print_cs_timing_data(void);
+#endif  // SW_TIME_MEASSREMENTS
 
 #endif  // TIMERS_H

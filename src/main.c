@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <util/delay.h>
 
+#include "defines.h"
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"

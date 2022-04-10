@@ -18,6 +18,7 @@ void init_timer_interupts(void) {
   TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
+#if defined(SW_TIME_MEASSREMENTS)
 // Use 16 bit timer to count approximate execution time.
 void init_ticks(void) {
   cprint("Setting up ticks\n");
@@ -30,5 +31,8 @@ void init_ticks(void) {
   // Set CS32 for 256 prescaler
   TCCR2B |= 1 << CS30;
 }
+#endif  // defined SW_TIME_MEASSREMENTS
 
+#if defined(SW_TIME_MEASSREMENTS)
 void print_cs_timing_data(void) { cprint("TODO: print timers"); }
+#endif  // defined SW_TIME_MEASSREMENTS

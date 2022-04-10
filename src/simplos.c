@@ -27,7 +27,9 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
     taskptr_t task = (Simplos_Task *)&queue->task_queue[i];
     // Take if available
     if (task->status == EMPTY) {
+#if defined(VERBOSE_OUTPUT)
       cprint("Initiating space for new function at block %d\n", i);
+#endif  // VERBOSE_OUTPUT
       task->priority = priority;
       task->status = READY;
       task->task_sp_adr = task_default_sp(task->task_memory_block);
@@ -75,9 +77,8 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
 
   simplos_schedule->queue.task_queue[new_task_index].status = RUNNING;
   uint16_t const new_task_pid = pid_cnt++;
-  cprint("Spawning task with PID %d\n", new_task_pid);
   simplos_schedule->queue.task_queue[new_task_index].pid = new_task_pid;
-
+  cprint("Spawning task with PID %d\n", new_task_pid);
   taskptr_t old_task =
       &simplos_schedule->queue
            .task_queue[simplos_schedule->queue.curr_task_index];
@@ -196,7 +197,6 @@ uint16_t init_heap(void) {
   for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i)
   {
     kernel->heap_mapping[i] = 0xFF;
-  }
-  */
+  } */
   return 0;
 }
