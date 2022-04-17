@@ -45,7 +45,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
 void init_schedule(void) {
   simplos_schedule->os_task_sp = os_stack_start();
   init_empty_queue(&simplos_schedule->queue);
-  kernel->cs_time_counter = 0;
+  // kernel->cs_time_counter = 0;
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
@@ -150,7 +150,7 @@ void kill_current_task(void) {
       &simplos_schedule->queue
            .task_queue[simplos_schedule->queue.curr_task_index];
   task->status = EMPTY;
-  kernel->ended_task_time_counter += task->time_counter;
+  // kernel->ended_task_time_counter += task->time_counter;
   k_yield();  // re-enables interrupts.
 }
 
