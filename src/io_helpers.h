@@ -25,7 +25,8 @@ _Pragma("clang diagnostic push")
   print_from_prg_mem(fmt, ##__VA_ARGS__); \
   SCILENT_ENABLE_MT();
 #else
-#define cprint(...) ;
+#define cprint(fmt, ...) \
+  { ; };
 #endif
 
 #if defined(__clang__)
@@ -62,7 +63,8 @@ _Pragma("clang diagnostic push")
 #define os_safe_print(fmt, ...) \
   uint16_t old_sp = *SP();      \
   SP = *os_task_sp;             \
-  cprint(fmt, ##__VA_ARGS__);
+  cprint(fmt, ##__VA_ARGS__);   \
+  SP = old_sp;
 
 #if defined(HW_TIME_MEASSUREMENTS)
             static inline
