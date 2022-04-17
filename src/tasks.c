@@ -53,7 +53,7 @@ void wait_for_other(void) {
   print("Spawning worker function\n");
   pid_t const p = spawn(wait_for_me, 1);
 
-  print("Waiting for other task to finnish\n");
+  print("Waiting for task with pid %d to finnish\n", p);
   wait_for_task_finnish(p);
   print("It's finnished!\n");
 }
@@ -65,14 +65,24 @@ void idle_fn(void) {
   // for (;;)
   //   ;
 
-  shared_x = 0;
+  shared_x = 1;
   print("Starting idle function\n");
-  pid_t p1 = spawn(sum_to_ten, 1);
-  pid_t p2 = spawn(sum_to_ten, 1);
+  // pid_t p1 = spawn(sum_to_ten, 1);
+  // pid_t p2 = spawn(sum_to_ten, 1);
+  print("Hi. Fuck Putin\n");
+  print("Adr of shared_x 0x%X\n", &shared_x);
+  print("SP is : 0x%X\n", SP);
+  print("Val of shared_x 0x%X\n", shared_x);
+  print("SP is : 0x%X\n", SP);
+  while (1) {
+    print("SP  in brackets is : 0x%X\n", SP);
+  }
   while (shared_x != 45 * 2) {
     ;
+    print("SP is : 0x%X\n", SP);
   }
-  print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());
+  print("Voff voff mjau mjau\n");
+  // print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());
   print("Heavy duty shared memory calculations performed!\n");
 
   wait_for_other();

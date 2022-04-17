@@ -22,11 +22,11 @@ void static_cyclic_scheduler(void) {
     if (simplos_schedule->queue.task_queue[next_candidate_index].status ==
         READY) {
       simplos_schedule->queue.curr_task_index = next_candidate_index;
-      // cprint("selected task  %d (SP=0x%X) using circular scheduling.\n",
-      //        simplos_schedule->queue.curr_task_index,
-      //        simplos_schedule->queue
-      //            .task_queue[simplos_schedule->queue.curr_task_index]
-      //            .task_sp_adr);
+      cprint("selected task  %d (SP=0x%X) using circular scheduling.\n",
+             simplos_schedule->queue.curr_task_index,
+             simplos_schedule->queue
+                 .task_queue[simplos_schedule->queue.curr_task_index]
+                 .task_sp_adr);
       break;
     }
   }
