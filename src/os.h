@@ -1,13 +1,17 @@
-#ifndef OS_H_
+#if !defined(OS_H_)
 #define OS_H_
+
+#if defined(__clang__)
+_Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
+#endif
 
 #include <avr/pgmspace.h>
 #include <stdint.h>
+#include <stdio.h>
+    // #include "simplos.h"
 
-// #include "simplos.h"
-
-// #define yield() k_yield();
-typedef uint16_t pid_t;
+    // #define yield() k_yield();
+    typedef uint16_t pid_t;
 
 // typedef struct mutex {
 //   volatile
@@ -38,10 +42,10 @@ void *malloc(size_t bytes);
   printf_P(PSTR(fmt), ##__VA_ARGS__); \
   asm volatile("sei");
 
-#define HALT_EXEC()                 \
-  print("Halting!");                \
-  asm volatile("cli" ::: "memory"); \
-  for (;;)                          \
+#define HALT_EXEC()    \
+  print("Halting!");   \
+  asm volatile("cli"); \
+  for (;;)             \
     ;
 
 #endif  // OS_H_

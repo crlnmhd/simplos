@@ -1,9 +1,7 @@
-#ifndef TASKS_H
+#if !defined(TASKS_H)
 #define TASKS_H
 
 #include <stdint.h>
-
-#include "simplos_types.h"
 
 /***********     Shared memory ***********/
 
@@ -17,7 +15,6 @@ extern volatile uint8_t shared_x;
 void test_fn1(void);
 void test_fn2(void);
 void test_fn3(void);
-
 void idle_fn(void);
 
-#endif
+#endif  // TASKS_H

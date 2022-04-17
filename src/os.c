@@ -46,9 +46,10 @@ void *malloc(size_t bytes) {
     return NULL;
   }
   // dprint("Heap map located at: %p\n", kernel->heap_mapping);
+  /*
   uint8_t rem = bytes % HEAP_PAGE_SIZE;
   uint8_t div = bytes / HEAP_PAGE_SIZE;
   uint8_t chunks_needed = 1;
-
+  */
   return NULL;
 }

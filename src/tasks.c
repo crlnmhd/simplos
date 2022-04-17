@@ -64,7 +64,6 @@ void idle_fn(void) {
   // spawn(worker_2_fn, 1);
   // for (;;)
   //   ;
-
   shared_x = 1;
   print("Starting idle function\n");
   // pid_t p1 = spawn(sum_to_ten, 1);
@@ -74,9 +73,6 @@ void idle_fn(void) {
   print("SP is : 0x%X\n", SP);
   print("Val of shared_x 0x%X\n", shared_x);
   print("SP is : 0x%X\n", SP);
-  while (1) {
-    print("SP  in brackets is : 0x%X\n", SP);
-  }
   while (shared_x != 45 * 2) {
     ;
     print("SP is : 0x%X\n", SP);
