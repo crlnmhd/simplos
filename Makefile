@@ -7,8 +7,35 @@ uP := atmega2560 #  (e.g. atmega328p, atmega2560)
 BAUD := 115200
 CPU_FREQ := 16000000UL
 SERIAL := /dev/ttyUSB0
-############# End of configuration ##################
 
+# Configure behavior though defines
+DEFINES :=
+# Static scheduling
+DEFINES += -DUSE_STATIC
+
+# Enable verbose output
+DEFINES += -DVERBOSE_OUTPUT
+
+# Use attached device on  22-26 to output current task as status during context
+# switch. Poll this over time on a separate device to gain knowledge of system
+# performance and how the ratio of time spent in context switches. Very small
+# overhead.
+DEINES += -DHW_TIME_MEASSUREMENTS
+
+# Measure time only in SW
+# DEFINES += -DSW_TIME_MEASSREMENTS
+
+# Enable debug ouput
+DEFINES += -DDEBUG_OUTPUT
+
+# Count the time spent in interups as oposed to outside. Incurres some
+# overhead. Print to uart using PRINT_CS_TIMING_DATA()
+# DEFINES += -DSW_TIME_MEASSREMENTS
+
+# Use priority based scheduling.
+# DEINFES += -DPRIORITY_SCHEDULING
+
+########## End of define configurations ###############
 
 SRC := src
 OBJ := build
@@ -16,10 +43,11 @@ OBJ := build
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
+
 .DEFAULT_GOAL := build
 CC := avr-gcc
 AVRINC :=/usr/avr/include
-CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -flto -Os -DBAUD=$(BAUD) -g
+CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -flto -Os -DBAUD=$(BAUD) -g
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb

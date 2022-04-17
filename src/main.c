@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <util/delay.h>
 
-#include "defines.h"
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"
@@ -19,7 +18,7 @@ volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
 volatile uint16_t pid_cnt = 0;
 
 // External variables
-volatile Kernel kernel;
+// volatile Kernel kernel;
 
 int main(void) {
   // Initialite serial communication.
@@ -35,12 +34,14 @@ int main(void) {
 
   // disable timer compare interrupt for now
   DISABLE_MT();
-  init_heap();
+  // init_heap();
 
   cprint("Starting!\n");
 
   init_schedule();
+#if defined(SW_TIME_MEASSREMENTS)
   init_ticks();
+#endif  // defined SW_TIME_MEASSREMENTS
 
   uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
   Simplos_Task *new_task = &simplos_schedule->queue.task_queue[index];
@@ -50,8 +51,9 @@ int main(void) {
   // Jump to the new task.
   cprint("At main: SP is 0x%X\n", SP);
   ASSERT(SP > HEAP_START, "main() has overflowed heap memory");
-  cprint("OS PC is 0x%X\n", simplos_schedule->os_task_sp);
   *task_sp = simplos_schedule->queue.task_queue[index].task_sp_adr;
+  cprint("OS SP is 0x%X.\nTask sp: 0x%X.\n", simplos_schedule->os_task_sp,
+         *task_sp);
   SET_SP();
 
   /* Run idle function. Should never leave this. */
