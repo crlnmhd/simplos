@@ -5,7 +5,7 @@
 #include "io_helpers.h"
 
 // Use timer1 (16 bit) at 10 Hz context-swtich interupt generator.
-void init_timer_interupts(void) {
+NO_MT void init_timer_interupts(void) {
   cprint("Setting up interupts\n");
   TCCR1A = 0;  // set entire TCCR1A register to 0
   TCCR1B = 0;  // same for TCCR1B
@@ -20,7 +20,7 @@ void init_timer_interupts(void) {
 
 #if defined(SW_TIME_MEASSREMENTS)
 // Use 16 bit timer to count approximate execution time.
-void init_ticks(void) {
+NO_MT void init_ticks(void) {
   cprint("Setting up ticks\n");
   TCCR3A = 0;  // set entire TCCR3A register to 0
   TCCR3B = 0;  // same for TCCR1B
@@ -34,5 +34,5 @@ void init_ticks(void) {
 #endif  // defined SW_TIME_MEASSREMENTS
 
 #if defined(SW_TIME_MEASSREMENTS)
-void print_cs_timing_data(void) { cprint("TODO: print timers"); }
+NO_MT void print_cs_timing_data(void) { cprint("TODO: print timers"); }
 #endif  // defined SW_TIME_MEASSREMENTS

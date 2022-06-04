@@ -1,3 +1,6 @@
+#pragma GCC push_options
+#pragma GCC optimize("Os")
+
 #include "serial.h"
 
 #include <avr/io.h>
@@ -15,7 +18,7 @@
   Initiate serial communication, taken from
   https://appelsiini.net/2011/simple-usart-with-avr-libc/
 */
-void uart_init(void) {
+NO_MT void uart_init(void) {
   UBRR0H = UBRRH_VALUE;
   UBRR0L = UBRRL_VALUE;
 
@@ -29,7 +32,7 @@ void uart_init(void) {
   UCSR0B = _BV(RXEN0) | _BV(TXEN0);   /* Enable RX and TX */
 }
 
-int uart_putchar(char c, FILE *stream) {
+NO_MT int uart_putchar(char c, FILE *stream) {
   if (c == '\n') {
     uart_putchar('\r', stream);
   }
@@ -38,7 +41,9 @@ int uart_putchar(char c, FILE *stream) {
   return 0;
 }
 
-int uart_getchar(__attribute__((unused)) FILE *stream) {
+NO_MT int uart_getchar(__attribute__((unused)) FILE *stream) {
   loop_until_bit_is_set(UCSR0A, RXC0);
   return UDR0;
 }
+
+#pragma GCC pop_options

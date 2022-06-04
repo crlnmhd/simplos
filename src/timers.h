@@ -19,12 +19,6 @@
   SCILENT_DISABLE_MT() \
   cprint("disabling MT\n");
 
-// I known, I know
-#define NO_MT(code) \
-  DISABLE_MT();     \
-  code;             \
-  ENABLE_MT();
-
 #if defined(SW_TIME_MEASSREMENTS)
 // "return" the value of timer3.
 #define GET_TICK_COUNTER() TCNT3

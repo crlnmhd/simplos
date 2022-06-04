@@ -1,3 +1,4 @@
+
 #include "io_helpers.h"
 
 #include <stdarg.h>
@@ -9,7 +10,7 @@
 #include "simplos.h"
 #include "timers.h"
 
-void print_task(taskptr_t task, bool const checks) {
+NO_MT void print_task(taskptr_t task, bool const checks) {
   if (task == NULL) {
     fatal_error("Error, task is NULL\n");
   }
@@ -43,7 +44,7 @@ void print_task(taskptr_t task, bool const checks) {
   }
 }
 
-void print_schedule(void) {
+NO_MT void print_schedule(void) {
   cprint(" -- Schedule --\n");
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     Simplos_Task *task = &simplos_schedule->queue.task_queue[i];
@@ -52,7 +53,7 @@ void print_schedule(void) {
   }
 }
 
-void print_timing_data(void) {
+NO_MT void print_timing_data(void) {
 #if defined(SW_TIME_MEASSREMENTS)
   cprint("Timing data:\nOS: %d\n", kernel->cs_time_counter);
   // FIXME risk of overflow!
@@ -82,3 +83,4 @@ void print_timing_data(void) {
 //   }
 
 // }
+//

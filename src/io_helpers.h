@@ -84,4 +84,4 @@ void print_schedule(void);
 // Print timing data (preferably after execution has finished).
 void print_timing_data(void);
 
-#endif  // IO_HELPERS
+#endif  // IOHELPERS

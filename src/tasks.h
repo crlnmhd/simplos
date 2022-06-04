@@ -1,4 +1,4 @@
-#if !defined(TASKS_H)
+#ifndef TASKS_H
 #define TASKS_H
 
 #include <stdint.h>
@@ -17,4 +17,4 @@ void test_fn2(void);
 void test_fn3(void);
 void idle_fn(void);
 
-#endif  // TASKS_H
+#endif

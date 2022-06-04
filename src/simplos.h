@@ -11,7 +11,7 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #include <stdint.h>
 #include <stdio.h>
 #include <util/atomic.h>
-#include <util/delay.h>
+//#include <util/delay.h>
 
 #include "io_helpers.h"
 #include "memory.h"

@@ -4,13 +4,13 @@
 #include <avr/io.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <util/delay.h>
+//#include <util/delay.h>
 
 #include "io_helpers.h"
 #include "memory.h"
 #include "timers.h"
 
-void init_empty_queue(Task_Queue *queue) {
+NO_MT void init_empty_queue(Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_t task = (taskptr_t)&queue->task_queue[i];
     task->task_memory_block = i;
@@ -22,7 +22,7 @@ void init_empty_queue(Task_Queue *queue) {
 }
 
 // NOT TS
-uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
+NO_MT uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_t task = (Simplos_Task *)&queue->task_queue[i];
     // Take if available
@@ -42,7 +42,7 @@ uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
   return 0;  // Never reached
 }
 
-void init_schedule(void) {
+NO_MT void init_schedule(void) {
   simplos_schedule->os_task_sp = os_stack_start();
   init_empty_queue(&simplos_schedule->queue);
   // kernel->cs_time_counter = 0;
@@ -175,7 +175,7 @@ enum Task_Status task_status(pid_t pid) {
 
 // Verify the heap configuration.
 // TODO add more checks.
-void verify_heap_config(void) {
+NO_MT void verify_heap_config(void) {
   ASSERT_EQ(os_stack_start(), 0x34F, "%u",
             "Heap configuration error: Incorrect os stack start");
   ASSERT_EQ(stack_end(), 0x350, "%u",

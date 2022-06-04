@@ -10,7 +10,7 @@
 
 // TODO better scheduling. This is just a placeholder.
 
-void static_cyclic_scheduler(void) {
+NO_MT void static_cyclic_scheduler(void) {
   // This defaults to the idle task.
   // print_schedule(simplos_schedule);
 

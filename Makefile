@@ -13,6 +13,9 @@ DEFINES :=
 # Static scheduling
 DEFINES += -DUSE_STATIC
 
+# Enables optimization. Use only for non threadsafe components.
+DEFINES += -DNO_MT='__attribute__((optimize("Os")))'
+
 # Enable verbose output
 DEFINES += -DVERBOSE_OUTPUT
 
@@ -43,11 +46,10 @@ OBJ := build
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
-
 .DEFAULT_GOAL := build
 CC := avr-gcc
 AVRINC :=/usr/avr/include
-CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -flto -Os -DBAUD=$(BAUD) -g
+CFLAGS := -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb
