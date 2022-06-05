@@ -1,6 +1,5 @@
 #include <avr/io.h>
 #include <stdio.h>
-//#include <util/delay.h>
 
 #include "scheduler.h"
 #include "serial.h"
@@ -16,9 +15,7 @@ volatile Scheduler *volatile simplos_schedule = &internal_simplos_schedule;
 volatile uint16_t internal_task_sp_adr = 0;
 volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
 volatile uint16_t pid_cnt = 0;
-
-// External variables
-// volatile Kernel kernel;
+volatile Kernel kernel;
 
 int main(void) {
   // Initialite serial communication.
@@ -26,8 +23,6 @@ int main(void) {
   FILE uart_file =
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
-
-  // &(kernel->heap_mapping) = HEAP_START + 1;
 
   init_timer_interupts();
   cli();

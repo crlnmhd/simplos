@@ -21,7 +21,6 @@ NO_MT void init_empty_queue(Task_Queue *queue) {
   }
 }
 
-// NOT TS
 NO_MT uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_t task = (Simplos_Task *)&queue->task_queue[i];
@@ -45,7 +44,7 @@ NO_MT uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
 NO_MT void init_schedule(void) {
   simplos_schedule->os_task_sp = os_stack_start();
   init_empty_queue(&simplos_schedule->queue);
-  // kernel->cs_time_counter = 0;
+  kernel->cs_time_counter = 0;
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
@@ -150,7 +149,7 @@ void kill_current_task(void) {
       &simplos_schedule->queue
            .task_queue[simplos_schedule->queue.curr_task_index];
   task->status = EMPTY;
-  // kernel->ended_task_time_counter += task->time_counter;
+  kernel->ended_task_time_counter += task->time_counter;
   k_yield();  // re-enables interrupts.
 }
 
@@ -191,12 +190,12 @@ NO_MT void verify_heap_config(void) {
          "Heap configuration error. To many heap pages for integer type.");
 }
 
+/*
 uint16_t init_heap(void) {
-  /*
   verify_heap_config();
-  for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i)
-  {
+  for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i) {
     kernel->heap_mapping[i] = 0xFF;
-  } */
-  return 0;
+    return 0;
+  }
 }
+*/

@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "memory_layout.h"
+
 #define TASKS_MAX 5
 
 #if defined(HW_TIME_MEASSUREMENTS)
@@ -44,7 +46,7 @@ typedef uint16_t pid_t;
 typedef struct Kernel_t {
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;
-  uint8_t *heap_mapping;
+  uint8_t heap_mapping[HEAP_CHUNKS];
 } Kernel_t;
 typedef Kernel_t volatile *volatile Kernel;
 

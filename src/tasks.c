@@ -59,11 +59,10 @@ void wait_for_other(void) {
 }
 
 void idle_fn(void) {
-  // print("Testing context switch ratio");
-  // spawn(worker_1_fn, 1);
-  // spawn(worker_2_fn, 1);
-  // for (;;)
-  //   ;
+  print("Testing context switch ratio");
+  spawn(worker_1_fn, 1);
+  spawn(worker_2_fn, 1);
+
   shared_x = 1;
   print("Starting idle function\n");
   // pid_t p1 = spawn(sum_to_ten, 1);
@@ -75,7 +74,6 @@ void idle_fn(void) {
   print("SP is : 0x%X\n", SP);
   while (shared_x != 45 * 2) {
     ;
-    print("SP is : 0x%X\n", SP);
   }
   print("Voff voff mjau mjau\n");
   // print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());

@@ -5,13 +5,11 @@
 _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #endif
 
-// #define  STACK_POINTER ((volatile uint16_t * const) 0x5E)
 #include <avr/interrupt.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <util/atomic.h>
-//#include <util/delay.h>
 
 #include "io_helpers.h"
 #include "memory.h"
@@ -27,7 +25,7 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #define INTERNAL_LED PORTB5
 
     extern uint16_t volatile pid_cnt;
-// extern volatile Kernel kernel;
+extern volatile Kernel kernel;
 
 extern volatile uint16_t *volatile task_sp;
 extern volatile uint16_t internal_task_sp_adr;
@@ -67,9 +65,6 @@ enum Task_Status task_status(pid_t pid);
 void kill_current_task(void);
 
 INLINED void reset_timer(void) { TCNT1 = 0; }
-
-// void kill_task(uint8_t const, bool);
-// void kill_current_task(void);
 
 __attribute__((noinline, naked)) void k_yield(void);
 __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
@@ -124,12 +119,6 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "in    r0, __SP_H__           \n\t" \
       "st    x+, r0                 \n\t" \
       "sei                          \n\t");
-
-// INLINED uint16_t SAVE_SP(void) { return *((uint16_t volatile*)(0x5E)); }
-
-// #define SET_SP() ;
-
-// #define SP *((uint16_t volatile*)(0x5E))
 
 #define SET_SP() SP = *task_sp;
 
@@ -208,10 +197,12 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #if defined(HW_TIME_MEASSUREMENTS)
     output_curr_task(OS_TASK_BLOCK);
 #endif
+#if defined(VERBOSE_OUTPUT)
     cprint("OS SP: 0x%X\n", SP);
+#endif
+
     taskptr_t prev = &simplos_schedule->queue
                           .task_queue[simplos_schedule->queue.curr_task_index];
-
 #if defined(SW_TIME_MEASSREMENTS)
     // Increment CPU time counter for previous task
     prev->time_counter += GET_TICK_COUNTER();
@@ -238,8 +229,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 
 #if defined(VERBOSE_OUTPUT)
     cprint("Next task selected: %d\n", simplos_schedule->queue.curr_task_index);
-#endif  // defined VERBOSE_OUTPUT
     print_task(task, true);
+#endif  // defined VERBOSE_OUTPUT
     task->status = RUNNING;
     *task_sp = task->task_sp_adr;
 #if defined(VERBOSE_OUTPUT)
@@ -248,7 +239,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 
 #if defined(SW_TIME_MEASSREMENTS)
     // Add this context switch (approx.) to time counters.
-    // kernel->cs_time_counter += GET_TICK_COUNTER();
+    kernel->cs_time_counter += GET_TICK_COUNTER();
     // Reset timer and "start" counting the rest as task CPU time.
     RESET_TICK_COUNTER();
 #endif  // SW_TIME_MEASSREMENTS

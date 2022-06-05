@@ -17,7 +17,7 @@ DEFINES += -DUSE_STATIC
 DEFINES += -DNO_MT='__attribute__((optimize("Os")))'
 
 # Enable verbose output
-DEFINES += -DVERBOSE_OUTPUT
+# DEFINES += -DVERBOSE_OUTPUT
 
 # Use attached device on  22-26 to output current task as status during context
 # switch. Poll this over time on a separate device to gain knowledge of system
