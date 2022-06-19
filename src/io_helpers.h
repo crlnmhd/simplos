@@ -9,8 +9,10 @@
 
 // Disable clang warning
 #if defined(__clang__)
+// clang-format off
 _Pragma("clang diagnostic push")
-    _Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
+_Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
+// clang-format on
 #endif  // __clang__
 
 #define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
@@ -30,7 +32,9 @@ _Pragma("clang diagnostic push")
 #endif
 
 #if defined(__clang__)
-        _Pragma("clang diagnostic pop")
+    // clang-format off
+_Pragma("clang diagnostic pop")
+// clang-format on
 #endif
 
 #define ASSERT(cond, msg)                    \
@@ -67,7 +71,7 @@ _Pragma("clang diagnostic push")
   SP = old_sp;
 
 #if defined(HW_TIME_MEASSUREMENTS)
-            static inline
+        static inline
     __attribute__((always_inline,
                    unused)) void output_curr_task(__attribute__((unused))
                                                   uint8_t task) {

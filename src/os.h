@@ -2,20 +2,17 @@
 #define OS_H_
 
 #if defined(__clang__)
+// clang-format off
 _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #endif
 
 #include <avr/pgmspace.h>
 #include <stdint.h>
 #include <stdio.h>
-    // #include "simplos.h"
 
-    // #define yield() k_yield();
-    typedef uint16_t pid_t;
+typedef uint16_t pid_t;
 
-// typedef struct mutex {
-//   volatile
-// } mutex;
+// clang-format on
 
 void yield(void);
 // uint8_t fork(void);

@@ -1,12 +1,8 @@
-#include <inttypes.h>
 #if !defined(SIMPLOS_H_)
 #define SIMPLOS_H_
 
-#if defined(__clang__)
-_Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
-#endif
-
 #include <avr/interrupt.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -24,8 +20,11 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 
 #define INTERNAL_LED_PORT PORTB
 #define INTERNAL_LED PORTB5
-    // clang-forma off
-    extern uint16_t volatile pid_cnt;
+// clang-format off
+#if defined(__clang__)
+_Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
+#endif
+extern uint16_t volatile pid_cnt;
 //clang-format on
 extern volatile Kernel internal_kernel;
 extern Kernel volatile *volatile kernel;
@@ -35,17 +34,18 @@ extern volatile uint16_t internal_task_sp_adr;
 
 #define DO_PRAGMA_(x) _Pragma(#x)
 #define DO_PRAGMA(x) DO_PRAGMA_(x)
+//clang-format off
 #if defined(__clang__)
 #define CLANG_IGNORE_BEGIN(warning)                             \
   _Pragma("clang diagnostic push")                              \
-      _Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
-          DO_PRAGMA(clang diagnostic ignored warning)
+  _Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
+  DO_PRAGMA(clang diagnostic ignored warning)
 #define CLANG_IGNORE_END() _Pragma("clang diagnostic pop")
 #elif defined(__GNUC__)
 #define GCC_IGNORE_BEGIN(warning)                             \
   _Pragma("GCC diagnostic push")                              \
-      _Pragma("GCC diagnostic ignored \"-Wunknown-pragmas\"") \
-          DO_PRAGMA(GCC diagnostic ignored warning)
+  _Pragma("GCC diagnostic ignored \"-Wunknown-pragmas\"") \
+  DO_PRAGMA(GCC diagnostic ignored warning)
 #define GCC_IGNORE_END() _Pragma("GCC diagnostic pop")
 #endif  // __GNUC__
 
@@ -58,6 +58,7 @@ extern volatile uint16_t internal_task_sp_adr;
   GCC_IGNORE_BEGIN("-Wdiscarded-qualifiers")
 #define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
 #endif  // __GNUC__
+// clang-format on
 
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
