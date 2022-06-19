@@ -2,6 +2,7 @@
 #define SIMPLOS_TYPES_H_
 
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -13,7 +14,7 @@
 #define OS_TASK_BLOCK 0x0F
 #define EXEC_FINNISHED 0x0E
 #endif
-// TODO place "empty" in this enum.
+
 enum Task_Status { SLEEPING, READY, RUNNING, EMPTY };
 
 typedef struct Simplos_Task_t {
@@ -44,10 +45,11 @@ typedef uint16_t pid_t;
 
 // TODO use this for all global variables.
 typedef struct Kernel_t {
+  char task_names[TASKS_MAX][FUNCTION_NAME_MAX_LENGTH + 1];
+  uint8_t heap_mapping[HEAP_CHUNKS];
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;
-  uint8_t heap_mapping[HEAP_CHUNKS];
 } Kernel_t;
-typedef Kernel_t volatile *volatile Kernel;
+typedef Kernel_t volatile Kernel;
 
 #endif  // SIMPLOS_TYPES_H_

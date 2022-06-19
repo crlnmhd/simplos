@@ -1,6 +1,9 @@
 #include "os.h"
 
+#include <string.h>
+
 #include "io_helpers.h"
+#include "memory_layout.h"
 #include "simplos.h"
 #include "simplos_types.h"
 
@@ -13,8 +16,13 @@ uint16_t pid(void) {
       .pid;
 }
 
-uint16_t spawn(void (*fn)(void), uint8_t const priority) {
-  uint16_t const pid = spawn_task(fn, priority);
+uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
+  // Validate name length
+  uint16_t const name_length = strlen(name);
+  ASSERT(name_length <= FUNCTION_NAME_MAX_LENGTH,
+         "Function name length exceeded.");
+
+  uint16_t const pid = spawn_task(fn, priority, name);
 
   cprint("done spawning task ---- new pid is %d\n", pid);
   return pid;

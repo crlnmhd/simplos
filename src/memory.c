@@ -1,10 +1,10 @@
+#include "memory_layout.h"
 #define _GNU_SOURCE
-#include "memory.h"
-
 #include <avr/io.h>
 #include <stdint.h>
 
 #include "io_helpers.h"
+#include "memory.h"
 #include "simplos_types.h"
 #include "timers.h"
 
@@ -63,16 +63,17 @@ enum MEM_REGION memory_region(taskptr_t adr) {
     case 0 ... 0x1FF:
       region = REGISTERS;
       break;
-    case 0x200 ... 0x2FF:
+    case 0x200 ... 0x200 + MAX_STATIC_RAM_USAGE - 1:
       region = STATIC_RAM;
       break;
-    case 0x300 ... 0x34F:
+    case 0x200 + MAX_STATIC_RAM_USAGE... 0x200 + MAX_STATIC_RAM_USAGE +
+        OS_STACK_SIZE - 1:
       region = OS_STACK;
       break;
-    case 0x350 ... 0xD4F:
+    case 0x200 + MAX_STATIC_RAM_USAGE + OS_STACK_SIZE... 0xE4F:
       region = TASK_RAM;
       break;
-    case 0xD50 ... HEAP_START:
+    case 0xE50 ... HEAP_START:
       region = HEAP;
       break;
     case HEAP_START + 1 ... 0x2000:

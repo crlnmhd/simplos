@@ -4,10 +4,12 @@
 #include <avr/io.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 //#include <util/delay.h>
 
 #include "io_helpers.h"
 #include "memory.h"
+#include "memory_layout.h"
 #include "timers.h"
 
 NO_MT void init_empty_queue(Task_Queue *queue) {
@@ -16,6 +18,10 @@ NO_MT void init_empty_queue(Task_Queue *queue) {
     task->task_memory_block = i;
     task->time_counter = 0;
     task->task_sp_adr = task_default_sp(task->task_memory_block);
+    BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
+    char *task_name_buf = kernel->task_names[i];
+    END_DISCARD_VOLATILE_QUALIFIER_WARNING()
+    strlcpy(task_name_buf, "", FUNCTION_NAME_MAX_LENGTH + 1);
     cprint("Initiating mem block %d with SP 0x%X\n", i, task->task_sp_adr);
     task->status = EMPTY;
   }
@@ -68,13 +74,18 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   reti();
 }
 
-pid_t spawn_task(void (*fn)(void), uint8_t const priority) {
+pid_t spawn_task(void (*fn)(void), uint8_t const priority, char const *name) {
   DISABLE_MT();
-
   uint8_t const new_task_index =
       add_task_to_queue(priority, &simplos_schedule->queue);
 
   simplos_schedule->queue.task_queue[new_task_index].status = RUNNING;
+  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
+  char *task_name_buffer = kernel->task_names[new_task_index];
+  cprint("buffer adress: 0x%X\n", &task_name_buffer);
+  END_DISCARD_VOLATILE_QUALIFIER_WARNING()
+  strlcpy(task_name_buffer, name, FUNCTION_NAME_MAX_LENGTH + 1);
+
   uint16_t const new_task_pid = pid_cnt++;
   simplos_schedule->queue.task_queue[new_task_index].pid = new_task_pid;
   cprint("Spawning task with PID %d\n", new_task_pid);
@@ -145,10 +156,11 @@ void kill_current_task(void) {
   cli();
   ENABLE_MT();
 
-  Simplos_Task *task =
-      &simplos_schedule->queue
-           .task_queue[simplos_schedule->queue.curr_task_index];
+  uint8_t const curr_task_index = simplos_schedule->queue.curr_task_index;
+
+  Simplos_Task *task = &simplos_schedule->queue.task_queue[curr_task_index];
   task->status = EMPTY;
+  kernel->task_names[curr_task_index][0] = '\0';
   kernel->ended_task_time_counter += task->time_counter;
   k_yield();  // re-enables interrupts.
 }

@@ -6,16 +6,17 @@
 #include "simplos.h"
 #include "timers.h"
 
+// Extern global variable to modify the stack pointer using macros from
+// simplos.h
 volatile Scheduler internal_simplos_schedule;
 volatile Scheduler *volatile simplos_schedule = &internal_simplos_schedule;
 
-// Extern global variable to modify the stack pointer using macros from
-// simplos.h
+volatile Kernel internal_kernel;
+volatile Kernel *volatile kernel = &internal_kernel;
 
 volatile uint16_t internal_task_sp_adr = 0;
 volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
 volatile uint16_t pid_cnt = 0;
-volatile Kernel kernel;
 
 int main(void) {
   // Initialite serial communication.

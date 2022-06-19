@@ -21,7 +21,7 @@ void yield(void);
 // uint8_t fork(void);
 uint8_t rank(void);
 pid_t pid(void);
-pid_t spawn(void (*fn)(void), uint8_t const priority);
+pid_t spawn(void (*fn)(void), uint8_t const priority, char const *name);
 void set_priority(uint8_t const priority);
 void kill_curr_task(void);
 

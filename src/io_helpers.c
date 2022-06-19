@@ -14,7 +14,12 @@ NO_MT void print_task(taskptr_t task, bool const checks) {
   if (task == NULL) {
     fatal_error("Error, task is NULL\n");
   }
-  cprint("Task at block %d:", task->task_memory_block);
+
+  uint8_t const task_index = task->task_memory_block;
+  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
+  char const *task_name = kernel->task_names[task_index];
+  END_DISCARD_VOLATILE_QUALIFIER_WARNING()
+  cprint("Task \"%s\" at block %d:", task_name, task_index);
   cprint(" PID: %d", task->pid);
   cprint(" Priority %d", task->priority);
   cprint(" SP = 0x%X", task->task_sp_adr);

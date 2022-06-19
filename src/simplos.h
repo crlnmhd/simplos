@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #if !defined(SIMPLOS_H_)
 #define SIMPLOS_H_
 
@@ -23,26 +24,40 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 
 #define INTERNAL_LED_PORT PORTB
 #define INTERNAL_LED PORTB5
-
+    // clang-forma off
     extern uint16_t volatile pid_cnt;
-extern volatile Kernel kernel;
+//clang-format on
+extern volatile Kernel internal_kernel;
+extern Kernel volatile *volatile kernel;
 
 extern volatile uint16_t *volatile task_sp;
 extern volatile uint16_t internal_task_sp_adr;
 
+#define DO_PRAGMA_(x) _Pragma(#x)
+#define DO_PRAGMA(x) DO_PRAGMA_(x)
 #if defined(__clang__)
-#define CLANG_IGNORE_BEGIN(warning) \
-  _Pragma("clang diagnostic push")  \
-      _Pragma("clang diagnostic ignored \"" warning "\"")
-
+#define CLANG_IGNORE_BEGIN(warning)                             \
+  _Pragma("clang diagnostic push")                              \
+      _Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
+          DO_PRAGMA(clang diagnostic ignored warning)
 #define CLANG_IGNORE_END() _Pragma("clang diagnostic pop")
+#elif defined(__GNUC__)
+#define GCC_IGNORE_BEGIN(warning)                             \
+  _Pragma("GCC diagnostic push")                              \
+      _Pragma("GCC diagnostic ignored \"-Wunknown-pragmas\"") \
+          DO_PRAGMA(GCC diagnostic ignored warning)
+#define GCC_IGNORE_END() _Pragma("GCC diagnostic pop")
+#endif  // __GNUC__
 
-#else  // GCC
-
-#define CLANG_IGNORE_BEGIN(warning)
-#define CLANG_IGNORE_END()
-
-#endif
+#if defined(__clang__)
+#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() \
+  CLANG_IGNORE_BEGIN("-Wincompatible-pointer-types-discards-qualifiers")
+#define END_DISCARD_VOLATILE_QUALIFIER_WARNING() CLANG_IGNORE_END()
+#elif defined(__GNUC__)
+#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() \
+  GCC_IGNORE_BEGIN("-Wdiscarded-qualifiers")
+#define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
+#endif  // __GNUC__
 
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
@@ -68,7 +83,8 @@ INLINED void reset_timer(void) { TCNT1 = 0; }
 
 __attribute__((noinline, naked)) void k_yield(void);
 __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
-                                              uint8_t const priority);
+                                              uint8_t const priority,
+                                              char const *name);
 
 // More or less borrowed from
 // https://www.freertos.org/kernel/secondarydocs.html
@@ -215,7 +231,9 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
       // The previous task has been killed.
       prev->task_sp_adr = *task_sp;
       prev->status = READY;
+#if defined(VERBOSE_OUTPUT)
       print_schedule();
+#endif                               // VERBOSE_OUTPUT
       assert_stack_integrity(prev);  // FIXME put this check eralier so
                                      // errors will be easier to detect.
 #if defined(VERBOSE_OUTPUT)
