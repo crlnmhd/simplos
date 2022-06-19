@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "scheduler.h"
 #include "serial.h"
@@ -44,6 +45,10 @@ int main(void) {
   new_task->status = RUNNING;
   new_task->pid = pid_cnt++;
   simplos_schedule->queue.curr_task_index = index;
+  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
+  char *task_name_buf = kernel->task_names[index];
+  END_DISCARD_VOLATILE_QUALIFIER_WARNING()
+  strlcpy(task_name_buf, "idle_fn", FUNCTION_NAME_MAX_LENGTH + 1);
   // Jump to the new task.
   cprint("At main: SP is 0x%X\n", SP);
   ASSERT(SP > HEAP_START, "main() has overflowed heap memory");

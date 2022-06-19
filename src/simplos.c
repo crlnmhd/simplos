@@ -141,6 +141,7 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority, char const *name) {
   cprint("Function finnished\n");
   simplos_schedule->queue.task_queue[simplos_schedule->queue.curr_task_index]
       .status = EMPTY;
+  kernel->task_names[simplos_schedule->queue.curr_task_index][0] = '\0';
 
   k_yield();  // re-enable interrupts.
 
