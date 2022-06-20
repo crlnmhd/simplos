@@ -34,7 +34,6 @@ uint16_t os_stack_end(void) {
 }
 
 void assert_stack_integrity(taskptr_t task) {
-  cprint("task SP: 0x%X\n", task->task_sp_adr);
   ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);

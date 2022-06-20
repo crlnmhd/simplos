@@ -82,13 +82,12 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority, char const *name) {
   simplos_schedule->queue.task_queue[new_task_index].status = RUNNING;
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char *task_name_buffer = kernel->task_names[new_task_index];
-  cprint("buffer adress: 0x%X\n", &task_name_buffer);
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
   strlcpy(task_name_buffer, name, FUNCTION_NAME_MAX_LENGTH + 1);
 
   uint16_t const new_task_pid = pid_cnt++;
   simplos_schedule->queue.task_queue[new_task_index].pid = new_task_pid;
-  cprint("Spawning task with PID %d\n", new_task_pid);
+  cprint("Spawning task \"%s\" with PID %d\n", task_name_buffer, new_task_pid);
   taskptr_t old_task =
       &simplos_schedule->queue
            .task_queue[simplos_schedule->queue.curr_task_index];

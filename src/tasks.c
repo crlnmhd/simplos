@@ -64,12 +64,12 @@ void wait_for_other(void) {
 }
 
 void idle_fn(void) {
+  print("Starting idle function\n");
   print("Testing context switch ratio\n");
   spawn(worker_1_fn, 1, "worker1");
   spawn(worker_2_fn, 1, "worker2");
 
   shared_x = 1;
-  print("Starting idle function\n");
   pid_t const p1 = spawn(sum_to_ten, 1, "sto10_1");
   pid_t const p2 = spawn(sum_to_ten, 1, "sto10_2");
 
