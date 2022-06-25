@@ -81,7 +81,7 @@ _Pragma("clang diagnostic pop")
 #endif
 void fatal_error_internal(void);
 
-void print_task(taskptr_t, bool);
+void print_task(taskptr_type, bool);
 void print_schedule(void);
 
 // void print_task_stack(uint8_t const pid);

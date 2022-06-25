@@ -10,7 +10,7 @@
 #include "simplos.h"
 #include "timers.h"
 
-NO_MT void print_task(taskptr_t task, bool const checks) {
+NO_MT void print_task(taskptr_type task, bool const checks) {
   if (task == NULL) {
     fatal_error("Error, task is NULL\n");
   }

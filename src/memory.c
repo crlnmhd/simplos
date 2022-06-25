@@ -33,7 +33,7 @@ uint16_t os_stack_end(void) {
   return last_start - margin;
 }
 
-void assert_stack_integrity(taskptr_t task) {
+void assert_stack_integrity(taskptr_type task) {
   ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
@@ -53,7 +53,7 @@ void assert_stack_integrity(taskptr_t task) {
   }
 }
 
-enum MEM_REGION memory_region(taskptr_t adr) {
+enum MEM_REGION memory_region(taskptr_type adr) {
   enum MEM_REGION region;
   // Switch on range is a very usefull GCC extension :-)
   switch ((uint16_t)adr->task_sp_adr) {

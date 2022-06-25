@@ -75,8 +75,8 @@ void init_schedule(void);
  */
 uint16_t init_heap(void);
 
-Simplos_Task *get_task(pid_t pid);
-enum Task_Status task_status(pid_t pid);
+Simplos_Task *get_task(pid_type pid);
+enum Task_Status task_status(pid_type pid);
 
 void kill_current_task(void);
 
@@ -214,8 +214,9 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
     output_curr_task(OS_TASK_BLOCK);
 #endif
 
-    taskptr_t prev = &simplos_schedule->queue
-                          .task_queue[simplos_schedule->queue.curr_task_index];
+    taskptr_type prev =
+        &simplos_schedule->queue
+             .task_queue[simplos_schedule->queue.curr_task_index];
 #if defined(SW_TIME_MEASSREMENTS)
     // Increment CPU time counter for previous task
     prev->time_counter += GET_TICK_COUNTER();
@@ -239,8 +240,9 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif
     }
     select_next_task();
-    taskptr_t task = &simplos_schedule->queue
-                          .task_queue[simplos_schedule->queue.curr_task_index];
+    taskptr_type task =
+        &simplos_schedule->queue
+             .task_queue[simplos_schedule->queue.curr_task_index];
 
 #if defined(VERBOSE_OUTPUT)
     print_task(task, true);

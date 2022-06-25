@@ -14,7 +14,7 @@
 
 NO_MT void init_empty_queue(Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    taskptr_t task = (taskptr_t)&queue->task_queue[i];
+    taskptr_type task = (taskptr_type)&queue->task_queue[i];
     task->task_memory_block = i;
     task->time_counter = 0;
     task->task_sp_adr = task_default_sp(task->task_memory_block);
@@ -29,7 +29,7 @@ NO_MT void init_empty_queue(Task_Queue *queue) {
 
 NO_MT uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    taskptr_t task = (Simplos_Task *)&queue->task_queue[i];
+    taskptr_type task = (Simplos_Task *)&queue->task_queue[i];
     // Take if available
     if (task->status == EMPTY) {
 #if defined(VERBOSE_OUTPUT)
@@ -74,7 +74,8 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   reti();
 }
 
-pid_t spawn_task(void (*fn)(void), uint8_t const priority, char const *name) {
+pid_type spawn_task(void (*fn)(void), uint8_t const priority,
+                    char const *name) {
   DISABLE_MT();
   uint8_t const new_task_index =
       add_task_to_queue(priority, &simplos_schedule->queue);
@@ -88,7 +89,7 @@ pid_t spawn_task(void (*fn)(void), uint8_t const priority, char const *name) {
   uint16_t const new_task_pid = pid_cnt++;
   simplos_schedule->queue.task_queue[new_task_index].pid = new_task_pid;
   cprint("Spawning task \"%s\" with PID %d\n", task_name_buffer, new_task_pid);
-  taskptr_t old_task =
+  taskptr_type old_task =
       &simplos_schedule->queue
            .task_queue[simplos_schedule->queue.curr_task_index];
 
@@ -165,7 +166,7 @@ void kill_current_task(void) {
   k_yield();  // re-enables interrupts.
 }
 
-Simplos_Task *get_task(pid_t pid) {
+Simplos_Task *get_task(pid_type pid) {
   DISABLE_MT();
   for (uint8_t t = 0; t < TASKS_MAX; ++t) {
     if (simplos_schedule->queue.task_queue[t].pid == pid) {
@@ -176,8 +177,8 @@ Simplos_Task *get_task(pid_t pid) {
   return NULL;
 }
 
-enum Task_Status task_status(pid_t pid) {
-  taskptr_t task = get_task(pid);
+enum Task_Status task_status(pid_type pid) {
+  taskptr_type task = get_task(pid);
   if (task == NULL) {
     return EMPTY;
   }
