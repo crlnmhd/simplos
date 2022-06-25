@@ -92,7 +92,6 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 
 #define SAVE_CONTEXT()                    \
   asm volatile(                           \
-      "cli                         \n\t"  \
       "push  r0                    \n\t"  \
       "in    r0, __SREG__          \n\t"  \
       "cli                         \n\t"  \

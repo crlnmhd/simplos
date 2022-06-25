@@ -31,6 +31,9 @@ DEINES += -DHW_TIME_MEASSUREMENTS
 # Enable debug ouput
 DEFINES += -DDEBUG_OUTPUT
 
+#enable tests
+DEFINES += -DRUN_TESTS
+
 # Count the time spent in interups as oposed to outside. Incurres some
 # overhead. Print to uart using PRINT_CS_TIMING_DATA()
 # DEFINES += -DSW_TIME_MEASSREMENTS
@@ -49,6 +52,7 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 .DEFAULT_GOAL := build
 CC := avr-gcc
 AVRINC :=/usr/avr/include
+SIMAVR := simavr
 CFLAGS := -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g
 FRAMEWORK := wiring
 
@@ -106,7 +110,7 @@ clean:
 	@echo "cleaning..."
 
 sim:
-	simavr -v -v -g -m $(uP) build/simplos.out
+	$(SIMAVR) -v -v -v -g -m $(uP) build/simplos.out
 
 debug:
 	$(AVR_GDB) build/simplos.out -ex "target remote :1234" -ex "directory src/"

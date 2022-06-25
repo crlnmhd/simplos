@@ -5,6 +5,7 @@
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"
+#include "test.h"
 #include "timers.h"
 
 // Extern global variable to modify the stack pointer using macros from
@@ -60,6 +61,14 @@ int main(void) {
   /* Run idle function. Should never leave this. */
   sei();
   ENABLE_MT();
+#if defined(RUN_TESTS)
+  cprint("Running tests\n");
+  struct TestStatistics test_stats = run_all_tests();
+  cprint("\n");
+  cprint("%d tests PASSED\n", test_stats.passed);
+  cprint("%d tests FAILED\n", test_stats.failed);
+  cprint("%d tests SKIPPED \n", test_stats.skipped);
+#endif  // defined(RUN_TESTS)
   idle_fn();
   fatal_error("UNREACHABLE END OF MAIN");
 }
