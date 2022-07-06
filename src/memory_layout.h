@@ -3,29 +3,28 @@
 
 /*
  * 0x0-1FF            # Registers
- * 0x200 - 0x3FF      # Static ram
- * 0x400 - 0x44F      # OS stack
- * 0x450 - 0xE4F      # (5) task stack
+ * 0x200 - 0x204      # Canary
+ * 0x205 - 0x24F      # OS stack
+ * 0x250 - 0x44F      # (5) task stack
  * 0xD50 - 0x2000     # heap
  */
 
+#define REGISTERS_START 0x1FF
+
+#define CANARY_START 0x204
+#define CANARY_END 0x200
+#define CANARY_VALUE 0x66  // As good a random value as any.
+
+#define OS_STACK_START 0x24F
+#define OS_STACK_END 0x205
+
+#define TASK_RAM_END 0x250
+#define TASK_RAM_START 0xC4F
 #define TASK_MEMORY_BYTES 0x200
-#define ALLOCABLE_MEMORY_BYTES 0x700
 
-// End of main and some extra just to be sure.
-#define HEAP_PAGE_SIZE 0x100
-
-#define HEAP_CHUNKS (ALLOCABLE_MEMORY_BYTES / HEAP_PAGE_SIZE)
-// OS task memory for use within constext switches and alike. Aprox 50 bytes).
-// RAMSTART = 0x200
-// Size of the heap map.
-#define HEAP_START (0x2000 - HEAP_CHUNKS)
-
-#define OS_STACK_SIZE 0x50
-#define MEM_START 0x200
-#define MAX_STATIC_RAM_USAGE 0x200
-#define TASK_RAM_LOW (MEM_START + MAX_STATIC_RAM_USAGE + OS_STACK_SIZE)
-#define HEAP_RAM_END (TASK_RAM_LOW + (TASKS_MAX * TASK_MEMORY_BYTES))
+#define HEAP_END TASK_RAM_START + 1
+// Start of heap (high) is dynamically defined based on the size of the RAM
+// needed by init (the main function).
 
 #define FUNCTION_NAME_MAX_LENGTH 8
 

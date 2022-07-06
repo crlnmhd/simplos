@@ -1,4 +1,5 @@
 #include "memory_layout.h"
+#include "simplos.h"
 #define _GNU_SOURCE
 #include <avr/io.h>
 #include <stdint.h>
@@ -8,6 +9,10 @@
 #include "simplos_types.h"
 #include "timers.h"
 
+INLINED bool in_region(size_t address, size_t region_start, size_t region_end) {
+  return region_end <= address && address <= region_start;
+}
+
 uint16_t task_default_sp(uint8_t const task_memory_block) {
   if (task_memory_block >= TASKS_MAX) {
     fatal_error("(task_default_sp()): Memory block '%d' is INVALID!",
@@ -15,15 +20,15 @@ uint16_t task_default_sp(uint8_t const task_memory_block) {
   }
   // Stack grows toward smaller values.
   uint16_t const sp_adr =
-      TASK_RAM_LOW + ((task_memory_block + 1) * TASK_MEMORY_BYTES) - 1;
+      TASK_RAM_START + ((task_memory_block + 1) * TASK_MEMORY_BYTES) - 1;
   // dprint("Giving task %d SP 0x%X\n", task_memory_block, sp_adr);
   return sp_adr;
 }
 
-uint16_t stack_end() { return TASK_RAM_LOW; }
+uint16_t stack_end() { return TASK_RAM_END; }
 // Stack grows downwards.
 
-uint16_t os_stack_start(void) { return TASK_RAM_LOW - 1; }
+uint16_t os_stack_start(void) { return TASK_RAM_END - 1; }
 
 // Stack grows downwards.
 uint16_t os_stack_end(void) {
@@ -34,7 +39,7 @@ uint16_t os_stack_end(void) {
 }
 
 void assert_stack_integrity(taskptr_type task) {
-  ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
+  ASSERT_EQ(TASK_RAM, memory_region(task), "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
   uint16_t const lower_bound =
@@ -54,33 +59,20 @@ void assert_stack_integrity(taskptr_type task) {
 }
 
 enum MEM_REGION memory_region(taskptr_type adr) {
-  enum MEM_REGION region;
-  // Switch on range is a very usefull GCC extension :-)
-  switch ((uint16_t)adr->task_sp_adr) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-    case 0 ... 0x1FF:
-      region = REGISTERS;
-      break;
-    case 0x200 ... 0x200 + MAX_STATIC_RAM_USAGE - 1:
-      region = STATIC_RAM;
-      break;
-    case 0x200 + MAX_STATIC_RAM_USAGE... 0x200 + MAX_STATIC_RAM_USAGE +
-        OS_STACK_SIZE - 1:
-      region = OS_STACK;
-      break;
-    case 0x200 + MAX_STATIC_RAM_USAGE + OS_STACK_SIZE... 0xE4F:
-      region = TASK_RAM;
-      break;
-    case 0xE50 ... HEAP_START:
-      region = HEAP;
-      break;
-    case HEAP_START + 1 ... 0x2000:
-      region = HEAP_MAP;
-      break;
-    default:
-      region = UNKNOWN;
-#pragma GCC diagnostic pop
+  const size_t sp = adr->task_sp_adr;
+  if (in_region(sp, REGISTERS_START, 0)) {
+    return REGISTERS;
+  } else if (in_region(sp, CANARY_START, CANARY_END)) {
+    return REGISTERS_CANARY;
+  } else if (in_region(sp, OS_STACK_START, OS_STACK_END)) {
+    return OS_STACK;
+  } else if (in_region(sp, TASK_RAM_START, TASK_RAM_END)) {
+    return TASK_RAM;
+  } else if (in_region(sp, kernel->heap_start, HEAP_END)) {
+    return HEAP;
+  } else if (in_region(sp, RAMSTART, kernel->heap_start + 1)) {
+    return INIT;
+  } else {
+    return UNKNOWN;
   }
-  return region;
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "memory_layout.h"
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"
@@ -51,11 +52,14 @@ int main(void) {
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
   strlcpy(task_name_buf, "idle_fn", FUNCTION_NAME_MAX_LENGTH + 1);
   // Jump to the new task.
-  cprint("At main: SP is 0x%X\n", SP);
-  ASSERT(SP > HEAP_START, "main() has overflowed heap memory");
+
+  kernel->heap_start = SP - 1;
+  cprint("Heap starting at  0x%X\n", kernel->heap_start);
+  ASSERT(kernel->heap_start > TASK_RAM_START,
+         "init section has overflowed heap memory");
+  cprint("%d bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
+
   *task_sp = simplos_schedule->queue.task_queue[index].task_sp_adr;
-  cprint("OS SP is 0x%X.\nTask sp: 0x%X.\n", simplos_schedule->os_task_sp,
-         *task_sp);
   SET_SP();
 
   /* Run idle function. Should never leave this. */
