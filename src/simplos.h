@@ -73,7 +73,7 @@ void init_schedule(void);
 /*
  * Initialise heap mapping. Sets free chunks to 0xFF (U8).
  */
-uint16_t init_heap(void);
+void init_memory(void);
 
 Simplos_Task *get_task(pid_type pid);
 enum Task_Status task_status(pid_type pid);

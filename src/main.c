@@ -32,7 +32,7 @@ int main(void) {
 
   // disable timer compare interrupt for now
   DISABLE_MT();
-  // init_heap();
+  init_memory();
 
   cprint("Starting!\n");
 

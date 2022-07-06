@@ -185,30 +185,16 @@ enum Task_Status task_status(pid_type pid) {
   return task->status;
 }
 
-// Verify the heap configuration.
-// TODO add more checks.
-NO_MT void verify_heap_config(void) {
-  ASSERT_EQ(os_stack_start(), 0x34F, "%u",
-            "Heap configuration error: Incorrect os stack start");
-  ASSERT_EQ(stack_end(), 0x350, "%u",
-            "Heap configuration error: Incorrect stack end");
-  ASSERT_EQ(HEAP_RAM_END, 0xD50, "%u",
-            "Heap configuration error: Incorrect heap low");
+void init_memory(void) {
+  for (uint8_t *canary_adr = (uint8_t *)CANARY_START;
+       (size_t)canary_adr <= CANARY_END; canary_adr--) {
+    *canary_adr = CANARY_VALUE;
+  }
 
-  ASSERT(HEAP_CHUNKS < UINT8_MAX,
-         "Heap configuration error: To many heap chunks for integer type");
-  ASSERT(HEAP_PAGE_SIZE > 0,
-         "Heap configuration error. Zero heap pages configured.");
-  ASSERT(HEAP_PAGE_SIZE < UINT16_MAX,
-         "Heap configuration error. To many heap pages for integer type.");
-}
-
-/*
-uint16_t init_heap(void) {
-  verify_heap_config();
+  /*
   for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i) {
     kernel->heap_mapping[i] = 0xFF;
-    return 0;
   }
+  return 0;
+  */
 }
-*/
