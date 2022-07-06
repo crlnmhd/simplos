@@ -37,7 +37,7 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
     return false;                             \
   }
 
-#define TEST_ASSERT_EQ(expected, recieved, fmt, msg) \
+#define TEST_ASSERT_EQ(recieved, expected, fmt, msg) \
   if ((expected) != (recieved)) {                    \
     asm volatile("cli");                             \
     print_from_prg_mem(" FAILED\n");                 \
@@ -75,7 +75,7 @@ bool test_multiple_yield(void) {
     test_var += (uint32_t)(i * i);  // perform some non_atomic calculations
     yield();
   }
-  TEST_ASSERT_EQ(5494655, test_var, "%d",
+  TEST_ASSERT_EQ(test_var, 5494655, "%d",
                  "Numerical issue with aggressive task yielding");
   return true;
 }
