@@ -51,9 +51,10 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
-AVRINC :=/usr/avr/include
-SIMAVR := $(SIMAVR)
-CFLAGS := -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g
+AVRINC := /usr/avr/include
+SIMAVR := simavr
+SIMAVR_DEBUG := $(SIMAVR_DEBUG)
+CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb
@@ -116,7 +117,7 @@ debug:
 	$(AVR_GDB) build/simplos.out -ex "target remote :1234" -ex "directory src/"
 
 debug_siulator:
-	gdb -ex "directory $(SIMAVR)/../../" --args $(SIMAVR) -v -v -v -g -m $(uP) build/simplos.out
+	gdb -ex "directory $(SIMAVR_SRC)" --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
 
 rebuild_container:
 	$(DOCKER) build --rm -t avr_docker .
