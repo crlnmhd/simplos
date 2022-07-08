@@ -89,13 +89,13 @@ build: dir all compile_commands.json
 
 all: $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o build/simplos.out
-	avr-size --mcu=$(uP) -C build/simplos.out
+	avr-size --mcu=$(uP) -A -x build/simplos.out
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -I$(SRC) -c -g $< -o $@
 
 flash: build
-	avr-size --mcu=$(uP) -C build/simplos.out
+	avr-size --mcu=$(uP) -A -x build/simplos.out
 	avr-objcopy -O ihex --strip-debug -R .eeprom build/simplos.out build/out.hex
 	avrdude -c $(FRAMEWORK) \
 		-p $(uP) \
