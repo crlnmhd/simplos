@@ -8,6 +8,8 @@ BAUD := 115200
 CPU_FREQ := 16000000UL
 SERIAL := /dev/ttyUSB0
 
+STACK_HIGH := 0x204F
+DATA_SECTION_START := 0x802050 # 0x8021FF - 511 bytes.
 # Configure behavior though defines
 DEFINES :=
 # Static scheduling
@@ -34,6 +36,8 @@ DEFINES += -DDEBUG_OUTPUT
 #enable tests
 DEFINES += -DRUN_TESTS
 
+DEFINES += -DSTACK_HIGH=$(STACK_HIGH)
+
 # Count the time spent in interups as oposed to outside. Incurres some
 # overhead. Print to uart using PRINT_CS_TIMING_DATA()
 # DEFINES += -DSW_TIME_MEASSREMENTS
@@ -50,14 +54,13 @@ SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
 
-DATA_SECTION_MAX_SIZE := 0x802050 # 0x8021FF - 511 bytes.
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
 AVRINC := /usr/avr/include
 SIMAVR := simavr
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
-CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g -Wl,--section-start=.data=$(DATA_SECTION_MAX_SIZE)
+CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g -Wl,--section-start=.data=$(DATA_SECTION_START)
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb

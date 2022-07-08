@@ -19,18 +19,18 @@ volatile uint16_t internal_task_sp_adr = 0;
 volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
 
 int main(void) {
-  SP = 0x2049;
-  // Allocate space (two bytes) for the task_sp "global" variable here.
-  // volatile uint16_t space_for_task_sp __attribute__((unused));
-  // volatile Kernel space_for_kernel __attribute__((unused));
-
+  // The stack starts where the just before the .data section begins.
+  SP = STACK_HIGH;
   // Initialite serial communication.
   uart_init();
   FILE uart_file =
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  cprint("space for sp at 0x%X\n", &internal_task_sp_adr);
+  cprint("space for stdou 0x%X\n", &stdin);
+  cprint("space for stdin 0x%X\n", &stdout);
+  cprint("space for uart_file at 0x%X\n", &uart_file);
+
   cprint("space for kernel at 0x%X\n", &internal_kernel_location);
   init_timer_interupts();
   cli();
@@ -39,8 +39,8 @@ int main(void) {
   DISABLE_MT();
   init_memory();
 
-  cprint("Kernel at at  0x%X\n", &kernel);
-  cprint("Scheduler at at  0x%X\n", &simplos_schedule);
+  cprint("Kernel at  0x%X\n", &kernel);
+  cprint("Scheduler at  0x%X\n", &simplos_schedule);
   cprint("Starting!\n");
 
   init_schedule();

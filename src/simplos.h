@@ -131,8 +131,8 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "push  r29                    \n\t" \
       "push  r30                    \n\t" \
       "push  r31                    \n\t" \
-      "lds   r26, 0x21FE        \n\t"     \
-      "lds   r27, 0x21FF    \n\t"         \
+      "lds   r26, task_sp           \n\t" \
+      "lds   r27, task_sp +1        \n\t" \
       "in    r0, __SP_L__           \n\t" \
       "st    x+, r0                 \n\t" \
       "in    r0, __SP_H__           \n\t" \
@@ -165,8 +165,8 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
-      "lds  r26, 0x21FE            \n\t" \
-      "lds  r27, 0x21FF            \n\t" \
+      "lds  r26, task_sp           \n\t" \
+      "lds  r27, task_sp +1        \n\t" \
       "ld   r28, x+                \n\t" \
       "out  __SP_L__, r28          \n\t" \
       "ld   r29, x+                \n\t" \
