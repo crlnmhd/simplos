@@ -15,7 +15,7 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
                        struct TestStatistics statistics) {
   print_from_prg_mem("Testing: ");
   printf_P(function_name);
-  printf_P("\n");
+  print_from_prg_mem("\n");
   if (!fn_ptr()) {
     statistics.failed += 1;
     printf_P(function_name);  // In an 'OS' with so many security concerns, this
