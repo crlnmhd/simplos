@@ -49,12 +49,15 @@ OBJ := build
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
+
+DATA_SECTION_MAX_SIZE := 0x802050 # 0x8021FF - 511 bytes.
+
 .DEFAULT_GOAL := build
 CC := avr-gcc
 AVRINC := /usr/avr/include
 SIMAVR := simavr
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
-CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g
+CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g -Wl,--section-start=.data=$(DATA_SECTION_MAX_SIZE)
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb

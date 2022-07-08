@@ -12,10 +12,17 @@
 // Extern global variable to modify the stack pointer using macros from
 // simplos.h
 
+volatile Kernel internal_kernel_location;
+volatile Kernel *volatile kernel = &internal_kernel_location;
+
+volatile uint16_t internal_task_sp_adr = 0;
+volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
+
 int main(void) {
+  SP = 0x2049;
   // Allocate space (two bytes) for the task_sp "global" variable here.
-  volatile uint16_t space_for_task_sp __attribute__((unused));
-  volatile Kernel space_for_kernel __attribute__((unused));
+  // volatile uint16_t space_for_task_sp __attribute__((unused));
+  // volatile Kernel space_for_kernel __attribute__((unused));
 
   // Initialite serial communication.
   uart_init();
@@ -23,11 +30,8 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  extern int __heap_start;
-  cprint("Heap start is: 0x%X\n", __heap_start);
-  cprint("space for sp at 0x%X\n", &space_for_task_sp);
-  cprint("space for kernel at 0x%X\n", &space_for_kernel);
-  ASSERT_EQ(SP, 0x21FD, "0x%X", "Unexpected initial SP in main()");
+  cprint("space for sp at 0x%X\n", &internal_task_sp_adr);
+  cprint("space for kernel at 0x%X\n", &internal_kernel_location);
   init_timer_interupts();
   cli();
 
@@ -35,8 +39,8 @@ int main(void) {
   DISABLE_MT();
   init_memory();
 
-  cprint("Kernel at at  0x%X\n", kernel);
-  cprint("Scheduler at at  0x%X\n", simplos_schedule);
+  cprint("Kernel at at  0x%X\n", &kernel);
+  cprint("Scheduler at at  0x%X\n", &simplos_schedule);
   cprint("Starting!\n");
 
   init_schedule();
@@ -54,7 +58,7 @@ int main(void) {
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
   strlcpy(task_name_buf, "test_fn", FUNCTION_NAME_MAX_LENGTH + 1);
   // Jump to the new task.
-
+  cprint("at main my SP is: 0x%X\n", SP);
   kernel->heap_start = SP - 1;
   cprint("Heap starting at  0x%X\n", kernel->heap_start);
   ASSERT(kernel->heap_start > TASK_RAM_START,

@@ -27,16 +27,13 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #endif
 //clang-format on
 
+extern volatile Kernel internal_kernel; 
+extern Kernel volatile *volatile kernel; 
 
-// task_sp is placed in right after RAMEND by allocating space in the main function.
-#define TASK_SP_ADDRESS (RAMEND) 
-// the kernel is places right after task_sp
-#define KERNEL_ADDRESS (TASK_SP_ADDRESS - sizeof(Kernel_type))
+extern volatile uint16_t *volatile task_sp;
+extern volatile uint16_t internal_task_sp_adr;
 
-#define task_sp ((uint16_t*) TASK_SP_ADDRESS)
-#define kernel ((volatile Kernel_type *volatile) KERNEL_ADDRESS)
 #define simplos_schedule (kernel->simplos_schedule)
-
 
 #define DO_PRAGMA_(x) _Pragma(#x)
 #define DO_PRAGMA(x) DO_PRAGMA_(x)
@@ -65,11 +62,11 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
 #endif  // __GNUC__
 
-    // clang-format on
-    /*
-     * Add a task to the task queue. This is needed to let the the task execute.
-     * */
-    uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue);
+// clang-format on
+/*
+ * Add a task to the task queue. This is needed to let the the task execute.
+ * */
+uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue);
 
 /*
  * Set up the scheduler.
