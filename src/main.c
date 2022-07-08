@@ -27,10 +27,6 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  cprint("space for stdou 0x%X\n", &stdin);
-  cprint("space for stdin 0x%X\n", &stdout);
-  cprint("space for uart_file at 0x%X\n", &uart_file);
-
   cprint("space for kernel at 0x%X\n", &internal_kernel_location);
   init_timer_interupts();
   cli();
@@ -58,14 +54,12 @@ int main(void) {
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
   strlcpy(task_name_buf, "test_fn", FUNCTION_NAME_MAX_LENGTH + 1);
   // Jump to the new task.
-  cprint("at main my SP is: 0x%X\n", SP);
   kernel->heap_start = SP - 1;
   cprint("Heap starting at  0x%X\n", kernel->heap_start);
   ASSERT(kernel->heap_start > TASK_RAM_START,
          "init section has overflowed heap memory");
   cprint("%d bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
 
-  cprint("OS SP: 0x%X\n", SP);
   *task_sp = simplos_schedule.queue.task_queue[index].task_sp_adr;
   SET_SP();
 
