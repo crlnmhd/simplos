@@ -7,8 +7,6 @@
 */
 void select_next_task(void);
 
-extern Scheduler volatile *volatile simplos_schedule;
-
 // void print_tasks(void);
 
 #endif  // SCHEDULER_H_

@@ -8,7 +8,7 @@
 // TODO mutex / semaphore.
 // Atomic access will do for now.
 
-extern volatile uint8_t shared_x;
+// extern volatile uint8_t shared_x;
 
 /*********** End of shared memory ***********/
 

@@ -20,31 +20,25 @@ uint16_t task_default_sp(uint8_t const task_memory_block) {
   }
   // Stack grows toward smaller values.
   uint16_t const sp_adr =
-      TASK_RAM_START + ((task_memory_block + 1) * TASK_MEMORY_BYTES) - 1;
+      TASK_RAM_END + ((task_memory_block + 1) * TASK_MEMORY_BYTES) - 1;
   // dprint("Giving task %d SP 0x%X\n", task_memory_block, sp_adr);
   return sp_adr;
 }
 
-uint16_t stack_end() { return TASK_RAM_END; }
-// Stack grows downwards.
-
-uint16_t os_stack_start(void) { return TASK_RAM_END - 1; }
-
-// Stack grows downwards.
-uint16_t os_stack_end(void) {
-  uint16_t const last_start = task_default_sp(TASKS_MAX - 1);
-  uint16_t const margin = 0x0;  // Update memory layout on change!
-
-  return last_start - margin;
-}
-
 void assert_stack_integrity(taskptr_type task) {
-  ASSERT_EQ(TASK_RAM, memory_region(task), "0x%X",
+  cprint("Task SP: 0x%X\n", task->task_sp_adr);
+  ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
+
+  for (uint8_t *canary_byte = (uint8_t *)CANARY_START;
+       canary_byte >= (uint8_t *)CANARY_END; canary_byte--) {
+    ASSERT_EQ(*canary_byte, CANARY_VALUE, "0x%X",
+              "Canary has been changed! The OS stack has likely overflown\n");
+  }
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
   uint16_t const lower_bound =
       task->task_memory_block == 0
-          ? stack_end()
+          ? OS_STACK_START + 1
           : task_default_sp(task->task_memory_block - 1);
   bool const sp_within_bounds =
       (lower_bound <= task->task_sp_adr && task->task_sp_adr <= upper_bound);
@@ -70,7 +64,7 @@ enum MEM_REGION memory_region(taskptr_type adr) {
     return TASK_RAM;
   } else if (in_region(sp, kernel->heap_start, HEAP_END)) {
     return HEAP;
-  } else if (in_region(sp, RAMSTART, kernel->heap_start + 1)) {
+  } else if (in_region(sp, RAMEND, kernel->heap_start + 1)) {
     return INIT;
   } else {
     return UNKNOWN;

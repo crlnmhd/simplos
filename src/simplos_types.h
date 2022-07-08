@@ -45,11 +45,14 @@ typedef uint16_t pid_type;
 
 // TODO use this for all global variables.
 typedef struct Kernel_type {
+  Scheduler_type simplos_schedule;
   char task_names[TASKS_MAX][FUNCTION_NAME_MAX_LENGTH + 1];
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;
   size_t heap_start;  // dynamically determined by the RAM needed for the init
                       // section (main function).
+  size_t task_sp;
+  uint16_t pid_cnt;
 } Kernel_type;
 typedef Kernel_type volatile Kernel;
 

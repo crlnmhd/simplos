@@ -11,4 +11,6 @@ struct TestStatistics {
 };
 
 struct TestStatistics run_all_tests(void);
+
+void run_tests(void);
 #endif  // defined(TESTS_H_)

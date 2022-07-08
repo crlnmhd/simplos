@@ -6,7 +6,7 @@
 #include "os.h"
 
 // extern
-volatile uint8_t shared_x = 5;
+// volatile uint8_t shared_x = 5;
 
 void worker_1_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
@@ -38,8 +38,8 @@ void sum_to_ten(void) {
     ;
   }
   print("res from sum is:%d\n", res);
-  print("shared_x is:%d\n", shared_x);
-  shared_x += res;
+  // print("shared_x is:%d\n", shared_x);
+  // shared_x += res;
 }
 
 void wait_for_me(void) {
@@ -68,21 +68,21 @@ void idle_fn(void) {
   spawn(worker_1_fn, 1, "worker1");
   spawn(worker_2_fn, 1, "worker2");
 
-  shared_x = 1;
+  // shared_x = 1;
   pid_t const p1 = spawn(sum_to_ten, 1, "sto10_1");
   pid_t const p2 = spawn(sum_to_ten, 1, "sto10_2");
 
   print("Sum to ten workers %d and %d started\n", p1, p2);
 
   print("Hi. Fuck Putin\n");
-  print("Adr of shared_x 0x%X\n", &shared_x);
+  // print("Adr of shared_x 0x%X\n", &shared_x);
   print("SP is : 0x%X\n", SP);
-  print("Val of shared_x 0x%X\n", shared_x);
+  // print("Val of shared_x 0x%X\n", shared_x);
   print("SP is : 0x%X\n", SP);
-  while (shared_x != 45 * 2) {
-    print("shared x:%d\n", shared_x);
-    ;
-  }
+  // while (shared_x != 45 * 2) {
+  //   print("shared x:%d\n", shared_x);
+  //   ;
+  // }
   print("Voff voff mjau mjau\n");
   // print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());
   print("Heavy duty shared memory calculations performed!\n");

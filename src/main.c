@@ -11,23 +11,23 @@
 
 // Extern global variable to modify the stack pointer using macros from
 // simplos.h
-volatile Scheduler internal_simplos_schedule;
-volatile Scheduler *volatile simplos_schedule = &internal_simplos_schedule;
-
-volatile Kernel internal_kernel;
-volatile Kernel *volatile kernel = &internal_kernel;
-
-volatile uint16_t internal_task_sp_adr = 0;
-volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
-volatile uint16_t pid_cnt = 0;
 
 int main(void) {
+  // Allocate space (two bytes) for the task_sp "global" variable here.
+  volatile uint16_t space_for_task_sp __attribute__((unused));
+  volatile Kernel space_for_kernel __attribute__((unused));
+
   // Initialite serial communication.
   uart_init();
   FILE uart_file =
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
+  extern int __heap_start;
+  cprint("Heap start is: 0x%X\n", __heap_start);
+  cprint("space for sp at 0x%X\n", &space_for_task_sp);
+  cprint("space for kernel at 0x%X\n", &space_for_kernel);
+  ASSERT_EQ(SP, 0x21FD, "0x%X", "Unexpected initial SP in main()");
   init_timer_interupts();
   cli();
 
@@ -35,6 +35,8 @@ int main(void) {
   DISABLE_MT();
   init_memory();
 
+  cprint("Kernel at at  0x%X\n", kernel);
+  cprint("Scheduler at at  0x%X\n", simplos_schedule);
   cprint("Starting!\n");
 
   init_schedule();
@@ -42,15 +44,15 @@ int main(void) {
   init_ticks();
 #endif  // defined SW_TIME_MEASSREMENTS
 
-  uint8_t const index = add_task_to_queue(0, &simplos_schedule->queue);
-  Simplos_Task *new_task = &simplos_schedule->queue.task_queue[index];
+  uint8_t const index = add_task_to_queue(0, &simplos_schedule.queue);
+  Simplos_Task *new_task = &simplos_schedule.queue.task_queue[index];
   new_task->status = RUNNING;
-  new_task->pid = pid_cnt++;
-  simplos_schedule->queue.curr_task_index = index;
+  new_task->pid = kernel->pid_cnt++;
+  simplos_schedule.queue.curr_task_index = index;
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char *task_name_buf = kernel->task_names[index];
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  strlcpy(task_name_buf, "idle_fn", FUNCTION_NAME_MAX_LENGTH + 1);
+  strlcpy(task_name_buf, "test_fn", FUNCTION_NAME_MAX_LENGTH + 1);
   // Jump to the new task.
 
   kernel->heap_start = SP - 1;
@@ -59,19 +61,16 @@ int main(void) {
          "init section has overflowed heap memory");
   cprint("%d bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
 
-  *task_sp = simplos_schedule->queue.task_queue[index].task_sp_adr;
+  cprint("OS SP: 0x%X\n", SP);
+  *task_sp = simplos_schedule.queue.task_queue[index].task_sp_adr;
   SET_SP();
 
+  // cprint("Kernel at at  0x%X\n", kernel);
   /* Run idle function. Should never leave this. */
   sei();
   ENABLE_MT();
 #if defined(RUN_TESTS)
-  cprint("Running tests\n");
-  struct TestStatistics test_stats = run_all_tests();
-  cprint("\n");
-  cprint("%d tests PASSED\n", test_stats.passed);
-  cprint("%d tests FAILED\n", test_stats.failed);
-  cprint("%d tests SKIPPED \n", test_stats.skipped);
+  run_tests();
 #endif  // defined(RUN_TESTS)
   idle_fn();
   fatal_error("UNREACHABLE END OF MAIN");

@@ -2,6 +2,7 @@
 #define SIMPLOS_H_
 
 #include <avr/interrupt.h>
+#include <avr/io.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -24,13 +25,18 @@
 #if defined(__clang__)
 _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #endif
-extern uint16_t volatile pid_cnt;
 //clang-format on
-extern volatile Kernel internal_kernel;
-extern Kernel volatile *volatile kernel;
 
-extern volatile uint16_t *volatile task_sp;
-extern volatile uint16_t internal_task_sp_adr;
+
+// task_sp is placed in right after RAMEND by allocating space in the main function.
+#define TASK_SP_ADDRESS (RAMEND) 
+// the kernel is places right after task_sp
+#define KERNEL_ADDRESS (TASK_SP_ADDRESS - sizeof(Kernel_type))
+
+#define task_sp ((uint16_t*) TASK_SP_ADDRESS)
+#define kernel ((volatile Kernel_type *volatile) KERNEL_ADDRESS)
+#define simplos_schedule (kernel->simplos_schedule)
+
 
 #define DO_PRAGMA_(x) _Pragma(#x)
 #define DO_PRAGMA(x) DO_PRAGMA_(x)
@@ -58,12 +64,12 @@ extern volatile uint16_t internal_task_sp_adr;
   GCC_IGNORE_BEGIN("-Wdiscarded-qualifiers")
 #define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
 #endif  // __GNUC__
-// clang-format on
 
-/*
- * Add a task to the task queue. This is needed to let the the task execute.
- * */
-uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue);
+    // clang-format on
+    /*
+     * Add a task to the task queue. This is needed to let the the task execute.
+     * */
+    uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue);
 
 /*
  * Set up the scheduler.
@@ -128,8 +134,8 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "push  r29                    \n\t" \
       "push  r30                    \n\t" \
       "push  r31                    \n\t" \
-      "lds   r26, task_sp           \n\t" \
-      "lds   r27, task_sp + 1       \n\t" \
+      "lds   r26, 0x21FE        \n\t"     \
+      "lds   r27, 0x21FF    \n\t"         \
       "in    r0, __SP_L__           \n\t" \
       "st    x+, r0                 \n\t" \
       "in    r0, __SP_H__           \n\t" \
@@ -162,8 +168,8 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
-      "lds  r26, task_sp           \n\t" \
-      "lds  r27, task_sp + 1       \n\t" \
+      "lds  r26, 0x21FE            \n\t" \
+      "lds  r27, 0x21FF            \n\t" \
       "ld   r28, x+                \n\t" \
       "out  __SP_L__, r28          \n\t" \
       "ld   r29, x+                \n\t" \
@@ -207,7 +213,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
   // Use OS stack location
   SAVE_SP();
-  SP = simplos_schedule->os_task_sp;
+  SP = simplos_schedule.os_task_sp;
 
   {
 #if defined(HW_TIME_MEASSUREMENTS)
@@ -215,8 +221,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif
 
     taskptr_type prev =
-        &simplos_schedule->queue
-             .task_queue[simplos_schedule->queue.curr_task_index];
+        &simplos_schedule.queue
+             .task_queue[simplos_schedule.queue.curr_task_index];
 #if defined(SW_TIME_MEASSREMENTS)
     // Increment CPU time counter for previous task
     prev->time_counter += GET_TICK_COUNTER();
@@ -241,8 +247,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
     }
     select_next_task();
     taskptr_type task =
-        &simplos_schedule->queue
-             .task_queue[simplos_schedule->queue.curr_task_index];
+        &simplos_schedule.queue
+             .task_queue[simplos_schedule.queue.curr_task_index];
 
 #if defined(VERBOSE_OUTPUT)
     print_task(task, true);

@@ -56,7 +56,7 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
 
 bool test_single_yeild(void) {
   int x = 42;
-  // yield();
+  yield();
   TEST_ASSERT_EQ(x, 42, "%d", "Yield caused funny issues");
   return true;
 }
@@ -90,6 +90,15 @@ struct TestStatistics run_all_tests(void) {
            test_statistics);
 
   return test_statistics;
+}
+
+void run_tests(void) {
+  print("Running tests\n");
+  struct TestStatistics test_stats = run_all_tests();
+  print("\n");
+  print("%d tests PASSED\n", test_stats.passed);
+  print("%d tests FAILED\n", test_stats.failed);
+  print("%d tests SKIPPED \n", test_stats.skipped);
 }
 
 #endif  // defined(RUN_TESTS)
