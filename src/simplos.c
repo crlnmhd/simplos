@@ -192,6 +192,14 @@ void init_memory(void) {
   }
   ASSERT_EQ(*(uint8_t *)0x204, CANARY_VALUE, "0x%X",
             "Failed to write register-os stack canary!");
+  ASSERT_EQ(*(uint8_t *)0x203, CANARY_VALUE, "0x%X",
+            "Failed to write register-os stack canary!");
+  ASSERT_EQ(*(uint8_t *)0x202, CANARY_VALUE, "0x%X",
+            "Failed to write register-os stack canary!");
+  ASSERT_EQ(*(uint8_t *)0x201, CANARY_VALUE, "0x%X",
+            "Failed to write register-os stack canary!");
+  ASSERT_EQ(*(uint8_t *)0x200, CANARY_VALUE, "0x%X",
+            "Failed to write register-os stack canary!");
   /*
   for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i) {
     kernel->heap_mapping[i] = 0xFF;
