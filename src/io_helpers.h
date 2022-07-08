@@ -67,7 +67,7 @@ _Pragma("clang diagnostic pop")
 // Safe print from the os task
 #define os_safe_print(fmt, ...)     \
   uint16_t old_sp = SP();           \
-  SP = simplos_schedule.os_task_sp; \
+  SP = kernel->schedule.os_task_sp; \
   cprint(fmt, ##__VA_ARGS__);       \
   SP = old_sp;
 

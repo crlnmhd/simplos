@@ -12,10 +12,10 @@ void yield(void) {
   k_yield();
 }
 
-uint8_t rank(void) { return simplos_schedule.queue.curr_task_index; }
+uint8_t rank(void) { return kernel->schedule.queue.curr_task_index; }
 uint16_t pid(void) {
-  return simplos_schedule.queue
-      .task_queue[simplos_schedule.queue.curr_task_index]
+  return kernel->schedule.queue
+      .task_queue[kernel->schedule.queue.curr_task_index]
       .pid;
 }
 
@@ -34,7 +34,7 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
 void kill_curr_task(void) { kill_current_task(); }
 
 void set_priority(uint8_t const priority) {
-  simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index]
+  kernel->schedule.queue.task_queue[kernel->schedule.queue.curr_task_index]
       .priority = priority;
 }
 

@@ -33,8 +33,6 @@ extern Kernel volatile *volatile kernel;
 extern volatile uint16_t *volatile task_sp;
 extern volatile uint16_t internal_task_sp_adr;
 
-#define simplos_schedule (kernel->simplos_schedule)
-
 #define DO_PRAGMA_(x) _Pragma(#x)
 #define DO_PRAGMA(x) DO_PRAGMA_(x)
 //clang-format off
@@ -210,7 +208,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
   // Use OS stack location
   SAVE_SP();
-  SP = simplos_schedule.os_task_sp;
+  SP = kernel->schedule.os_task_sp;
 
   {
 #if defined(HW_TIME_MEASSUREMENTS)
@@ -218,8 +216,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif
 
     taskptr_type prev =
-        &simplos_schedule.queue
-             .task_queue[simplos_schedule.queue.curr_task_index];
+        &kernel->schedule.queue
+             .task_queue[kernel->schedule.queue.curr_task_index];
 #if defined(SW_TIME_MEASSREMENTS)
     // Increment CPU time counter for previous task
     prev->time_counter += GET_TICK_COUNTER();
@@ -244,8 +242,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
     }
     select_next_task();
     taskptr_type task =
-        &simplos_schedule.queue
-             .task_queue[simplos_schedule.queue.curr_task_index];
+        &kernel->schedule.queue
+             .task_queue[kernel->schedule.queue.curr_task_index];
 
 #if defined(VERBOSE_OUTPUT)
     print_task(task, true);
@@ -264,7 +262,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif  // SW_TIME_MEASSREMENTS
 
 #if defined(HW_TIME_MEASSUREMENTS)
-    output_curr_task(simplos_schedule->queue.curr_task_index);
+    output_curr_task(kernel->schedule->queue.curr_task_index);
 #endif
   }
   reset_timer();

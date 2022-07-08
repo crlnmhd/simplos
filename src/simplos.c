@@ -48,8 +48,8 @@ NO_MT uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
 }
 
 NO_MT void init_schedule(void) {
-  simplos_schedule.os_task_sp = OS_STACK_START;
-  init_empty_queue(&(simplos_schedule.queue));
+  kernel->schedule.os_task_sp = OS_STACK_START;
+  init_empty_queue(&(kernel->schedule.queue));
   kernel->cs_time_counter = 0;
 }
 
@@ -78,20 +78,20 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
                     char const *name) {
   DISABLE_MT();
   uint8_t const new_task_index =
-      add_task_to_queue(priority, &simplos_schedule.queue);
+      add_task_to_queue(priority, &kernel->schedule.queue);
 
-  simplos_schedule.queue.task_queue[new_task_index].status = RUNNING;
+  kernel->schedule.queue.task_queue[new_task_index].status = RUNNING;
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char *task_name_buffer = kernel->task_names[new_task_index];
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
   strlcpy(task_name_buffer, name, FUNCTION_NAME_MAX_LENGTH + 1);
 
   uint16_t const new_task_pid = kernel->pid_cnt++;
-  simplos_schedule.queue.task_queue[new_task_index].pid = new_task_pid;
+  kernel->schedule.queue.task_queue[new_task_index].pid = new_task_pid;
   cprint("Spawning task \"%s\" with PID %d\n", task_name_buffer, new_task_pid);
   taskptr_type old_task =
-      &simplos_schedule.queue
-           .task_queue[simplos_schedule.queue.curr_task_index];
+      &kernel->schedule.queue
+           .task_queue[kernel->schedule.queue.curr_task_index];
 
   old_task->status = READY;
 
@@ -99,7 +99,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
   old_task->time_counter += GET_TICK_COUNTER();
   RESET_TICK_COUNTER();
 #endif  // SW_TIME_MEASSREMNTS
-  simplos_schedule.queue.curr_task_index = new_task_index;
+  kernel->schedule.queue.curr_task_index = new_task_index;
 
   register uint8_t tmpH, tmpM, tmpL, tmp;
   cli();
@@ -131,7 +131,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
   old_task->task_sp_adr = *task_sp;
 
   *task_sp =
-      simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index]
+      kernel->schedule.queue.task_queue[kernel->schedule.queue.curr_task_index]
           .task_sp_adr;
   SET_SP();
   cprint("Calling function\n");
@@ -139,9 +139,9 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
   fn();
   DISABLE_MT();
   cprint("Function finnished\n");
-  simplos_schedule.queue.task_queue[simplos_schedule.queue.curr_task_index]
+  kernel->schedule.queue.task_queue[kernel->schedule.queue.curr_task_index]
       .status = EMPTY;
-  kernel->task_names[simplos_schedule.queue.curr_task_index][0] = '\0';
+  kernel->task_names[kernel->schedule.queue.curr_task_index][0] = '\0';
 
   k_yield();  // re-enable interrupts.
 
@@ -157,9 +157,9 @@ void kill_current_task(void) {
   cli();
   ENABLE_MT();
 
-  uint8_t const curr_task_index = simplos_schedule.queue.curr_task_index;
+  uint8_t const curr_task_index = kernel->schedule.queue.curr_task_index;
 
-  Simplos_Task *task = &simplos_schedule.queue.task_queue[curr_task_index];
+  Simplos_Task *task = &kernel->schedule.queue.task_queue[curr_task_index];
   task->status = EMPTY;
   kernel->task_names[curr_task_index][0] = '\0';
   kernel->ended_task_time_counter += task->time_counter;
@@ -169,8 +169,8 @@ void kill_current_task(void) {
 Simplos_Task *get_task(pid_type pid) {
   DISABLE_MT();
   for (uint8_t t = 0; t < TASKS_MAX; ++t) {
-    if (simplos_schedule.queue.task_queue[t].pid == pid) {
-      return &simplos_schedule.queue.task_queue[t];
+    if (kernel->schedule.queue.task_queue[t].pid == pid) {
+      return &kernel->schedule.queue.task_queue[t];
     }
   }
   ENABLE_MT();
