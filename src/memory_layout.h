@@ -20,7 +20,6 @@
 
 #define TASK_RAM_END 0x350
 #define TASK_RAM_START 0xD50
-#define TASK_MEMORY_BYTES 0x200
 
 #define HEAP_END (TASK_RAM_START + 1)
 // Start of heap (high) is dynamically defined based on the size of the RAM

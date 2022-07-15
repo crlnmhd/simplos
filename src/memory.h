@@ -17,8 +17,11 @@ enum MEM_REGION {
 
 enum MEM_REGION memory_region(taskptr_type);
 
-uint16_t task_default_sp(uint8_t);
+uint16_t task_default_sp(uint8_t task_index);
 
 void assert_stack_integrity(taskptr_type task_block);
 
+uint16_t task_memory_size(void);
+
+void check_task_configuration_uses_all_available_memory(void);
 #endif  // MEMORY_H_

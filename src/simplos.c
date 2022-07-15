@@ -13,6 +13,8 @@
 #include "timers.h"
 
 NO_MT void init_empty_queue(Task_Queue *queue) {
+  check_task_configuration_uses_all_available_memory();
+
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_type task = (taskptr_type)&queue->task_queue[i];
     task->task_memory_block = i;
@@ -23,7 +25,7 @@ NO_MT void init_empty_queue(Task_Queue *queue) {
     END_DISCARD_VOLATILE_QUALIFIER_WARNING()
     strlcpy(task_name_buf, "", FUNCTION_NAME_MAX_LENGTH + 1);
     cprint("Initiating mem block %d at 0x%X-0x%X\n", i,
-           task->task_sp_adr - TASK_MEMORY_BYTES, task->task_sp_adr);
+           task->task_sp_adr - task_memory_size(), task->task_sp_adr);
     task->status = EMPTY;
   }
 }

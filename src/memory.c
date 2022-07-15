@@ -9,6 +9,18 @@
 #include "simplos_types.h"
 #include "timers.h"
 
+void check_task_configuration_uses_all_available_memory(void) {
+  // Warn if not all available task memory has been allocated due to sub-optimal
+  // configuration.
+  const uint16_t available_task_stack_size = TASK_RAM_START - TASK_RAM_END;
+  const uint16_t used_task_memory = task_memory_size() * TASKS_MAX;
+  if (used_task_memory != available_task_stack_size) {
+    warn(
+        "Could not divide available stack evenly between tasks. Consider "
+        "modifying the configuration.\n");
+  }
+}
+
 INLINED bool in_region(size_t address, size_t region_start, size_t region_end) {
   return region_end <= address && address <= region_start;
 }
@@ -19,8 +31,8 @@ uint16_t task_default_sp(uint8_t const task_memory_block) {
                 task_memory_block);
   }
   // Stack grows toward smaller values.
-  uint16_t const sp_adr =
-      TASK_RAM_END + ((task_memory_block + 1) * TASK_MEMORY_BYTES);
+  const uint16_t sp_adr =
+      TASK_RAM_END + ((task_memory_block + 1) * task_memory_size());
   // dprint("Giving task %d SP 0x%X\n", task_memory_block, sp_adr);
   return sp_adr;
 }
@@ -50,6 +62,10 @@ void assert_stack_integrity(taskptr_type task) {
     fatal_error("STACK OVERFLOW DETECTED!\nTask %d SP = 0x%X is of bounds.",
                 task->task_memory_block, task->task_sp_adr);
   }
+}
+
+uint16_t task_memory_size(void) {
+  return (TASK_RAM_START - TASK_RAM_END) / TASKS_MAX;
 }
 
 enum MEM_REGION memory_region(taskptr_type adr) {
