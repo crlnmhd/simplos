@@ -19,10 +19,12 @@ NO_MT void print_task(taskptr_type task, bool const checks) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char const *task_name = kernel->task_names[task_index];
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  cprint("Task \"%s\" at block %d:", task_name, task_index);
+  cprint("Task: \"%s\". Block: %d", task_name, task_index);
   cprint(" PID: %d", task->pid);
-  cprint(" Priority %d", task->priority);
-  cprint(" SP = 0x%X", task->task_sp_adr);
+  cprint(" Priority: %d", task->priority);
+  cprint(" SP: 0x%X", task->task_sp_adr);
+  struct StackRange task_ram_range = kernel->task_RAM_ranges[task_index];
+  cprint(" [0x%X - 0x%X]\n", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {
     case READY:
