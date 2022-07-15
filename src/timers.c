@@ -29,7 +29,7 @@ NO_MT void init_ticks(void) {
   // Use normal mode.
   // TCCR2B |= (0 << WGM32);
   // Set CS32 for 256 prescaler
-  TCCR2B |= 1 << CS30;
+  TCCR3B |= 1 << CS30;
 }
 #endif  // defined SW_TIME_MEASSREMENTS
 
