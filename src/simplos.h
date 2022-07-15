@@ -67,6 +67,11 @@ extern volatile uint16_t internal_task_sp_adr;
 uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue);
 
 /*
+ * Set up kernel configuration.
+ * */
+void init_kernel(void);
+
+/*
  * Set up the scheduler.
  * */
 void init_schedule(void);

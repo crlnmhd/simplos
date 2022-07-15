@@ -20,10 +20,6 @@ NO_MT void init_empty_queue(Task_Queue *queue) {
     task->task_memory_block = i;
     task->time_counter = 0;
     task->task_sp_adr = task_default_sp(task->task_memory_block);
-    BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
-    char *task_name_buf = kernel->task_names[i];
-    END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-    strlcpy(task_name_buf, "", FUNCTION_NAME_MAX_LENGTH + 1);
     cprint("Initiating mem block %d at 0x%X-0x%X\n", i,
            task->task_sp_adr - task_memory_size(), task->task_sp_adr);
     task->status = EMPTY;
@@ -72,6 +68,23 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   context_switch();
   // PORTA &= ~(1 << PORTA0);
   reti();
+}
+
+NO_MT void init_kernel(void) {
+  for (uint8_t i = 0; i < TASKS_MAX; i++) {
+    // Empty task name.
+    BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
+    char *task_name_buf = kernel->task_names[i];
+    END_DISCARD_VOLATILE_QUALIFIER_WARNING()
+    strlcpy(task_name_buf, "", FUNCTION_NAME_MAX_LENGTH + 1);
+
+    // Set task RAM range.
+    BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
+    struct StackRange *task_stack_range = &kernel->task_RAM_ranges[i];
+    END_DISCARD_VOLATILE_QUALIFIER_WARNING()
+    task_stack_range->high = task_default_sp(i);
+    task_stack_range->low = task_default_sp(i) - task_memory_size();
+  }
 }
 
 pid_type spawn_task(void (*fn)(void), uint8_t const priority,

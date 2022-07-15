@@ -41,7 +41,14 @@ void assert_stack_integrity(taskptr_type task) {
   cprint("Task SP: 0x%X\n", task->task_sp_adr);
   ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
+  struct StackRange task_stack_range =
+      kernel->task_RAM_ranges[task->task_memory_block];
+  ASSERT(task_stack_range.low <= task->task_sp_adr &&
+             task->task_sp_adr <= task_stack_range.high,
+         "TASK MEMORY ERROR! Saved stack pointer 0x%X is outside allowed range "
+         "for task\n.");
 
+  // Check canaries.
   for (uint8_t *canary_byte = (uint8_t *)CANARY_START;
        canary_byte >= (uint8_t *)CANARY_END; canary_byte--) {
     ASSERT_EQ(*canary_byte, CANARY_VALUE, "0x%X",

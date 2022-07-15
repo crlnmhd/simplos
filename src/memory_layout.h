@@ -27,4 +27,10 @@
 
 #define FUNCTION_NAME_MAX_LENGTH 8
 
+#include <stdint.h>
+struct StackRange {
+  uint16_t low;
+  uint16_t high;
+};
+
 #endif  // !defined MEMORY_LAYOUT_H_

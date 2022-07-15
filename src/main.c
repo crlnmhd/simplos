@@ -39,6 +39,7 @@ int main(void) {
   cprint("Scheduler at  0x%X\n", &kernel->schedule);
   cprint("Starting!\n");
 
+  init_kernel();
   init_schedule();
 #if defined(SW_TIME_MEASSREMENTS)
   init_ticks();
