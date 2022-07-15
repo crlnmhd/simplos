@@ -71,6 +71,11 @@ _Pragma("clang diagnostic pop")
   cprint(fmt, ##__VA_ARGS__);       \
   SP = old_sp;
 
+#define warn(fmt, ...)                    \
+  SCILENT_DISABLE_MT();                   \
+  print_from_prg_mem(fmt, ##__VA_ARGS__); \
+  SCILENT_ENABLE_MT();
+
 #if defined(HW_TIME_MEASSUREMENTS)
         static inline
     __attribute__((always_inline,
