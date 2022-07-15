@@ -20,7 +20,7 @@ uint16_t task_default_sp(uint8_t const task_memory_block) {
   }
   // Stack grows toward smaller values.
   uint16_t const sp_adr =
-      TASK_RAM_END + ((task_memory_block + 1) * TASK_MEMORY_BYTES) - 1;
+      TASK_RAM_END + ((task_memory_block + 1) * TASK_MEMORY_BYTES);
   // dprint("Giving task %d SP 0x%X\n", task_memory_block, sp_adr);
   return sp_adr;
 }

@@ -15,14 +15,14 @@
 #define CANARY_END 0x200
 #define CANARY_VALUE 0x66  // As good a random value as any.
 
-#define OS_STACK_START 0x24F
+#define OS_STACK_START 0x34F
 #define OS_STACK_END 0x205
 
-#define TASK_RAM_END 0x250
-#define TASK_RAM_START 0xC4F
+#define TASK_RAM_END 0x350
+#define TASK_RAM_START 0xD50
 #define TASK_MEMORY_BYTES 0x200
 
-#define HEAP_END TASK_RAM_START + 1
+#define HEAP_END (TASK_RAM_START + 1)
 // Start of heap (high) is dynamically defined based on the size of the RAM
 // needed by init (the main function).
 

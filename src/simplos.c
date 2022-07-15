@@ -22,7 +22,8 @@ NO_MT void init_empty_queue(Task_Queue *queue) {
     char *task_name_buf = kernel->task_names[i];
     END_DISCARD_VOLATILE_QUALIFIER_WARNING()
     strlcpy(task_name_buf, "", FUNCTION_NAME_MAX_LENGTH + 1);
-    cprint("Initiating mem block %d with SP 0x%X\n", i, task->task_sp_adr);
+    cprint("Initiating mem block %d at 0x%X-0x%X\n", i,
+           task->task_sp_adr - TASK_MEMORY_BYTES, task->task_sp_adr);
     task->status = EMPTY;
   }
 }
@@ -60,9 +61,6 @@ __attribute__((noinline, naked)) void k_yield(void) {
   // PORTB = 0xFF;  // turn on led, and whatever else happen to be there...
 
   context_switch();
-  // is handled manually).
-  // asm volatile("ret" ::: "memory");
-  sei();
   asm volatile("ret");
 }
 
