@@ -91,7 +91,7 @@ dir:
 	mkdir -p build
 
 # Target to compile and generate database for clangd.
-build: dir all compile_commands.json
+build: compile_commands.json dir all
 
 all: $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o build/simplos.out
