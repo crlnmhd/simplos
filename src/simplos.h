@@ -50,6 +50,7 @@ extern volatile uint16_t internal_task_sp_adr;
 #define GCC_IGNORE_END() _Pragma("GCC diagnostic pop")
 #endif  // __GNUC__
 
+/*
 #if defined(__clang__)
 #define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() \
   CLANG_IGNORE_BEGIN("-Wincompatible-pointer-types-discards-qualifiers")
@@ -59,7 +60,11 @@ extern volatile uint16_t internal_task_sp_adr;
   GCC_IGNORE_BEGIN("-Wdiscarded-qualifiers")
 #define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
 #endif  // __GNUC__
+*/
 
+#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() volatile
+
+#define END_DISCARD_VOLATILE_QUALIFIER_WARNING()
 // clang-format on
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
@@ -211,8 +216,9 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 
 static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
-  // Use OS stack location
   SAVE_SP();
+  SCILENT_DISABLE_MT();
+  // Use OS stack location
   SP = kernel->schedule.os_task_sp;
 
   {
@@ -223,6 +229,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
     taskptr_type prev =
         &kernel->schedule.queue
              .task_queue[kernel->schedule.queue.curr_task_index];
+    cprint("printing task:\n");
+    print_task(prev, true);
 #if defined(SW_TIME_MEASSREMENTS)
     // Increment CPU time counter for previous task
     prev->time_counter += GET_TICK_COUNTER();
@@ -251,6 +259,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
              .task_queue[kernel->schedule.queue.curr_task_index];
 
 #if defined(VERBOSE_OUTPUT)
+    cprint("printing task:\n");
     print_task(task, true);
 #endif  // defined VERBOSE_OUTPUT
     task->status = RUNNING;
@@ -269,8 +278,9 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #if defined(HW_TIME_MEASSUREMENTS)
     output_curr_task(kernel->schedule->queue.curr_task_index);
 #endif
+    reset_timer();
   }
-  reset_timer();
+  SCILENT_ENABLE_MT();
   SET_SP();
   RESTORE_CONTEXT();
   sei();

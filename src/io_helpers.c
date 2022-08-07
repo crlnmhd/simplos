@@ -58,6 +58,7 @@ NO_MT void print_schedule(void) {
     // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
     print_task(task, false);
   }
+  cprint(" --  end of schedule --\n")
 }
 
 NO_MT void print_timing_data(void) {
