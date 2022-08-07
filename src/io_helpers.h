@@ -23,10 +23,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
     ;
 
 #if defined(DEBUG_OUTPUT)
-#define cprint(fmt, ...)                  \
-  SCILENT_DISABLE_MT();                   \
-  print_from_prg_mem(fmt, ##__VA_ARGS__); \
-  SCILENT_ENABLE_MT();
+#define cprint(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 #else
 #define cprint(fmt, ...) \
   { ; };
@@ -62,6 +59,7 @@ _Pragma("clang diagnostic pop")
   cli();                                  \
   print_from_prg_mem("FATAL ERROR!\n");   \
   print_from_prg_mem(str, ##__VA_ARGS__); \
+  print_from_prg_mem("\n");               \
   HALT
 
 // Safe print from the os task
@@ -71,10 +69,7 @@ _Pragma("clang diagnostic pop")
   cprint(fmt, ##__VA_ARGS__);       \
   SP = old_sp;
 
-#define warn(fmt, ...)                    \
-  SCILENT_DISABLE_MT();                   \
-  print_from_prg_mem(fmt, ##__VA_ARGS__); \
-  SCILENT_ENABLE_MT();
+#define warn(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 
 #if defined(HW_TIME_MEASSUREMENTS)
         static inline
