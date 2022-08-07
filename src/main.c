@@ -22,6 +22,9 @@ int main(void) {
   // The stack starts where the just before the .data section begins.
   SP = STACK_HIGH;
   // Initialite serial communication.
+  sei();
+  asm volatile("nop");
+  cli();
   uart_init();
   FILE uart_file =
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
@@ -29,14 +32,13 @@ int main(void) {
 
   cprint("space for kernel at 0x%X\n", &internal_kernel_location);
   init_timer_interupts();
-  cli();
 
   // disable timer compare interrupt for now
   DISABLE_MT();
   init_memory();
 
   cprint("Kernel at  0x%X\n", &kernel);
-  cprint("Scheduler at  0x%X\n", &kernel->schedule);
+  cprint("kernel end at  0x%X\n", &kernel->heap_start + sizeof(uint16_t));
   cprint("Starting!\n");
 
   init_kernel();
@@ -50,13 +52,12 @@ int main(void) {
   new_task->status = RUNNING;
   new_task->pid = kernel->pid_cnt++;
   kernel->schedule.queue.curr_task_index = index;
-  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  char *task_name_buf = kernel->task_names[index];
-  END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  strlcpy(task_name_buf, "test_fn", FUNCTION_NAME_MAX_LENGTH + 1);
+  strlcpy(kernel->task_names[index], "idle_fn", FUNCTION_NAME_MAX_LENGTH + 1);
   // Jump to the new task.
   cprint("OS SP set to: 0x%X\n", kernel->schedule.os_task_sp);
-  kernel->heap_start = SP - 1;
+
+  const uint8_t remaining_main_margin = 10;
+  kernel->heap_start = SP - remaining_main_margin;
   cprint("Heap starting at  0x%X\n", kernel->heap_start);
   ASSERT(kernel->heap_start > TASK_RAM_START,
          "init section has overflowed heap memory");
@@ -69,9 +70,6 @@ int main(void) {
   /* Run idle function. Should never leave this. */
   sei();
   ENABLE_MT();
-#if defined(RUN_TESTS)
-  run_tests();
-#endif  // defined(RUN_TESTS)
   idle_fn();
-  fatal_error("UNREACHABLE END OF MAIN");
+  fatal_error("UNREACHABLE END OF MAIN\n");
 }

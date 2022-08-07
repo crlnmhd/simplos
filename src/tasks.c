@@ -4,6 +4,7 @@
 
 #include "io_helpers.h"
 #include "os.h"
+#include "test.h"
 
 // extern
 // volatile uint8_t shared_x = 5;
@@ -64,6 +65,11 @@ void wait_for_other(void) {
 
 void idle_fn(void) {
   print("Starting idle function\n");
+
+#if defined(RUN_TESTS)
+  run_tests();
+#endif  // defined(RUN_TESTS)
+
   print("Testing context switch ratio\n");
   spawn(worker_1_fn, 1, "worker1");
   spawn(worker_2_fn, 1, "worker2");
