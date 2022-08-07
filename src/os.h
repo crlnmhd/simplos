@@ -34,15 +34,18 @@ void *malloc(size_t bytes);
 // void mutex_lock(mutex* mtx);
 // void mutex_unlock(mutex* mtx);
 
-#define print(fmt, ...)               \
-  asm volatile("cli");                \
-  printf_P(PSTR(fmt), ##__VA_ARGS__); \
-  asm volatile("sei");
+#define print(fmt, ...)                    \
+  do {                                     \
+    uint8_t internal_kernel_sreg__ = SREG; \
+    cli();                                 \
+    printf_P(PSTR(fmt), ##__VA_ARGS__);    \
+    SREG = internal_kernel_sreg__;         \
+  } while (0)
 
-#define HALT_EXEC()    \
-  print("Halting!");   \
-  asm volatile("cli"); \
-  for (;;)             \
+#define HALT_EXEC()  \
+  print("Halting!"); \
+  cli();             \
+  for (;;)           \
     ;
 
 #endif  // OS_H_
