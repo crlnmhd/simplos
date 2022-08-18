@@ -1,8 +1,8 @@
-#include "timers.h"
+#include "../timers.h"
 #if defined(RUN_TESTS)
 #include <avr/pgmspace.h>
 
-#include "os.h"
+#include "../os.h"
 #include "test.h"
 #define SKIP_TEST(test_fn, function_name, test_statistics)       \
   test_statistics.skipped += 1;                                  \
@@ -67,6 +67,11 @@ bool test_single_yeild(void) {
   print("x = %d\n", x);
   print("x lives here: 0x%X\n", &x);
   print("x = %d\n", x);
+  asm volatile("push r16");
+  asm volatile("ldi r16, 0xFF");
+  asm volatile("push r16");
+  asm volatile("push r16");
+  asm volatile("push r16");
   yield();
   TEST_ASSERT_EQ(x, 42, "%d", "Yield caused funny issues");
   print("IT ALL WORKED!\n");

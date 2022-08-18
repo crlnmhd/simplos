@@ -51,10 +51,8 @@ DEFINES += -DSTACK_HIGH=$(STACK_HIGH)
 SRC := src
 OBJ := build
 
-SOURCES := $(wildcard $(SRC)/*.c)
-OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
-
-
+SOURCES := $(wildcard $(SRC)/*.c $(SRC)/*/*.c)
+OBJECTS := $(patsubst $(SRC)/%,$(OBJ)/%,$(addsuffix .o,$(basename $(SOURCES))))
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -73,6 +71,7 @@ CFLAGS := -Wall $\
 					-mmcu=$(uP) $\
 					-I$(AVRINC) $\
 					-I/include/ $\
+					-I$(TESTS_DIR) $\
 					-DF_CPU=$(CPU_FREQ) $\
 					-DBAUD=$(BAUD) $\
 					-g $\
@@ -86,11 +85,11 @@ AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb
 
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
 %.compdb_entry: %.c
-	@echo "    {" > $@
-	@echo "        \"command\": \"$(CC)  $(CFLAGS) $(CPPFLAGS) -c $<\","   >> $@
-	@echo "        \"directory\": \"$(CURDIR)\","               >> $@
-	@echo "        \"file\": \"$<\""                    >> $@
-	@echo "    },"                              >> $@
+	@echo "    {"                                             > $@
+	@echo "        \"command\": \"$(CC)  $(CFLAGS) -c $<\"," >> $@
+	@echo "        \"directory\": \"$(CURDIR)\","            >> $@
+	@echo "        \"file\": \"$<\""                         >> $@
+	@echo "    },"                                           >> $@
 
 COMPDB_ENTRIES = $(addsuffix .compdb_entry, $(basename $(SOURCES)))
 
@@ -107,6 +106,7 @@ compile_commands.json: $(COMPDB_ENTRIES)
 # Create build directory only if it doesn't exits.
 dir:
 	mkdir -p build
+	mkdir -p build/tests
 
 # Target to compile and generate database for clangd.
 build: compile_commands.json dir all

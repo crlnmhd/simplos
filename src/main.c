@@ -6,7 +6,7 @@
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"
-#include "test.h"
+#include "tests/test.h"
 #include "timers.h"
 
 // Extern global variable to modify the stack pointer using macros from

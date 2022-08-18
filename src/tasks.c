@@ -4,7 +4,7 @@
 
 #include "io_helpers.h"
 #include "os.h"
-#include "test.h"
+#include "tests/test.h"
 
 // extern
 // volatile uint8_t shared_x = 5;
