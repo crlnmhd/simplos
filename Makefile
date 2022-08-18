@@ -16,10 +16,11 @@ DEFINES :=
 DEFINES += -DUSE_STATIC
 
 # Enables optimization. Use only for non threadsafe components.
-DEFINES += -DNO_MT='__attribute__((optimize("Os")))'
+# DEFINES += -DNO_MT='__attribute__((optimize("Os")))'
+DEFINES += -DNO_MT='' # '__attribute__((optimize("Os")))'
 
 # Enable verbose output
-# DEFINES += -DVERBOSE_OUTPUT
+DEFINES += -DVERBOSE_OUTPUT
 
 # Use attached device on  22-26 to output current task as status during context
 # switch. Poll this over time on a separate device to gain knowledge of system
@@ -60,7 +61,24 @@ CC := avr-gcc
 AVRINC := /usr/avr/include
 SIMAVR := simavr
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
-CFLAGS := -Werror -Wall -pedantic -Wextra -Wstrict-prototypes -fshort-enums -std=gnu17 $(DEFINES) -mmcu=$(uP) -Wno-unknown-attributes -I$(AVRINC) -I/include/ -DF_CPU=$(CPU_FREQ) -DBAUD=$(BAUD) -g -Wl,--section-start=.data=$(DATA_SECTION_START)
+CFLAGS := -Wall $\
+					-pedantic $\
+					-Wextra $\
+					-Wstrict-prototypes $\
+					-fshort-enums $\
+					-std=gnu17 $\
+					-Wno-unknown-attributes $\
+					-fno-omit-frame-pointer $\
+					$(DEFINES) $\
+					-mmcu=$(uP) $\
+					-I$(AVRINC) $\
+					-I/include/ $\
+					-DF_CPU=$(CPU_FREQ) $\
+					-DBAUD=$(BAUD) $\
+					-g $\
+					-Wl,--section-start=.data=$(DATA_SECTION_START) $\
+					-Os
+
 FRAMEWORK := wiring
 
 AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb
@@ -119,11 +137,14 @@ clean:
 sim:
 	$(SIMAVR) -v -v -v -g -m $(uP) build/simplos.out
 
+show-size:
+	avr-size --mcu=$(uP) -A -x build/simplos.out
+
 debug:
-	$(AVR_GDB) build/simplos.out -ex "target remote :1234" -ex "directory src/"
+	$(AVR_GDB) build/simplos.out -x debug_config.gdb
 
 debug_siulator:
-	gdb -ex "directory $(SIMAVR_SRC)" --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
+	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
 
 rebuild_container:
 	$(DOCKER) build --rm -t avr_docker .
