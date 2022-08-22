@@ -9,6 +9,14 @@
 #include "simplos_types.h"
 #include "timers.h"
 
+void configure_heap_location(const int margin_to_main) {
+  kernel->heap_start = SP - margin_to_main;
+  cprint("Heap starting at  0x%X\n", kernel->heap_start);
+  ASSERT(kernel->heap_start > TASK_RAM_START,
+         "init section has overflowed heap memory");
+  cprint("%d bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
+}
+
 void check_task_configuration_uses_all_available_memory(void) {
   // Warn if not all available task memory has been allocated due to sub-optimal
   // configuration.

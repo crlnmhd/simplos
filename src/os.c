@@ -7,9 +7,17 @@
 #include "simplos.h"
 #include "simplos_types.h"
 
-void yield(void) {
-  cprint("Hi from yield!\n");
+// void yield(void) {
+void __attribute__((noinline)) yield(void) {
+  //  cprint("SP is 0x%X\n", SP);
+  //  asm volatile("nop");
+  //  cprint("Hi from yield!\n");
   k_yield();
+  ASSERT_EQ((*(uint16_t *)0x505), 0x0011, "0x%X",
+            "unexpected upper end of return address");
+  ASSERT_EQ((*(uint8_t *)0x507), 0x00b6, "0x%X",
+            "unexpected lower end of return address");
+  //  cprint("SP post pop 0x%X\n", SP);
 }
 
 uint8_t rank(void) { return kernel->schedule.queue.curr_task_index; }
