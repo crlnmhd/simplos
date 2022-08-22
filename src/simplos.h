@@ -105,7 +105,6 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
   asm volatile(                           \
       "push  r0                    \n\t"  \
       "in    r0, __SREG__          \n\t"  \
-      "cli                         \n\t"  \
       "push  r0                    \n\t"  \
       "push  r1                    \n\t"  \
       "clr   r1                    \n\t"  \
@@ -144,32 +143,7 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "in    r0, __SP_L__           \n\t" \
       "st    x+, r0                 \n\t" \
       "in    r0, __SP_H__           \n\t" \
-      "st    x+, r0                 \n\t" \
-      "sei                          \n\t");
-
-#define SET_SP() SP = *task_sp;
-
-#define SAVE_SP() *task_sp = SP;
-
-/*
- #define SAVE_SP()                         \
-   asm volatile(                           \
-      "lds   r26, task_sp           \n\t" \
-      "lds   r27, task_sp + 1       \n\t" \
-      "in    r0, __SP_L__           \n\t" \
-      "st    x+, r0                 \n\t" \
-      "in    r0, __SP_H__           \n\t" \
       "st    x+, r0                 \n\t");
-
-#define SET_SP()                         \
-  asm volatile(                          \
-      "lds  r26, task_sp           \n\t" \
-      "lds  r27, task_sp + 1       \n\t" \
-      "ld   r28, x+                \n\t" \
-      "out  __SP_L__, r28          \n\t" \
-      "ld   r29, x+                \n\t" \
-      "out  __SP_H__, r29          \n\t");
-      */
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
@@ -214,76 +188,78 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "out  __SREG__, r0           \n\t" \
       "pop  r0                     \n\t");
 
+#define SET_SP() SP = *task_sp;
+
+#define SAVE_SP() *task_sp = SP;
+
 static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
   SAVE_SP();
   SCILENT_DISABLE_MT();
   // Use OS stack location
   SP = kernel->schedule.os_task_sp;
-
-  {
 #if defined(HW_TIME_MEASSUREMENTS)
-    output_curr_task(OS_TASK_BLOCK);
+  output_curr_task(OS_TASK_BLOCK);
 #endif
 
-    taskptr_type prev =
-        &kernel->schedule.queue
-             .task_queue[kernel->schedule.queue.curr_task_index];
-    cprint("printing task:\n");
-    print_task(prev, true);
+  taskptr_type prev = &kernel->schedule.queue
+                           .task_queue[kernel->schedule.queue.curr_task_index];
+  cprint("printing task:\n");
+  print_task(prev, true);
 #if defined(SW_TIME_MEASSREMENTS)
-    // Increment CPU time counter for previous task
-    prev->time_counter += GET_TICK_COUNTER();
+  // Increment CPU time counter for previous task
+  prev->time_counter += GET_TICK_COUNTER();
 
-    // TODO: improve this! Make the measurements more fair for task/os.
-    // Reset counter to get an approximate value for time spent in interupt.
-    RESET_TICK_COUNTER();
+  // TODO: improve this! Make the measurements more fair for task/os.
+  // Reset counter to get an approximate value for time spent in interupt.
+  RESET_TICK_COUNTER();
 #endif  // SW_TIME_MEASSREMENTS
-    if (prev->status == RUNNING) {
-      // The previous task has been killed.
-      prev->task_sp_adr = *task_sp;
-      prev->status = READY;
+  if (prev->status == RUNNING) {
+    // The previous task has been killed.
+    prev->task_sp_adr = *task_sp;
+    prev->status = READY;
 #if defined(VERBOSE_OUTPUT)
-      print_schedule();
-#endif                               // VERBOSE_OUTPUT
-      assert_stack_integrity(prev);  // FIXME put this check eralier so
-                                     // errors will be easier to detect.
+    print_schedule();
+#endif                             // VERBOSE_OUTPUT
+    assert_stack_integrity(prev);  // FIXME put this check eralier so
+                                   // errors will be easier to detect.
 #if defined(VERBOSE_OUTPUT)
-      cprint("saving task %d's SP 0x%X\n", prev->task_memory_block,
-             prev->task_sp_adr);
+    cprint("saving task %d's SP 0x%X\n", prev->task_memory_block,
+           prev->task_sp_adr);
 #endif
-    }
-    select_next_task();
-    taskptr_type task =
-        &kernel->schedule.queue
-             .task_queue[kernel->schedule.queue.curr_task_index];
-
-#if defined(VERBOSE_OUTPUT)
-    cprint("printing task:\n");
-    print_task(task, true);
-#endif  // defined VERBOSE_OUTPUT
-    task->status = RUNNING;
-    *task_sp = task->task_sp_adr;
-#if defined(VERBOSE_OUTPUT)
-    cprint("Setting task_sp to 0x%X\n", *task_sp);
-#endif  // defined VERBOSE_OUTPUT
-
-#if defined(SW_TIME_MEASSREMENTS)
-    // Add this context switch (approx.) to time counters.
-    kernel->cs_time_counter += GET_TICK_COUNTER();
-    // Reset timer and "start" counting the rest as task CPU time.
-    RESET_TICK_COUNTER();
-#endif  // SW_TIME_MEASSREMENTS
-
-#if defined(HW_TIME_MEASSUREMENTS)
-    output_curr_task(kernel->schedule->queue.curr_task_index);
-#endif
-    reset_timer();
   }
-  SCILENT_ENABLE_MT();
+  select_next_task();
+  taskptr_type task = &kernel->schedule.queue
+                           .task_queue[kernel->schedule.queue.curr_task_index];
+
+#if defined(VERBOSE_OUTPUT)
+  cprint("printing task:\n");
+  print_task(task, true);
+#endif  // defined VERBOSE_OUTPUT
+  task->status = RUNNING;
+  *task_sp = task->task_sp_adr;
+#if defined(VERBOSE_OUTPUT)
+  cprint("Setting task_sp to 0x%X\n", *task_sp);
+#endif  // defined VERBOSE_OUTPUT
+
+#if defined(SW_TIME_MEASSREMENTS)
+  // Add this context switch (approx.) to time counters.
+  kernel->cs_time_counter += GET_TICK_COUNTER();
+  // Reset timer and "start" counting the rest as task CPU time.
+  RESET_TICK_COUNTER();
+#endif  // SW_TIME_MEASSREMENTS
+
+#if defined(HW_TIME_MEASSUREMENTS)
+  output_curr_task(kernel->schedule->queue.curr_task_index);
+#endif
+  reset_timer();
   SET_SP();
   RESTORE_CONTEXT();
-  sei();
+  SCILENT_ENABLE_MT();
 }
+
+typedef uint8_t Index;
+void set_task_name(Index task_index, const char *name);
+Index create_simplos_task(const char *name, const uint8_t priority);
 
 #endif  // SIMPLOS_H_

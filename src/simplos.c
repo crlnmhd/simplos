@@ -53,13 +53,14 @@ NO_MT void init_schedule(void) {
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
-  cli();
   // TODO do blinking in asm.
   // INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
   // PORTB = 0xFF;  // turn on led, and whatever else happen to be there...
-
+  cli();
   context_switch();
+  sei();
   asm volatile("ret");
+  // asm volatile("ret");
 }
 
 // Timer interupt for context switching
@@ -73,10 +74,7 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
 NO_MT void init_kernel(void) {
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
-    BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
-    char *task_name_buf = kernel->task_names[i];
-    END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-    strlcpy(task_name_buf, "", FUNCTION_NAME_MAX_LENGTH + 1);
+    set_task_name(i, "");
 
     // Set task RAM range.
     BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
@@ -90,18 +88,13 @@ NO_MT void init_kernel(void) {
 pid_type spawn_task(void (*fn)(void), uint8_t const priority,
                     char const *name) {
   DISABLE_MT();
-  uint8_t const new_task_index =
-      add_task_to_queue(priority, &kernel->schedule.queue);
+  uint8_t const new_task_index = create_simplos_task(name, priority);
 
-  kernel->schedule.queue.task_queue[new_task_index].status = RUNNING;
-  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  char *task_name_buffer = kernel->task_names[new_task_index];
-  END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  strlcpy(task_name_buffer, name, FUNCTION_NAME_MAX_LENGTH + 1);
+  Simplos_Task *new_task = &kernel->schedule.queue.task_queue[new_task_index];
+  new_task->status = RUNNING;
 
-  uint16_t const new_task_pid = kernel->pid_cnt++;
-  kernel->schedule.queue.task_queue[new_task_index].pid = new_task_pid;
-  cprint("Spawning task \"%s\" with PID %d\n", task_name_buffer, new_task_pid);
+  uint16_t const new_task_pid = new_task->pid;
+
   taskptr_type old_task =
       &kernel->schedule.queue
            .task_queue[kernel->schedule.queue.curr_task_index];
@@ -164,6 +157,24 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
       "RETPOINT:        \n\t"
       " nop             \n\t");
   return new_task_pid;
+}
+
+inline void set_task_name(const Index task_index, const char *name) {
+  strlcpy((char *)kernel->task_names[task_index], name,
+          FUNCTION_NAME_MAX_LENGTH + 1);
+}
+
+inline Index create_simplos_task(const char *name, const uint8_t priority) {
+  uint8_t const index = add_task_to_queue(priority, &kernel->schedule.queue);
+  Simplos_Task *new_task = &kernel->schedule.queue.task_queue[index];
+  new_task->status = RUNNING;
+  new_task->pid = kernel->pid_cnt++;
+  set_task_name(index, name);
+
+#if defined(DEBUG_OUTPUT)
+  cprint("Created simplos task %s with pid %d\n", name, new_task->pid);
+#endif  // DEBUG_OUTPUT
+  return index;
 }
 
 void kill_current_task(void) {

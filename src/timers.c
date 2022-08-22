@@ -5,7 +5,7 @@
 #include "io_helpers.h"
 
 // Use timer1 (16 bit) at 10 Hz context-swtich interupt generator.
-NO_MT void init_timer_interupts(void) {
+NO_MT void init_scheduler_interupts(void) {
   cprint("Setting up interupts\n");
   TCCR1A = 0;  // set entire TCCR1A register to 0
   TCCR1B = 0;  // same for TCCR1B

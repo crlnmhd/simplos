@@ -26,7 +26,7 @@
 #define RESET_TICK_COUNTER() TCNT3 = 0;
 #endif  // SW_TIME_MEASSREMENTS
 
-void init_timer_interupts(void);
+void init_scheduler_interupts(void);
 
 void TIMER1_COMPA_vect(void);
 
