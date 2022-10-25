@@ -51,10 +51,18 @@ DEFINES += -DSTACK_HIGH=$(STACK_HIGH)
 SRC := src
 OBJ := build
 
+ASM_SRC:= src/asm
+
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
+ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
+ASM_OBJECTS := $(patsubst $(ASM_SRC)/%.s, $(OBJ)/asm/%.o, $(ASM_SOURCES))
 
+ALL_OBJECTS := $(OBJECTS)
+ALL_OBJECTS += $($ASM_OBJECTS)
+
+$(info ${ALL_OBJECTS})
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -106,17 +114,22 @@ compile_commands.json: $(COMPDB_ENTRIES)
 
 # Create build directory only if it doesn't exits.
 dir:
-	mkdir -p build
+	mkdir -p $(OBJ)
+	mkdir -p $(OBJ)/asm
 
 # Target to compile and generate database for clangd.
 build: compile_commands.json dir all
 
-all: $(OBJECTS)
+all: $(OBJECTS) $(ASM_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o build/simplos.out
 	avr-size --mcu=$(uP) -A -x build/simplos.out
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -I$(SRC) -c -g $< -o $@
+
+$(OBJ)/asm/%.o: $(ASM_SRC)/%.s
+	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
+
 
 flash: build
 	avr-size --mcu=$(uP) -A -x build/simplos.out
