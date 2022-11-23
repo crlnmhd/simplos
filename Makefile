@@ -75,6 +75,12 @@ CFLAGS := -Wall $\
 					-Wstrict-prototypes $\
 					-fshort-enums $\
 					-std=gnu17 $\
+					-Wshadow $\
+					-Wpointer-arith $\
+					-Wswitch-enum $\
+					-Wconversion $\
+					-Wstrict-overflow $\
+					-Wno-aggressive-loop-optimizations $\
 					-Wno-unknown-attributes $\
 					-fno-omit-frame-pointer $\
 					$(DEFINES) $\
