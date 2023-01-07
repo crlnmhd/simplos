@@ -72,7 +72,7 @@ enter_dev_container() {
   echo "entering dev container"
 
   local source_directory
-  source_directory="$(pwd)/playground"
+  source_directory="$(pwd)/simplos"
 
   local mount_destination
   mount_destination="/simplos"
