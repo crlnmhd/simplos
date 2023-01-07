@@ -147,9 +147,9 @@ flash: build
 		-U flash:w:build/out.hex
 
 clean:
-	@if [[ -e build ]]; then \
-		rm -r build;						\
-		fi
+	@if [ -d build ]; then 	\
+		rm -r build;					\
+	fi
 	@rm -f src/*.compbd_entry
 	@echo "cleaning..."
 
