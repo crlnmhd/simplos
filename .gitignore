@@ -13,3 +13,4 @@ package-lock.json
 gdb-8.3.1
 src/*.compdb_entry
 TODO.txt
+simplos/tmux.conf

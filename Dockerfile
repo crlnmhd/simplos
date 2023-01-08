@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-RUN apt-get update && apt-get install gcc g++ make simavr avrdude gdb-avr git libmpc-dev libgmp3-dev libmpfr-dev flex wget -y
+RUN apt-get update && apt-get install gcc g++ make simavr avrdude gdb-avr git libmpc-dev libgmp3-dev libmpfr-dev flex wget tmux -y
 
 RUN mkdir /build_tools && mkdir /build_tools/avr_gcc && mkdir /build_tools/binutils && mkdir /build_tools/bin && mkdir /simplos
 
