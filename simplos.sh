@@ -31,7 +31,7 @@ asked_to_run_dev_container(){
 }
 
 asked_to_rebuild_dev_container(){
-  if [[ $# -eq 1 && $1 == "rebuild-dev-container" ]]; then
+  if [[ $# -eq 1 && $1 == "build-container" ]]; then
     return 0
   else
     return 1
@@ -39,7 +39,7 @@ asked_to_rebuild_dev_container(){
 }
 
 show_usage_help(){
-  echo "Usage: ./simplos [dev] [build-dev-container]"
+  echo "Usage: ./simplos [dev] [build-container]"
 }
 
 os_supported() {
