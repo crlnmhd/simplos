@@ -15,6 +15,7 @@ RUN echo "Downloading binutils..." && \
   tar zxf binutils-2.38.tar.gz -C binutils && \
   rm binutils-2.38.tar.gz && \
   cd binutils/binutils-2.38 && \
+  touch -d1970-01-01 gas/doc/.dirstamp && \
   mkdir obj-avr && \
   cd obj-avr && \
   echo "building binutils..." && \
