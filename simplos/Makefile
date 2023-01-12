@@ -169,11 +169,6 @@ debug_siulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
 
 
-#scons)
-#  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug
-#  avr-size --mcu=$uP -C src/simplos.out
-#  ;;
-
 #flash)
 #  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
 #  BAUD=115200
