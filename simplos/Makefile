@@ -69,6 +69,7 @@ $(info ${ALL_OBJECTS})
 CC := avr-gcc
 AVRINC := /usr/avr/include
 SIMAVR := simavr
+AVR_GDB := avr-gdb
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
 CFLAGS := -Wall $\
 					-pedantic $\
@@ -97,7 +98,6 @@ CFLAGS := -Wall $\
 
 FRAMEWORK := wiring
 
-AVR_GDB := /home/cgn/prog/external/avr-gdb/avr-gdb-8.3/bin/avr-gdb
 .PHONY: %.compdb_entry compile_commands.json dir all
 
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
