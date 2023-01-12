@@ -131,7 +131,7 @@ build: compile_commands.json dir all
 
 all: $(OBJECTS) $(ASM_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o build/simplos.out
-	avr-size --mcu=$(uP) -A -x build/simplos.out
+	avr-size -A -x build/simplos.out
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -I$(SRC) -c -g $< -o $@
