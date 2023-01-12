@@ -51,8 +51,19 @@ DEFINES += -DSTACK_HIGH=$(STACK_HIGH)
 SRC := src
 OBJ := build
 
+ASM_SRC:= src/asm
+
 SOURCES := $(wildcard $(SRC)/*.c $(SRC)/*/*.c)
-OBJECTS := $(patsubst $(SRC)/%,$(OBJ)/%,$(addsuffix .o,$(basename $(SOURCES))))
+OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
+
+ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
+ASM_OBJECTS := $(patsubst $(ASM_SRC)/%.s, $(OBJ)/asm/%.o, $(ASM_SOURCES))
+
+ALL_OBJECTS := $(OBJECTS)
+ALL_OBJECTS += $($ASM_OBJECTS)
+
+$(info ${ALL_OBJECTS})
+>>>>>>> asm_ctx_switch:simplos/Makefile
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -65,6 +76,12 @@ CFLAGS := -Wall $\
 					-Wstrict-prototypes $\
 					-fshort-enums $\
 					-std=gnu17 $\
+					-Wshadow $\
+					-Wpointer-arith $\
+					-Wswitch-enum $\
+					-Wconversion $\
+					-Wstrict-overflow $\
+					-Wno-aggressive-loop-optimizations $\
 					-Wno-unknown-attributes $\
 					-fno-omit-frame-pointer $\
 					$(DEFINES) $\
@@ -105,18 +122,23 @@ compile_commands.json: $(COMPDB_ENTRIES)
 
 # Create build directory only if it doesn't exits.
 dir:
-	mkdir -p build
-	mkdir -p build/tests
+	mkdir -p $(OBJ)
+	mkdir -p $(OBJ)/asm
+	mkdir -p $(OBJ)/tests
 
 # Target to compile and generate database for clangd.
 build: compile_commands.json dir all
 
-all: $(OBJECTS)
+all: $(OBJECTS) $(ASM_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o build/simplos.out
 	avr-size --mcu=$(uP) -A -x build/simplos.out
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -I$(SRC) -c -g $< -o $@
+
+$(OBJ)/asm/%.o: $(ASM_SRC)/%.s
+	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
+
 
 flash: build
 	avr-size --mcu=$(uP) -A -x build/simplos.out
@@ -128,9 +150,9 @@ flash: build
 		-U flash:w:build/out.hex
 
 clean:
-	@if [[ -e build ]]; then \
-		rm -r build;						\
-		fi
+	@if [ -d build ]; then 	\
+		rm -r build;					\
+	fi
 	@rm -f src/*.compbd_entry
 	@echo "cleaning..."
 
@@ -146,22 +168,12 @@ debug:
 debug_siulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
 
-rebuild_container:
-	$(DOCKER) build --rm -t avr_docker .
-
-build_gdb:
-	$(DOCKER) run -it --rm --mount type=bind,source=$(PWD)/gdb_build,target=/out_dir avr_docker
-
 
 #scons)
 #  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD debug
 #  avr-size --mcu=$uP -C src/simplos.out
 #  ;;
-#build)
-#  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
-#  avr-size --mcu=$uP -C src/simplos.out
-#  ;;
-#
+
 #flash)
 #  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
 #  BAUD=115200
