@@ -23,7 +23,8 @@ NO_MT void print_task(taskptr_type task, bool const checks) {
   cprint(" PID: %d", task->pid);
   cprint(" Priority: %d", task->priority);
   cprint(" SP: 0x%X", task->task_sp_adr);
-  struct StackRange task_ram_range = kernel->task_RAM_ranges[task_index];
+  struct StackRange task_ram_range =
+      *(struct StackRange *)&kernel->task_RAM_ranges[task_index];
   cprint(" [0x%X - 0x%X]\n", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {
