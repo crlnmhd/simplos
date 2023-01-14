@@ -15,6 +15,12 @@ DEFINES :=
 # Static scheduling
 DEFINES += -DUSE_STATIC
 
+# Frequency
+DEFINES += -DF_CPU=$(CPU_FREQ)
+
+# Baud rate for serial
+DEFINES += -DBAUD=$(BAUD)
+
 # Enables optimization. Use only for non threadsafe components.
 # DEFINES += -DNO_MT='__attribute__((optimize("Os")))'
 DEFINES += -DNO_MT='' # '__attribute__((optimize("Os")))'
@@ -90,8 +96,6 @@ CFLAGS := -Wall $\
 					-I$(AVRINC) $\
 					-I/include/ $\
 					-I$(TESTS_DIR) $\
-					-DF_CPU=$(CPU_FREQ) $\
-					-DBAUD=$(BAUD) $\
 					-g $\
 					-Wl,--section-start=.data=$(DATA_SECTION_START) $\
 					-Os
