@@ -17,7 +17,7 @@ NO_MT void static_cyclic_scheduler(void) {
   // cprint("At block: %d\n", kernel->schedule.queue.curr_task_index);
   for (uint8_t i = 1; i <= TASKS_MAX; ++i) {
     uint8_t const next_candidate_index =
-        (kernel->schedule.queue.curr_task_index + i) % TASKS_MAX;
+        ((uint8_t)(kernel->schedule.queue.curr_task_index + i) % TASKS_MAX);
 
     if (kernel->schedule.queue.task_queue[next_candidate_index].status ==
         READY) {

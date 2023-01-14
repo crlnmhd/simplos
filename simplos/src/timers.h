@@ -7,9 +7,9 @@
 // 781210 = (16*10^6) / (2*1024) - 1 (must be <65536) //FIXME
 #define TIMER_COMPARE_MATCH 781  // aprox 100 ms
 
-#define SCILENT_ENABLE_MT() TIMSK1 |= (1 << OCIE1A);
+#define SCILENT_ENABLE_MT() TIMSK1 |= (1U << OCIE1A);
 
-#define SCILENT_DISABLE_MT() TIMSK1 &= ~(1 << OCIE1A);
+#define SCILENT_DISABLE_MT() TIMSK1 &= (uint8_t) ~(1U << OCIE1A);
 
 #define ENABLE_MT()    \
   SCILENT_ENABLE_MT(); \

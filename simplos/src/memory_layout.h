@@ -9,23 +9,23 @@
  * 0xD50 - 0x2000     # heap
  */
 
-#define REGISTERS_START 0x1FF
+#define REGISTERS_START 0x1FFU
 
-#define CANARY_START 0x204
-#define CANARY_END 0x200
-#define CANARY_VALUE 0x66  // As good a random value as any.
+#define CANARY_START 0x204U
+#define CANARY_END 0x200U
+#define CANARY_VALUE 0x66U  // As good a random value as any.
 
-#define OS_STACK_START 0x34F
-#define OS_STACK_END 0x205
+#define OS_STACK_START 0x34FU
+#define OS_STACK_END 0x205U
 
-#define TASK_RAM_END 0x350
-#define TASK_RAM_START 0xD50
+#define TASK_RAM_END 0x350U
+#define TASK_RAM_START 0xD50U
 
-#define HEAP_END (TASK_RAM_START + 1)
+#define HEAP_END (TASK_RAM_START + 1U)
 // Start of heap (high) is dynamically defined based on the size of the RAM
 // needed by init (the main function).
 
-#define FUNCTION_NAME_MAX_LENGTH 8
+#define FUNCTION_NAME_MAX_LENGTH 8U
 
 #include <stdint.h>
 struct StackRange {
