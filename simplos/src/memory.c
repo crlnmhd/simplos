@@ -40,7 +40,7 @@ uint16_t task_default_sp(uint8_t const task_memory_block) {
   }
   // Stack grows toward smaller values.
   const uint16_t sp_adr =
-      TASK_RAM_END + ((task_memory_block + 1) * task_memory_size());
+      TASK_RAM_END + ((task_memory_block + 1U) * task_memory_size());
   // dprint("Giving task %d SP 0x%X\n", task_memory_block, sp_adr);
   return sp_adr;
 }
@@ -66,7 +66,7 @@ void assert_stack_integrity(taskptr_type task) {
   uint16_t const lower_bound =
       task->task_memory_block == 0
           ? OS_STACK_START + 1
-          : task_default_sp(task->task_memory_block - 1);
+          : task_default_sp((uint8_t)(task->task_memory_block - 1U));
   bool const sp_within_bounds =
       (lower_bound <= task->task_sp_adr && task->task_sp_adr <= upper_bound);
 

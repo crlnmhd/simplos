@@ -37,7 +37,7 @@ NO_MT int uart_putchar(char c, FILE *stream) {
     uart_putchar('\r', stream);
   }
   loop_until_bit_is_set(UCSR0A, UDRE0);
-  UDR0 = c;
+  UDR0 = (uint8_t)c;
   return 0;
 }
 

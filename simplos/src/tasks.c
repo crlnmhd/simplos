@@ -30,7 +30,7 @@ void worker_2_fn(void) {
 void sum_to_ten(void) {
   uint8_t res = 0;
   for (uint8_t i = 1; i < 10; ++i) {
-    res += i;
+    res = (uint8_t)(res + i);
     yield();
     yield();
   }
