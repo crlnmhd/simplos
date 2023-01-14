@@ -25,5 +25,5 @@ uint16_t task_memory_size(void);
 
 void check_task_configuration_uses_all_available_memory(void);
 
-void configure_heap_location(const int margin_to_main);
+void configure_heap_location(const uint8_t margin_to_main);
 #endif  // MEMORY_H_

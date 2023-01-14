@@ -9,7 +9,7 @@
 #include "simplos_types.h"
 #include "timers.h"
 
-void configure_heap_location(const int margin_to_main) {
+void configure_heap_location(const uint8_t margin_to_main) {
   kernel->heap_start = SP - margin_to_main;
   cprint("Heap starting at  0x%X\n", kernel->heap_start);
   ASSERT(kernel->heap_start > TASK_RAM_START,
