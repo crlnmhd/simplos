@@ -69,7 +69,6 @@ ALL_OBJECTS := $(OBJECTS)
 ALL_OBJECTS += $($ASM_OBJECTS)
 
 $(info ${ALL_OBJECTS})
->>>>>>> asm_ctx_switch:simplos/Makefile
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
