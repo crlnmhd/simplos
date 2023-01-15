@@ -56,7 +56,6 @@ int main(void) {
   *task_sp = kernel->schedule.queue.task_queue[index].task_sp_adr;
   SET_SP();
 
-  // cprint("Kernel at at  0x%X\n", kernel);
   /* Run idle function. Should never leave this. */
   sei();
   ENABLE_MT();

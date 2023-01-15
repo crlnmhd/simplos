@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-//#include <util/delay.h>
 
 #include "io_helpers.h"
 #include "memory.h"
@@ -53,9 +52,6 @@ NO_MT void init_schedule(void) {
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
-  // TODO do blinking in asm.
-  // INTERNAL_LED_PORT |= (1 << INTERNAL_LED);
-  // PORTB = 0xFF;  // turn on led, and whatever else happen to be there...
   cli();
   context_switch();
   sei();
@@ -65,9 +61,7 @@ __attribute__((noinline, naked)) void k_yield(void) {
 
 // Timer interupt for context switching
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-  // PORTA |= (1 << PORTA0);
   context_switch();
-  // PORTA &= ~(1 << PORTA0);
   reti();
 }
 
