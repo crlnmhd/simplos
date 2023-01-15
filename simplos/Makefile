@@ -8,8 +8,12 @@ BAUD := 115200
 CPU_FREQ := 16000000UL
 SERIAL := /dev/ttyUSB0
 
-STACK_HIGH := 0x204F
-DATA_SECTION_START := 0x802050 # 0x8021FF - 511 bytes.
+INITIAL_STACK_START := 0x1FFF
+
+TASK_SP_LOCATION := 0x802100
+KERNEL_DATA_LOCATION := 0x802102
+DATA_SECTION_START := 0x802000
+
 # Configure behavior though defines
 DEFINES :=
 # Static scheduling
@@ -44,6 +48,7 @@ DEFINES += -DDEBUG_OUTPUT
 DEFINES += -DRUN_TESTS
 
 DEFINES += -DSTACK_HIGH=$(STACK_HIGH)
+DEFINES += -DINITIAL_STACK_START=$(INITIAL_STACK_START)
 
 # Count the time spent in interups as oposed to outside. Incurres some
 # overhead. Print to uart using PRINT_CS_TIMING_DATA()
@@ -81,6 +86,8 @@ CFLAGS := -Wall $\
 					-Wextra $\
 					-Wstrict-prototypes $\
 					-fshort-enums $\
+					-fno-pie $\
+					-no-pie $\
 					-std=gnu17 $\
 					-Wshadow $\
 					-Wpointer-arith $\
@@ -97,6 +104,8 @@ CFLAGS := -Wall $\
 					-I$(TESTS_DIR) $\
 					-g $\
 					-Wl,--section-start=.data=$(DATA_SECTION_START) $\
+ 					-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
+ 					-Wl,--section-start=.kernel_data_location=$(KERNEL_DATA_LOCATION) $\
 					-Os
 
 FRAMEWORK := wiring

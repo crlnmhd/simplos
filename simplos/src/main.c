@@ -12,16 +12,16 @@
 // Extern global variable to modify the stack pointer using macros from
 // simplos.h
 
-volatile Kernel internal_kernel_location;
+volatile Kernel internal_kernel_location
+    __attribute((section(".kernel_data_location")));
 volatile Kernel *volatile kernel = &internal_kernel_location;
 
-volatile uint16_t internal_task_sp_adr = 0;
-volatile uint16_t *volatile task_sp = &internal_task_sp_adr;
+volatile uint16_t task_sp_adr __attribute__((section(".task_sp_location"))) = 0;
+volatile uint16_t *volatile task_sp = &task_sp_adr;
 
 int main(void) {
-  SP = STACK_HIGH;  // The stack starts where the just before the .data section
-                    // begins.
   cli();
+  SP = INITIAL_STACK_START;
 
   /* Set up serial communication */
   uart_init();
