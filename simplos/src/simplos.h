@@ -188,8 +188,39 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "out  __SREG__, r0           \n\t" \
       "pop  r0                     \n\t");
 
-#define SET_SP() SP = task_sp
-#define SAVE_SP() task_sp = SP;
+#define SET_SP()                  \
+  asm volatile(                   \
+      "push r26             \n\t" \
+      "push r27             \n\t" \
+      "push r28             \n\t" \
+      "push r29             \n\t" \
+      "ldi  r26, 0x00       \n\t" \
+      "ldi  r27, 0x21       \n\t" \
+      "ld   r28, x+         \n\t" \
+      "ld   r29, x+         \n\t" \
+      "out  __SP_L__, r28   \n\t" \
+      "out  __SP_H__, r29   \n\t");
+
+#define SAVE_SP()                 \
+  asm volatile(                   \
+      "push r26             \n\t" \
+      "push r27             \n\t" \
+      "push r16             \n\t" \
+      "push r17             \n\t" \
+      "ldi  r26, 0x00       \n\t" \
+      "ldi  r27, 0x21       \n\t" \
+      "ldi  r17, 0x4        \n\t" \
+      "in   r16, __SP_L__   \n\t" \
+      "add  r16, r17        \n\t" \
+      "st   x+, r16         \n\t" \
+      "in   r16, __SP_H__  \n\t"  \
+      "clr  r17             \n\t" \
+      "adc  r16, r17        \n\t" \
+      "st   x+, r16         \n\t" \
+      "pop  r17             \n\t" \
+      "pop  r16             \n\t" \
+      "pop  r27             \n\t" \
+      "pop  r26             \n\t");
 
 static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
