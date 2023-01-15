@@ -45,9 +45,9 @@ typedef uint16_t pid_type;
 
 // TODO use this for all global variables.
 typedef struct Kernel_type {
-  Scheduler_type schedule;
+  Scheduler schedule;
   char task_names[TASKS_MAX][FUNCTION_NAME_MAX_LENGTH + 1];
-  struct StackRange task_RAM_ranges[TASKS_MAX];
+  volatile struct StackRange task_RAM_ranges[TASKS_MAX];
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;
   size_t heap_start;  // dynamically determined by the RAM needed for the init
