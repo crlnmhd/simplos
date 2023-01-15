@@ -27,8 +27,7 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #endif
 //clang-format on
 
-extern volatile uint16_t *volatile task_sp;
-extern volatile uint16_t internal_task_sp_adr;
+extern volatile uint16_t task_sp;
 
 extern volatile Kernel internal_kernel; 
 extern Kernel volatile *volatile kernel; 
@@ -139,8 +138,8 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "push  r29                    \n\t" \
       "push  r30                    \n\t" \
       "push  r31                    \n\t" \
-      "lds   r26, task_sp           \n\t" \
-      "lds   r27, task_sp +1        \n\t" \
+      "ldi   r26, 0x00              \n\t" \
+      "ldi   r27, 0x21              \n\t" \
       "in    r0, __SP_L__           \n\t" \
       "st    x+, r0                 \n\t" \
       "in    r0, __SP_H__           \n\t" \
@@ -148,8 +147,8 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
-      "lds  r26, task_sp           \n\t" \
-      "lds  r27, task_sp +1        \n\t" \
+      "ldi  r26, 0x00              \n\t" \
+      "ldi  r27, 0x21              \n\t" \
       "ld   r28, x+                \n\t" \
       "out  __SP_L__, r28          \n\t" \
       "ld   r29, x+                \n\t" \
@@ -189,9 +188,8 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
       "out  __SREG__, r0           \n\t" \
       "pop  r0                     \n\t");
 
-#define SET_SP() SP = *task_sp;
-
-#define SAVE_SP() *task_sp = SP;
+#define SET_SP() SP = task_sp
+#define SAVE_SP() task_sp = SP;
 
 static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
@@ -217,7 +215,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif  // SW_TIME_MEASSREMENTS
   if (prev->status == RUNNING) {
     // The previous task has been killed.
-    prev->task_sp_adr = *task_sp;
+    prev->task_sp_adr = task_sp;
     prev->status = READY;
 #if defined(VERBOSE_OUTPUT)
     print_schedule();
@@ -238,9 +236,9 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   print_task(task, true);
 #endif  // defined VERBOSE_OUTPUT
   task->status = RUNNING;
-  *task_sp = task->task_sp_adr;
+  task_sp = task->task_sp_adr;
 #if defined(VERBOSE_OUTPUT)
-  cprint("Setting task_sp to 0x%X\n", *task_sp);
+  cprint("Setting task_sp to 0x%X\n", task_sp);
 #endif  // defined VERBOSE_OUTPUT
 
 #if defined(SW_TIME_MEASSREMENTS)

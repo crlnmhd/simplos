@@ -128,9 +128,9 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
 
   SAVE_CONTEXT();
 
-  old_task->task_sp_adr = *task_sp;
+  old_task->task_sp_adr = task_sp;
 
-  *task_sp =
+  task_sp =
       kernel->schedule.queue.task_queue[kernel->schedule.queue.curr_task_index]
           .task_sp_adr;
   SET_SP();

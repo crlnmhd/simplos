@@ -16,8 +16,7 @@ volatile Kernel internal_kernel_location
     __attribute((section(".kernel_data_location")));
 volatile Kernel *volatile kernel = &internal_kernel_location;
 
-volatile uint16_t task_sp_adr __attribute__((section(".task_sp_location"))) = 0;
-volatile uint16_t *volatile task_sp = &task_sp_adr;
+volatile uint16_t task_sp __attribute__((section(".task_sp_location"))) = 0;
 
 int main(void) {
   cli();
@@ -52,8 +51,7 @@ int main(void) {
   const uint8_t margin_to_main = 10;
 
   configure_heap_location(margin_to_main);
-
-  *task_sp = kernel->schedule.queue.task_queue[index].task_sp_adr;
+  task_sp = kernel->schedule.queue.task_queue[index].task_sp_adr;
   SET_SP();
 
   /* Run idle function. Should never leave this. */
