@@ -98,9 +98,6 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
                                               uint8_t const priority,
                                               char const *name);
 
-// More or less borrowed from
-// https://www.freertos.org/kernel/secondarydocs.html
-
 #define SAVE_CONTEXT()                    \
   asm volatile(                           \
       "push  r0                    \n\t"  \
