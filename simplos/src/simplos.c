@@ -11,7 +11,7 @@
 #include "memory_layout.h"
 #include "timers.h"
 
-NO_MT void init_empty_queue(Task_Queue *queue) {
+NO_MT void init_task_list(Task_Queue *queue) {
   check_task_configuration_uses_all_available_memory();
 
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
@@ -25,7 +25,7 @@ NO_MT void init_empty_queue(Task_Queue *queue) {
   }
 }
 
-NO_MT uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
+NO_MT uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_type task = (Simplos_Task *)&queue->tasks[i];
     // Take if available
@@ -47,7 +47,7 @@ NO_MT uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue) {
 
 NO_MT void init_schedule(void) {
   kernel->schedule.os_task_sp = OS_STACK_START;
-  init_empty_queue(&(kernel->schedule.queue));
+  init_task_list(&(kernel->schedule.queue));
   kernel->cs_time_counter = 0;
 }
 
@@ -157,7 +157,7 @@ inline void set_task_name(const Index task_index, const char *name) {
 }
 
 inline Index create_simplos_task(const char *name, const uint8_t priority) {
-  uint8_t const index = add_task_to_queue(priority, &kernel->schedule.queue);
+  uint8_t const index = add_to_task_list(priority, &kernel->schedule.queue);
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
   new_task->status = RUNNING;
   new_task->pid = kernel->pid_cnt++;

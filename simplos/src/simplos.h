@@ -69,7 +69,7 @@ extern Kernel volatile *volatile kernel;
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
  * */
-uint8_t add_task_to_queue(uint8_t priority, Task_Queue *queue);
+uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue);
 
 /*
  * Set up kernel configuration.
