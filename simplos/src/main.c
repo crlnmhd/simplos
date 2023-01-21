@@ -51,7 +51,7 @@ int main(void) {
   const uint8_t margin_to_main = 10;
 
   configure_heap_location(margin_to_main);
-  task_sp = kernel->schedule.queue.task_queue[index].task_sp_adr;
+  task_sp = kernel->schedule.queue.tasks[index].task_sp_adr;
   SET_SP();
 
   /* Run idle function. Should never leave this. */

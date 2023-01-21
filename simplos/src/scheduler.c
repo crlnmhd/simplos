@@ -19,20 +19,18 @@ NO_MT void static_cyclic_scheduler(void) {
     uint8_t const next_candidate_index =
         ((uint8_t)(kernel->schedule.queue.curr_task_index + i) % TASKS_MAX);
 
-    if (kernel->schedule.queue.task_queue[next_candidate_index].status ==
-        READY) {
+    if (kernel->schedule.queue.tasks[next_candidate_index].status == READY) {
       kernel->schedule.queue.curr_task_index = next_candidate_index;
       cprint(
           "selected task  %d \"%s\" with SP=0x%X using circular scheduling.\n",
           kernel->schedule.queue.curr_task_index,
           kernel->task_names[kernel->schedule.queue.curr_task_index],
-          kernel->schedule.queue
-              .task_queue[kernel->schedule.queue.curr_task_index]
+          kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index]
               .task_sp_adr);
       break;
     }
   }
-  if (kernel->schedule.queue.task_queue[kernel->schedule.queue.curr_task_index]
+  if (kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index]
           .status == EMPTY) {
     fatal_error("No task ready to run!\n");
   }

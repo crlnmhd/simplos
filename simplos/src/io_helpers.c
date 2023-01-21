@@ -55,7 +55,7 @@ NO_MT void print_task(taskptr_type task, bool const checks) {
 NO_MT void print_schedule(void) {
   cprint(" -- Schedule --\n");
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    Simplos_Task *task = &kernel->schedule.queue.task_queue[i];
+    Simplos_Task *task = &kernel->schedule.queue.tasks[i];
     // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
     print_task(task, false);
   }
@@ -68,7 +68,7 @@ NO_MT void print_timing_data(void) {
   // FIXME risk of overflow!
   uint32_t running_total = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
-    Simplos_Task *task = &kernel->schedule->queue.task_queue[i];
+    Simplos_Task *task = &kernel->schedule->queue.tasks[i];
     if (task->status != EMPTY) {
       cprint("Task %d: %d\n", i, task->time_counter);
       running_total += task->time_counter;

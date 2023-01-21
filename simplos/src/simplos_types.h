@@ -29,7 +29,7 @@ typedef Simplos_Task_type volatile Simplos_Task;
 typedef Simplos_Task volatile *volatile taskptr_type;
 
 typedef struct Task_Queue_type {
-  Simplos_Task_type volatile task_queue[TASKS_MAX];
+  Simplos_Task_type volatile tasks[TASKS_MAX];
   uint8_t volatile curr_task_index;
 } Task_Queue_type;
 typedef Task_Queue_type volatile Task_Queue;

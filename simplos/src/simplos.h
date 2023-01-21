@@ -229,8 +229,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   output_curr_task(OS_TASK_BLOCK);
 #endif
 
-  taskptr_type prev = &kernel->schedule.queue
-                           .task_queue[kernel->schedule.queue.curr_task_index];
+  taskptr_type prev =
+      &kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index];
   cprint("printing task:\n");
   print_task(prev, true);
 #if defined(SW_TIME_MEASSREMENTS)
@@ -256,8 +256,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif
   }
   select_next_task();
-  taskptr_type task = &kernel->schedule.queue
-                           .task_queue[kernel->schedule.queue.curr_task_index];
+  taskptr_type task =
+      &kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index];
 
 #if defined(VERBOSE_OUTPUT)
   cprint("printing task:\n");
