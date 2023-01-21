@@ -17,21 +17,18 @@ NO_MT void static_cyclic_scheduler(void) {
   // cprint("At block: %d\n", kernel->schedule.queue.curr_task_index);
   for (uint8_t i = 1; i <= TASKS_MAX; ++i) {
     uint8_t const next_candidate_index =
-        ((uint8_t)(kernel->schedule.queue.curr_task_index + i) % TASKS_MAX);
+        ((uint8_t)(INDEX_OF_CURRENT_TASK + i) % TASKS_MAX);
 
     if (kernel->schedule.queue.tasks[next_candidate_index].status == READY) {
-      kernel->schedule.queue.curr_task_index = next_candidate_index;
+      INDEX_OF_CURRENT_TASK = next_candidate_index;
       cprint(
           "selected task  %d \"%s\" with SP=0x%X using circular scheduling.\n",
-          kernel->schedule.queue.curr_task_index,
-          kernel->task_names[kernel->schedule.queue.curr_task_index],
-          kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index]
-              .task_sp_adr);
+          INDEX_OF_CURRENT_TASK, kernel->task_names[INDEX_OF_CURRENT_TASK],
+          kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].task_sp_adr);
       break;
     }
   }
-  if (kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index]
-          .status == EMPTY) {
+  if (kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].status == EMPTY) {
     fatal_error("No task ready to run!\n");
   }
 }

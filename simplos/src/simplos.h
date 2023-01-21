@@ -61,6 +61,9 @@ extern Kernel volatile *volatile kernel;
 #endif  // __GNUC__
 // clang-format on
 
+#define INDEX_OF_CURRENT_TASK \
+  kernel->schedule.queue.task_index_queue[kernel->schedule.queue.queue_position]
+
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
  * */
@@ -224,8 +227,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   output_curr_task(OS_TASK_BLOCK);
 #endif
 
-  taskptr_type prev =
-      &kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index];
+  taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
   cprint("printing task:\n");
   print_task(prev, true);
 #if defined(SW_TIME_MEASSREMENTS)
@@ -251,8 +253,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif
   }
   select_next_task();
-  taskptr_type task =
-      &kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index];
+  taskptr_type task = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
 
 #if defined(VERBOSE_OUTPUT)
   cprint("printing task:\n");
@@ -272,7 +273,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #endif  // SW_TIME_MEASSREMENTS
 
 #if defined(HW_TIME_MEASSUREMENTS)
-  output_curr_task(kernel->schedule->queue.curr_task_index);
+  output_curr_task(INDEX_OF_CURRENT_TASK);
 #endif
   reset_timer();
   SET_SP();

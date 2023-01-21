@@ -20,10 +20,9 @@ void __attribute__((noinline)) yield(void) {
   //  cprint("SP post pop 0x%X\n", SP);
 }
 
-uint8_t rank(void) { return kernel->schedule.queue.curr_task_index; }
+uint8_t rank(void) { return INDEX_OF_CURRENT_TASK; }
 uint16_t pid(void) {
-  return kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index]
-      .pid;
+  return kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].pid;
 }
 
 uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
@@ -41,8 +40,7 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
 void kill_curr_task(void) { kill_current_task(); }
 
 void set_priority(uint8_t const priority) {
-  kernel->schedule.queue.tasks[kernel->schedule.queue.curr_task_index]
-      .priority = priority;
+  kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].priority = priority;
 }
 
 void wait_for_task_finnish(pid_t pid) {

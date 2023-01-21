@@ -46,7 +46,7 @@ int main(void) {
 
   uint8_t index = create_simplos_task("idle_fn", 0);
 
-  kernel->schedule.queue.curr_task_index = index;
+  INDEX_OF_CURRENT_TASK = index;
 
   const uint8_t margin_to_main = 10;
 
