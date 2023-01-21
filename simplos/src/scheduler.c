@@ -3,6 +3,7 @@
 #include <avr/io.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "io_helpers.h"
 #include "serial.h"
@@ -30,6 +31,58 @@ NO_MT void static_cyclic_scheduler(void) {
   }
   if (kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].status == EMPTY) {
     fatal_error("No task ready to run!\n");
+  }
+}
+
+/*
+ * fills list tasks_block_list of length num_tasks unique active tasks.
+ * Return value: the number of unique tasks.
+ *
+ * Note: any values of tasks_block_list[<return_value -1>] have no meening.
+ * */
+uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks) {
+  uint8_t active_task_counter = 0;
+  for (uint8_t i = 0; i < num_tasks; ++i) {
+    if (kernel->schedule.queue.tasks[i].status == READY) {
+      tasks_block_list[active_task_counter] = i;
+      active_task_counter++;
+    }
+  }
+  return active_task_counter;
+}
+
+/*
+ * Reorder the task list positions [0, num_tasks) in decending order of
+ * priority.
+ * */
+void prioritize_tasks(const uint8_t num_tasks_in_queue) {
+  uint8_t unsorted[TASK_QUEUE_LENGTH];
+  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING();
+  memcpy(unsorted, kernel->schedule.queue.task_index_queue, num_tasks_in_queue);
+  memset(kernel->schedule.queue.task_index_queue, 0, num_tasks_in_queue);
+  END_DISCARD_VOLATILE_QUALIFIER_WARNING();
+
+  uint8_t sorted_task_counter = 0;
+
+  for (uint16_t priority = 0; priority < UINT8_MAX; priority++) {
+    for (uint8_t task_index = 0; task_index < num_tasks_in_queue;
+         task_index++) {
+      const uint16_t remaining_tasks_to_schedule =
+          (uint8_t)(num_tasks_in_queue - sorted_task_counter);
+      if (remaining_tasks_to_schedule == 0) {
+        return;
+      } else {
+        const uint8_t task_list_index = unsorted[task_index];
+        if (kernel->schedule.queue.tasks[task_list_index].priority ==
+            priority) {
+          const uint8_t position_in_sorted =
+              (uint8_t)(num_tasks_in_queue - sorted_task_counter - 1);
+          kernel->schedule.queue.task_index_queue[position_in_sorted] =
+              task_list_index;
+          sorted_task_counter++;
+        }
+      }
+    }
   }
 }
 
