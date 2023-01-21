@@ -26,6 +26,7 @@
 // needed by init (the main function).
 
 #define FUNCTION_NAME_MAX_LENGTH 8U
+#define TASK_QUEUE_LENGTH 6U
 
 #include <stdint.h>
 struct StackRange {
