@@ -50,7 +50,6 @@ extern Kernel volatile *volatile kernel;
 #define GCC_IGNORE_END() _Pragma("GCC diagnostic pop")
 #endif  // __GNUC__
 
-/*
 #if defined(__clang__)
 #define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() \
   CLANG_IGNORE_BEGIN("-Wincompatible-pointer-types-discards-qualifiers")
@@ -60,12 +59,8 @@ extern Kernel volatile *volatile kernel;
   GCC_IGNORE_BEGIN("-Wdiscarded-qualifiers")
 #define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
 #endif  // __GNUC__
-*/
-
-#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() volatile
-
-#define END_DISCARD_VOLATILE_QUALIFIER_WARNING()
 // clang-format on
+
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
  * */
