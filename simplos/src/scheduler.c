@@ -52,7 +52,7 @@ uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks) {
 }
 
 /*
- * Reorder the task list positions [0, num_tasks) in decending order of
+ * Reorder the task list positions [0, num_tasks) in acending order of
  * priority.
  * */
 void prioritize_tasks(const uint8_t num_tasks_in_queue) {
@@ -75,9 +75,7 @@ void prioritize_tasks(const uint8_t num_tasks_in_queue) {
         const uint8_t task_list_index = unsorted[task_index];
         if (kernel->schedule.queue.tasks[task_list_index].priority ==
             priority) {
-          const uint8_t position_in_sorted =
-              (uint8_t)(num_tasks_in_queue - sorted_task_counter - 1);
-          kernel->schedule.queue.task_index_queue[position_in_sorted] =
+          kernel->schedule.queue.task_index_queue[sorted_task_counter] =
               task_list_index;
           sorted_task_counter++;
         }
