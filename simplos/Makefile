@@ -55,7 +55,7 @@ DEFINES += -DINITIAL_STACK_START=$(INITIAL_STACK_START)
 # DEFINES += -DSW_TIME_MEASSREMENTS
 
 # Use priority based scheduling.
-# DEINFES += -DPRIORITY_SCHEDULING
+DEFINES += -DPRIORITY_SCHEDULING
 
 ########## End of define configurations ###############
 
