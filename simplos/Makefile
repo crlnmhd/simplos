@@ -17,7 +17,7 @@ DATA_SECTION_START := 0x802000
 # Configure behavior though defines
 DEFINES :=
 # Static scheduling
-DEFINES += -DUSE_STATIC
+# DEFINES += -DUSE_STATIC
 
 # Frequency
 DEFINES += -DF_CPU=$(CPU_FREQ)

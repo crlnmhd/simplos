@@ -14,25 +14,6 @@ void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
                       const uint8_t end_index);
 void prioritize_tasks(const uint8_t num_tasks);
 
-NO_MT void static_cyclic_scheduler(void) {
-  for (uint8_t i = 1; i <= TASKS_MAX; ++i) {
-    uint8_t const next_candidate_index =
-        ((uint8_t)(INDEX_OF_CURRENT_TASK + i) % TASKS_MAX);
-
-    if (kernel->schedule.queue.tasks[next_candidate_index].status == READY) {
-      INDEX_OF_CURRENT_TASK = next_candidate_index;
-      cprint(
-          "selected task  %d \"%s\" with SP=0x%X using circular scheduling.\n",
-          INDEX_OF_CURRENT_TASK, kernel->task_names[INDEX_OF_CURRENT_TASK],
-          kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].task_sp_adr);
-      break;
-    }
-  }
-  if (kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].status == EMPTY) {
-    fatal_error("No task ready to run!\n");
-  }
-}
-
 void prioity_scheduler(void) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING();
   const uint8_t num_active_tasks =
