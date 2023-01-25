@@ -14,7 +14,7 @@ void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
                       const uint8_t end_index);
 void prioritize_tasks(const uint8_t num_tasks);
 
-void prioity_scheduler(void) {
+void reschedule(void) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING();
   const uint8_t num_active_tasks =
       get_active_tasks(kernel->schedule.queue.task_index_queue, TASKS_MAX);
@@ -75,7 +75,7 @@ void prioritize_tasks(const uint8_t num_tasks_in_queue) {
 
 void select_next_task(void) {
   while (kernel->schedule.queue.queue_position == 0) {
-    prioity_scheduler();
+    reschedule();
   }
   cprint("Scheduled tasks:");
   kernel->schedule.queue.queue_position--;
@@ -83,4 +83,4 @@ void select_next_task(void) {
       kernel->schedule.queue
           .task_index_queue[kernel->schedule.queue.queue_position];
 }
-void schedule_tasks(void) { prioity_scheduler(); }
+void schedule_tasks(void) { reschedule(); }
