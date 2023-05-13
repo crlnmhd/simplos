@@ -31,7 +31,9 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 // "return" the value of timer3.
 #define GET_TICK_COUNTER() TCNT3
 
-#define RESET_TICK_COUNTER() TCNT3 = 0;
+#define RESET_TICK_COUNTER() \
+  CLEAR_IO_REG(TCNT3L);      \
+  CLEAR_IO_REG(TCNT3H);
 #endif  // SW_TIME_MEASSREMENTS
 
 void init_scheduler_interupts(void);
