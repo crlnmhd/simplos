@@ -89,18 +89,8 @@ enum Task_Status task_status(pid_type pid);
 
 void kill_current_task(void);
 
-#define CLEAR_IO_REG(io_reg) \
-  asm volatile(              \
-      "sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"(_SFR_IO_ADDR(io_reg)));
-
-#define RESET_TIMER()   \
-  CLEAR_IO_REG(TCNT1L); \
-  CLEAR_IO_REG(TCNT1H);
-
-__attribute__((noinline, naked)) void k_yield(void);
-__attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
-                                              uint8_t const priority,
-                                              char const *name);
+#define STRINGIFY_WRAPPER(X) #X
+#define AS_STRING(X) STRINGIFY_WRAPPER(X)
 
 #define SAVE_CONTEXT()                    \
   asm volatile(                           \

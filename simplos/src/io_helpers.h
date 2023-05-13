@@ -89,4 +89,8 @@ void print_schedule(void);
 // Print timing data (preferably after execution has finished).
 void print_timing_data(void);
 
+#define CLEAR_IO_REG(io_reg) \
+  asm volatile(              \
+      "sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"(_SFR_IO_ADDR(io_reg)));
+
 #endif  // IOHELPERS

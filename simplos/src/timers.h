@@ -19,6 +19,14 @@
   SCILENT_DISABLE_MT() \
   cprint("disabling MT\n");
 
+#define RESET_TIMER()   \
+  CLEAR_IO_REG(TCNT1L); \
+  CLEAR_IO_REG(TCNT1H);
+
+__attribute__((noinline, naked)) void k_yield(void);
+__attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
+                                              uint8_t const priority,
+                                              char const *name);
 #if defined(SW_TIME_MEASSREMENTS)
 // "return" the value of timer3.
 #define GET_TICK_COUNTER() TCNT3
