@@ -89,7 +89,13 @@ enum Task_Status task_status(pid_type pid);
 
 void kill_current_task(void);
 
-INLINED void reset_timer(void) { TCNT1 = 0; }
+#define CLEAR_IO_REG(io_reg) \
+  asm volatile(              \
+      "sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"(_SFR_IO_ADDR(io_reg)));
+
+#define RESET_TIMER()   \
+  CLEAR_IO_REG(TCNT1L); \
+  CLEAR_IO_REG(TCNT1H);
 
 __attribute__((noinline, naked)) void k_yield(void);
 __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
@@ -275,7 +281,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #if defined(HW_TIME_MEASSUREMENTS)
   output_curr_task(INDEX_OF_CURRENT_TASK);
 #endif
-  reset_timer();
+  RESET_TIMER();
   SET_SP();
   RESTORE_CONTEXT();
   SCILENT_ENABLE_MT();
