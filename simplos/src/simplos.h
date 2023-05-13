@@ -219,9 +219,6 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SCILENT_DISABLE_MT();
   // Use OS stack location
   SP = kernel->schedule.os_task_sp;
-#if defined(HW_TIME_MEASSUREMENTS)
-  output_curr_task(OS_TASK_BLOCK);
-#endif
 
   taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
   cprint("printing task:\n");
@@ -270,9 +267,6 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   RESET_TICK_COUNTER();
 #endif  // SW_TIME_MEASSREMENTS
 
-#if defined(HW_TIME_MEASSUREMENTS)
-  output_curr_task(INDEX_OF_CURRENT_TASK);
-#endif
   RESET_TIMER();
   SET_SP();
   RESTORE_CONTEXT();

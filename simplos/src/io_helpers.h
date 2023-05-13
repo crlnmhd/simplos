@@ -71,15 +71,7 @@ _Pragma("clang diagnostic pop")
 
 #define warn(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 
-#if defined(HW_TIME_MEASSUREMENTS)
-        static inline
-    __attribute__((always_inline,
-                   unused)) void output_curr_task(__attribute__((unused))
-                                                  uint8_t task) {
-  PORTB = task;
-}
-#endif
-void fatal_error_internal(void);
+        void fatal_error_internal(void);
 
 void print_task(taskptr_type);
 void print_schedule(void);

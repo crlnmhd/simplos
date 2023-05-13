@@ -32,22 +32,12 @@ DEFINES += -DNO_MT='' # '__attribute__((optimize("Os")))'
 # Enable verbose output
 DEFINES += -DVERBOSE_OUTPUT
 
-# Use attached device on  22-26 to output current task as status during context
-# switch. Poll this over time on a separate device to gain knowledge of system
-# performance and how the ratio of time spent in context switches. Very small
-# overhead.
-DEINES += -DHW_TIME_MEASSUREMENTS
-
-# Measure time only in SW
-# DEFINES += -DSW_TIME_MEASSREMENTS
-
 # Enable debug ouput
 DEFINES += -DDEBUG_OUTPUT
 
 #enable tests
 DEFINES += -DRUN_TESTS
 
-DEFINES += -DSTACK_HIGH=$(STACK_HIGH)
 DEFINES += -DINITIAL_STACK_START=$(INITIAL_STACK_START)
 
 # Count the time spent in interups as oposed to outside. Incurres some

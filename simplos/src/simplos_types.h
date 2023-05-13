@@ -10,11 +10,6 @@
 
 #define TASKS_MAX 5U
 
-#if defined(HW_TIME_MEASSUREMENTS)
-#define OS_TASK_BLOCK 0x0FU
-#define EXEC_FINNISHED 0x0EU
-#endif
-
 enum Task_Status { SLEEPING, READY, RUNNING, EMPTY };
 
 typedef struct Simplos_Task_type {
