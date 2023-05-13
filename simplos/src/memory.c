@@ -44,7 +44,7 @@ uint16_t task_default_sp(uint8_t const task_memory_block) {
   return sp_adr;
 }
 
-void assert_stack_integrity(taskptr_type task) {
+void assert_task_pointer_integrity(taskptr_type task) {
   cprint("Task SP: 0x%X\n", task->task_sp_adr);
   ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");

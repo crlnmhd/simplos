@@ -235,7 +235,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 
   taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
   cprint("printing task:\n");
-  print_task(prev, true);
+  print_task(prev);
+  assert_task_pointer_integrity(prev);
 #if defined(SW_TIME_MEASSREMENTS)
   // Increment CPU time counter for previous task
   prev->time_counter += GET_TICK_COUNTER();
@@ -250,9 +251,9 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
     prev->status = READY;
 #if defined(VERBOSE_OUTPUT)
     print_schedule();
-#endif                             // VERBOSE_OUTPUT
-    assert_stack_integrity(prev);  // FIXME put this check eralier so
-                                   // errors will be easier to detect.
+#endif                                    // VERBOSE_OUTPUT
+    assert_task_pointer_integrity(prev);  // FIXME put this check eralier so
+                                          // errors will be easier to detect.
 #if defined(VERBOSE_OUTPUT)
     cprint("saving task %d's SP 0x%X\n", prev->task_memory_block,
            prev->task_sp_adr);
@@ -263,7 +264,8 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 
 #if defined(VERBOSE_OUTPUT)
   cprint("printing task:\n");
-  print_task(task, true);
+  print_task(task);
+  assert_task_pointer_integrity(task);
 #endif  // defined VERBOSE_OUTPUT
   task->status = RUNNING;
   task_sp = task->task_sp_adr;

@@ -10,7 +10,7 @@
 #include "simplos.h"
 #include "timers.h"
 
-NO_MT void print_task(taskptr_type task, bool const checks) {
+NO_MT void print_task(taskptr_type task) {
   if (task == NULL) {
     fatal_error("Error, task is NULL\n");
   }
@@ -46,10 +46,6 @@ NO_MT void print_task(taskptr_type task, bool const checks) {
   cprint("\n");
 
   // dprint("Debug -- task memory block: %d\n", task->task_memory_block);
-
-  if (checks) {
-    assert_stack_integrity(task);
-  }
 }
 
 NO_MT void print_schedule(void) {
@@ -57,7 +53,7 @@ NO_MT void print_schedule(void) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     Simplos_Task *task = &kernel->schedule.queue.tasks[i];
     // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
-    print_task(task, false);
+    print_task(task);
   }
   cprint(" --  end of schedule --\n")
 }

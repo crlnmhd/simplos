@@ -19,7 +19,7 @@ enum MEM_REGION memory_region(taskptr_type);
 
 uint16_t task_default_sp(uint8_t task_index);
 
-void assert_stack_integrity(taskptr_type task_block);
+void assert_task_pointer_integrity(taskptr_type task_block);
 
 uint16_t task_memory_size(void);
 
