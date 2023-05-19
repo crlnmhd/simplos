@@ -129,17 +129,17 @@ void kill_current_task(void);
       "push  r29                    \n\t" \
       "push  r30                    \n\t" \
       "push  r31                    \n\t" \
-      "ldi   r26, 0x00              \n\t" \
-      "ldi   r27, 0x21              \n\t" \
+      "ldi   r26, lo8(%0)           \n\t" \
+      "ldi   r27, hi8(%0)           \n\t" \
       "in    r0, __SP_L__           \n\t" \
       "st    x+, r0                 \n\t" \
       "in    r0, __SP_H__           \n\t" \
-      "st    x+, r0                 \n\t");
+      "st    x+, r0                 \n\t" ::"i"(&task_sp));
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
-      "ldi  r26, 0x00              \n\t" \
-      "ldi  r27, 0x21              \n\t" \
+      "ldi  r26, lo8(%0)           \n\t" \
+      "ldi  r27, hi8(%0)           \n\t" \
       "ld   r28, x+                \n\t" \
       "out  __SP_L__, r28          \n\t" \
       "ld   r29, x+                \n\t" \
@@ -177,7 +177,7 @@ void kill_current_task(void);
       "pop  r1                     \n\t" \
       "pop  r0                     \n\t" \
       "out  __SREG__, r0           \n\t" \
-      "pop  r0                     \n\t");
+      "pop  r0                     \n\t" ::"i"(&task_sp));
 
 #define SET_SP()                  \
   asm volatile(                   \
@@ -185,12 +185,12 @@ void kill_current_task(void);
       "push r27             \n\t" \
       "push r28             \n\t" \
       "push r29             \n\t" \
-      "ldi  r26, 0x00       \n\t" \
-      "ldi  r27, 0x21       \n\t" \
+      "ldi  r26, lo8(%0)    \n\t" \
+      "ldi  r27, hi8(%0)    \n\t" \
       "ld   r28, x+         \n\t" \
       "ld   r29, x+         \n\t" \
       "out  __SP_L__, r28   \n\t" \
-      "out  __SP_H__, r29   \n\t");
+      "out  __SP_H__, r29   \n\t" ::"i"(&task_sp));
 
 #define SAVE_SP()                 \
   asm volatile(                   \
@@ -198,20 +198,20 @@ void kill_current_task(void);
       "push r27             \n\t" \
       "push r16             \n\t" \
       "push r17             \n\t" \
-      "ldi  r26, 0x00       \n\t" \
-      "ldi  r27, 0x21       \n\t" \
+      "ldi  r26, lo8(%0)    \n\t" \
+      "ldi  r27, hi8(%0)    \n\t" \
       "ldi  r17, 0x4        \n\t" \
       "in   r16, __SP_L__   \n\t" \
       "add  r16, r17        \n\t" \
       "st   x+, r16         \n\t" \
-      "in   r16, __SP_H__  \n\t"  \
+      "in   r16, __SP_H__   \n\t" \
       "clr  r17             \n\t" \
       "adc  r16, r17        \n\t" \
       "st   x+, r16         \n\t" \
       "pop  r17             \n\t" \
       "pop  r16             \n\t" \
       "pop  r27             \n\t" \
-      "pop  r26             \n\t");
+      "pop  r26             \n\t" ::"i"(&task_sp));
 
 #define SET_SP_TO_OS_TASK_SP()      \
   asm volatile(                     \
