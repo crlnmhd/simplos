@@ -213,12 +213,18 @@ void kill_current_task(void);
       "pop  r27             \n\t" \
       "pop  r26             \n\t");
 
+#define SET_SP_TO_OS_TASK_SP()      \
+  asm volatile(                     \
+      "ldi r26, lo8(%0)       \n\t" \
+      "ldi r27, hi8(%0)       \n\t" \
+      "out __SP_L__, r26      \n\t" \
+      "out __SP_H__, r27      \n\t" ::"i"(OS_STACK_START));
+
 static inline __attribute__((always_inline, unused)) void context_switch(void) {
   SAVE_CONTEXT();
   SAVE_SP();
   SCILENT_DISABLE_MT();
-  // Use OS stack location
-  SP = kernel->schedule.os_task_sp;
+  SET_SP_TO_OS_TASK_SP();
 
   taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
   cprint("printing task:\n");
