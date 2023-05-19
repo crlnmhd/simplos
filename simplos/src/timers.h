@@ -7,9 +7,23 @@
 // 781210 = (16*10^6) / (2*1024) - 1 (must be <65536) //FIXME
 #define TIMER_COMPARE_MATCH 781  // aprox 100 ms
 
-#define SCILENT_ENABLE_MT() TIMSK1 |= (1U << OCIE1A);
+#define SCILENT_ENABLE_MT()                                             \
+  asm volatile(                                                         \
+      "push r16                         \n\t "                          \
+      "lds r16, %[timer_adr]            \n\t "                          \
+      "ori r16, (1 << %[enable_bit])    \n\t "                          \
+      "sts %[timer_adr], r16            \n\t "                          \
+      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
+      [enable_bit] "I"(OCIE1A));  // Set enable bit for TIMSK1
 
-#define SCILENT_DISABLE_MT() TIMSK1 &= (uint8_t) ~(1U << OCIE1A);
+#define SCILENT_DISABLE_MT()                                            \
+  asm volatile(                                                         \
+      "push r16                         \n\t "                          \
+      "lds r16, %[timer_adr]            \n\t "                          \
+      "andi r16, ~(1 << %[enable_bit])  \n\t "                          \
+      "sts %[timer_adr], r16            \n\t "                          \
+      "pop r16                          \n\t " ::[timer_adr] "i"(0x70), \
+      [enable_bit] "I"(OCIE1A));  // Unset enable bit for TMSK1
 
 #define ENABLE_MT()    \
   SCILENT_ENABLE_MT(); \
