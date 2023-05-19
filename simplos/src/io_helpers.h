@@ -55,7 +55,7 @@ _Pragma("clang diagnostic pop")
     HALT                                        \
   }
 
-#define fatal_error(str, ...)             \
+#define FATAL_ERROR(str, ...)             \
   cli();                                  \
   print_from_prg_mem("FATAL ERROR!\n");   \
   print_from_prg_mem(str, ##__VA_ARGS__); \
@@ -63,17 +63,15 @@ _Pragma("clang diagnostic pop")
   HALT
 
 // Safe print from the os task
-#define os_safe_print(fmt, ...)     \
+#define OS_SAFE_PRINT(fmt, ...)     \
   uint16_t old_sp = SP();           \
   SP = kernel->schedule.os_task_sp; \
   cprint(fmt, ##__VA_ARGS__);       \
   SP = old_sp;
 
-#define warn(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
+#define WARNING(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 
-        void fatal_error_internal(void);
-
-void print_task(taskptr_type);
+        void print_task(taskptr_type);
 void print_schedule(void);
 
 // void print_task_stack(uint8_t const pid);

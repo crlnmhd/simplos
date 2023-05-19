@@ -40,7 +40,7 @@ NO_MT uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
       return i;
     }
   }
-  fatal_error("Can't create new task! Queue if full!");
+  FATAL_ERROR("Can't create new task! Queue if full!");
 
   return 0;  // Never reached
 }

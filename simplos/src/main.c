@@ -58,5 +58,5 @@ int main(void) {
   sei();
   ENABLE_MT();
   idle_fn();
-  fatal_error("UNREACHABLE END OF MAIN\n");
+  FATAL_ERROR("UNREACHABLE END OF MAIN\n");
 }

@@ -12,7 +12,7 @@
 
 NO_MT void print_task(taskptr_type task) {
   if (task == NULL) {
-    fatal_error("Error, task is NULL\n");
+    FATAL_ERROR("Error, task is NULL\n");
   }
 
   uint8_t const task_index = task->task_memory_block;
