@@ -33,7 +33,7 @@ typedef Task_Queue_type volatile Task_Queue;
 typedef struct Scheduler_type {
   Task_Queue queue;
   uint16_t os_task_sp;
-  bool enabled;
+  uint8_t task_scheduled;
 } Scheduler_type;
 typedef Scheduler_type volatile Scheduler;
 
