@@ -224,14 +224,7 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
   cprint("printing task:\n");
   print_task(prev);
   assert_task_pointer_integrity(prev);
-#if defined(SW_TIME_MEASSREMENTS)
-  // Increment CPU time counter for previous task
-  prev->time_counter += GET_TICK_COUNTER();
 
-  // TODO: improve this! Make the measurements more fair for task/os.
-  // Reset counter to get an approximate value for time spent in interupt.
-  RESET_TICK_COUNTER();
-#endif  // SW_TIME_MEASSREMENTS
   if (prev->status == RUNNING) {
     // The previous task has been killed.
     prev->task_sp_adr = task_sp;
@@ -259,13 +252,6 @@ static inline __attribute__((always_inline, unused)) void context_switch(void) {
 #if defined(VERBOSE_OUTPUT)
   cprint("Setting task_sp to 0x%X\n", task_sp);
 #endif  // defined VERBOSE_OUTPUT
-
-#if defined(SW_TIME_MEASSREMENTS)
-  // Add this context switch (approx.) to time counters.
-  kernel->cs_time_counter += GET_TICK_COUNTER();
-  // Reset timer and "start" counting the rest as task CPU time.
-  RESET_TICK_COUNTER();
-#endif  // SW_TIME_MEASSREMENTS
 
   RESET_TIMER();
   SET_SP();
