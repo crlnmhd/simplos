@@ -77,7 +77,7 @@ enter_dev_container() {
   local mount_destination
   mount_destination="/simplos"
 
-  podman run -it --rm -v "${source_directory}:${mount_destination}":Z avr_docker bash
+  podman run -it --rm -v "${source_directory}:${mount_destination}":Z avr_docker bash -c "tmux -f tmux.conf && bash"
 }
 
 main "$@"
