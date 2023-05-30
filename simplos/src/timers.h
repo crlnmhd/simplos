@@ -22,7 +22,7 @@
       "lds r16, %[timer_adr]            \n\t "                          \
       "andi r16, ~(1 << %[enable_bit])  \n\t "                          \
       "sts %[timer_adr], r16            \n\t "                          \
-      "pop r16                          \n\t " ::[timer_adr] "i"(0x70), \
+      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
       [enable_bit] "I"(OCIE1A));  // Unset enable bit for TMSK1
 
 #define ENABLE_MT()    \

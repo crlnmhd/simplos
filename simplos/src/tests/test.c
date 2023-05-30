@@ -15,6 +15,13 @@ static bool test_single_yeild(void);
 static bool test_multiple_yield(void);
 static bool test_long_running_function(void);
 
+void verify_enable_disable_mt_macros(void);
+
+void pre_scheduler_self_checks(void) {
+  verify_enable_disable_mt_macros();
+  cprint("Pre scheduler self checks ... PASSED\n");
+}
+
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
                        struct TestStatistics statistics) {
   print_from_prg_mem("Testing: ");
