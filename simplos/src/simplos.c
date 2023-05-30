@@ -56,7 +56,6 @@ __attribute__((noinline, naked)) void k_yield(void) {
   context_switch();
   sei();
   asm volatile("ret");
-  // asm volatile("ret");
 }
 
 // Timer interupt for context switching

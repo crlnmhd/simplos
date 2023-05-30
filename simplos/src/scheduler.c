@@ -58,9 +58,7 @@ void prioritize_tasks(const uint8_t num_tasks_in_queue) {
          task_index++) {
       const uint16_t remaining_tasks_to_schedule =
           (uint8_t)(num_tasks_in_queue - sorted_task_counter);
-      if (remaining_tasks_to_schedule == 0) {
-        return;
-      } else {
+      if (remaining_tasks_to_schedule > 0) {
         const uint8_t task_list_index = unsorted[task_index];
         if (kernel->schedule.queue.tasks[task_list_index].priority ==
             priority) {
@@ -68,6 +66,8 @@ void prioritize_tasks(const uint8_t num_tasks_in_queue) {
               task_list_index;
           sorted_task_counter++;
         }
+      } else {
+        return;
       }
     }
   }
