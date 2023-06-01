@@ -29,3 +29,8 @@ void verify_enable_disable_mt_macros(void) {
   TIMSK1 = original_timsk1_content;
   sei();
 }
+
+void pre_scheduler_self_checks(void) {
+  verify_enable_disable_mt_macros();
+  cprint("Pre scheduler self checks ... PASSED\n");
+}
