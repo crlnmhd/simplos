@@ -30,7 +30,21 @@ void verify_enable_disable_mt_macros(void) {
   sei();
 }
 
+void verify_set_sp_to_os_sp_macro(void) {
+  volatile uint16_t old_sp = 0, new_sp = 0;
+  old_sp = SP;
+
+  SET_SP_TO_OS_TASK_SP();
+  new_sp = SP;
+
+  ASSERT_EQ(new_sp, OS_STACK_START, "0x%X",
+            "Unexpected new stack pointer after SET_SP_TO_OS_TASK");
+
+  SP = old_sp;  // reset
+}
+
 void pre_scheduler_self_checks(void) {
   verify_enable_disable_mt_macros();
+  verify_set_sp_to_os_sp_macro();
   cprint("Pre scheduler self checks ... PASSED\n");
 }
