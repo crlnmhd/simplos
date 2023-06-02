@@ -8,8 +8,6 @@
 void verify_enable_disable_mt_macros(void) {
   // Setup
   const uint8_t original_timsk1_content = TIMSK1;
-  cli();
-
   // Test
   TIMSK1 = 0;
   SCILENT_ENABLE_MT();
@@ -25,9 +23,7 @@ void verify_enable_disable_mt_macros(void) {
   ASSERT_EQ(TIMSK1, 0xFF ^ 1 << OCIE1A, "0x%X",
             "Unexpeced status of TIMSK1 register after disabling MT.");
 
-  // Teardown
-  TIMSK1 = original_timsk1_content;
-  sei();
+  TIMSK1 = original_timsk1_content;  // Reset
 }
 
 void verify_set_sp_to_os_sp_macro(void) {
