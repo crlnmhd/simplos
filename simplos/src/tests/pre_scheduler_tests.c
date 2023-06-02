@@ -43,8 +43,22 @@ void verify_set_sp_to_os_sp_macro(void) {
   SP = old_sp;  // reset
 }
 
+void verify_save_sp_macro(void) {
+  const uint16_t old_task_sp = task_sp;
+  ASSERT(old_task_sp != SP,
+         "Bad test setup. Expected task_sp not to be set to SP");
+
+  SAVE_SP();
+
+  ASSERT_EQ(task_sp, SP, "0x%X",
+            "SAVE_SP macro failed to save stack pointer to task_sp variable");
+
+  task_sp = old_task_sp;  // reset
+}
+
 void pre_scheduler_self_checks(void) {
   verify_enable_disable_mt_macros();
   verify_set_sp_to_os_sp_macro();
+  verify_save_sp_macro();
   cprint("Pre scheduler self checks ... PASSED\n");
 }
