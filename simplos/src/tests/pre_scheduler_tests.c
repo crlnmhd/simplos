@@ -125,9 +125,12 @@ void verify_set_sp_macro(void) {
 }
 
 void pre_scheduler_self_checks(void) {
-  verify_enable_disable_mt_macros();
-  verify_set_sp_to_os_sp_macro();
-  verify_save_sp_macro();
-  verify_set_sp_macro();
+  cprint("Running pre sheduler tests...\n");
+
+  run_with_stack_integrity_check(verify_enable_disable_mt_macros);
+  run_with_stack_integrity_check(verify_set_sp_to_os_sp_macro);
+  run_with_stack_integrity_check(verify_save_sp_macro);
+  run_with_stack_integrity_check(verify_set_sp_macro);
+
   cprint("Pre scheduler self checks ... PASSED\n");
 }
