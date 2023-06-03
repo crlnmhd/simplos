@@ -99,29 +99,30 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
 #endif  // SW_TIME_MEASSREMNTS
   INDEX_OF_CURRENT_TASK = new_task_index;
 
-  register uint8_t tmpH, tmpM, tmpL, tmp;
   cli();
-  asm volatile(
-      "rcall .+0                  \n\t"  // pushes PC (3 bytes) onto the
+  asm goto(
+      "rcall .+0            \n\t"  // pushes PC (3 bytes) onto the
       // stack
-      "pop %[tmpH]                \n\t"
-      "pop %[tmpM]                \n\t"
-      "pop %[tmpL]                \n\t"  // MSB
-      "ldi %[tmp], 12             \n\t"
-      "add %[tmpL], %[tmp]        \n\t"  // Offset to jmp RETPOINT
-      "ldi %[tmp], 0              \n\t"  // This may not be nessesary with
-      // __zero_reg__
-      "adc %[tmpM], %[tmp]       \n\t"  // Carry from LSB. tmp = 0
-      "adc %[tmpH], %[tmp]       \n\t"  // Carry from Middle byte
-      "push %[tmpL]              \n\t"  // PUSH LS byte of PC back onto the
+      "pop r16              \n\t"
+      "pop r17              \n\t"
+      "pop r18              \n\t"  // MSB
+      "ldi r19, 12          \n\t"
+      "add r18, r19         \n\t"  // Offset to jmp RETPOINT
+      "ldi r19, 0           \n\t"  // Clearing the registe might not be
+                                   // nessesary.
+      "adc r17, r19         \n\t"  // Carry from LSB.
+      "adc r16, r19         \n\t"  // Carry from Middle byte
+      "push r18             \n\t"  // PUSH LS byte of PC back onto the
       // stack.
-      "push %[tmpM]              \n\t"
-      "push %[tmpH]              \n\t"
-      "cpse r1, r1               \n\t"  // Skip next instruction
-      "jmp RETPOINT              \n\t"
-      "nop                       \n\t"
-      :
-      [tmpH] "=r"(tmpH), [tmpM] "=r"(tmpM), [tmpL] "=r"(tmpL), [tmp] "=r"(tmp));
+      "push r17             \n\t"
+      "push r16             \n\t"
+      "cpse r1, r1          \n\t"  // Skip next instruction
+      "jmp %l[return_point] \n\t"  // Target
+      "nop                  \n\t"
+      : /* No outputs */
+      : /* No inputs */
+      : "r16", "r17", "r18", "r19"
+      : return_point);
 
   SAVE_CONTEXT();
 
@@ -142,9 +143,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
 
   cprint("Task killed");
 
-  asm volatile(
-      "RETPOINT:        \n\t"
-      " nop             \n\t");
+return_point:
   return new_task_pid;
 }
 
