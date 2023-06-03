@@ -7,6 +7,8 @@
 */
 void select_next_task(void);
 
+void start_scheduler(void);
+
 // void print_tasks(void);
 
 #endif  // SCHEDULER_H_

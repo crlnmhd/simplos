@@ -84,3 +84,11 @@ void select_next_task(void) {
           .task_index_queue[kernel->schedule.queue.queue_position];
 }
 void schedule_tasks(void) { reschedule(); }
+
+void start_scheduler(void) {
+  k_yield();  // Contect swtich back after starting
+  while (true) {
+    select_next_task();
+    k_yield();
+  }
+}
