@@ -6,7 +6,6 @@
 #include "scheduler.h"
 #include "serial.h"
 #include "simplos.h"
-#include "tasks.h"
 #include "tests/test.h"
 #include "timers.h"
 
@@ -47,27 +46,18 @@ int main(void) {
   init_ticks();
 #endif  // defined SW_TIME_MEASSREMENTS
 
-  uint8_t scheduler_index = create_simplos_task("OS", 0);
-  uint8_t idle_fn_index = create_simplos_task("idle_fn", 0);
-
-  INDEX_OF_CURRENT_TASK = scheduler_index;
+  uint8_t index = create_simplos_task("idle_fn", 0);
+  INDEX_OF_CURRENT_TASK = index;
 
   const uint8_t margin_to_main = 10;
 
   configure_heap_location(margin_to_main);
-  task_sp = kernel->schedule.queue.tasks[scheduler_index].task_sp_adr;
+  task_sp = kernel->schedule.queue.tasks[index].task_sp_adr;
   SET_SP();
 
   /* Run idle function. Should never leave this. */
   sei();
   ENABLE_MT();
-
-  start_scheduler();  // Yields emidiatly at first run.
-
-  INDEX_OF_CURRENT_TASK = idle_fn_index;
-  task_sp = kernel->schedule.queue.tasks[scheduler_index].task_sp_adr;
-  SET_SP();
-  idle_fn();  // Never returns
-
+  idle_fn();
   FATAL_ERROR("UNREACHABLE END OF MAIN\n");
 }

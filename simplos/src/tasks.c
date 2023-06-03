@@ -4,6 +4,7 @@
 
 #include "io_helpers.h"
 #include "os.h"
+#include "scheduler.h"
 #include "tests/test.h"
 
 // extern
@@ -64,6 +65,10 @@ void wait_for_other(void) {
 }
 
 void idle_fn(void) {
+  print("Starting scheduler\n");
+  spawn(start_scheduler, 0, "OS sched");  // yields emidiatly.
+  print("Running static tests\n");
+  run_static_tests();
   print("Starting idle function\n");
 
 #if defined(RUN_TESTS)

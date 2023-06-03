@@ -8,6 +8,7 @@
 #include "io_helpers.h"
 #include "serial.h"
 #include "simplos.h"
+#include "timers.h"
 
 uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks);
 void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
@@ -86,8 +87,10 @@ void select_next_task(void) {
 void schedule_tasks(void) { reschedule(); }
 
 void start_scheduler(void) {
+  cprint("Scheduler started. Yielding...\n");
   k_yield();  // Contect swtich back after starting
   while (true) {
+    cprint("Selecting next task...\n");
     select_next_task();
     k_yield();
   }
