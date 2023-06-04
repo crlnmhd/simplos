@@ -30,7 +30,7 @@ void reschedule(void) {
 
   prioritize_tasks(kernel->schedule.queue.tasks, num_active_tasks,
                    kernel->schedule.queue.task_index_queue);
-  kernel->schedule.queue.queue_position = num_active_tasks;
+  kernel->schedule.queue.queue_position = num_active_tasks - 1;
 #if defined(VERBOSE_OUTPUT)
   print_queue(num_active_tasks);
 #endif  // defined(VERBOSE_OUTPUT)
@@ -87,13 +87,14 @@ void print_queue(uint8_t num_active_tasks) {
 }
 
 void select_next_task(void) {
-  while (kernel->schedule.queue.queue_position == 0) {
+  if (kernel->schedule.queue.queue_position == 0) {
 #if defined(VERBOSE_OUTPUT)
     cprint("Rescheduling...\n");
 #endif  // defined(VERBOSE_OUTPUT)
     reschedule();
+  } else {
+    kernel->schedule.queue.queue_position--;
   }
-  kernel->schedule.queue.queue_position--;
   INDEX_OF_CURRENT_TASK =
       kernel->schedule.queue
           .task_index_queue[kernel->schedule.queue.queue_position];
