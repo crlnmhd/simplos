@@ -8,12 +8,15 @@
 #include "io_helpers.h"
 #include "serial.h"
 #include "simplos.h"
+#include "simplos_types.h"
 #include "timers.h"
 
 uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks);
 void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
                       const uint8_t end_index);
 void prioritize_tasks(const uint8_t num_tasks);
+
+void print_queue(uint8_t num_active_tasks);
 
 void reschedule(void) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING();
@@ -22,6 +25,9 @@ void reschedule(void) {
   END_DISCARD_VOLATILE_QUALIFIER_WARNING();
 
   prioritize_tasks(num_active_tasks);
+#if defined(VERBOSE_OUTPUT)
+  print_queue(num_active_tasks);
+#endif  // defined(VERBOSE_OUTPUT)
 }
 
 /*
@@ -74,11 +80,26 @@ void prioritize_tasks(const uint8_t num_tasks_in_queue) {
   }
 }
 
+void print_queue(uint8_t num_active_tasks) {
+  ASSERT(num_active_tasks < TASKS_MAX,
+         "Invalid number of active tasks provided!");
+
+  cprint("Start of queue:\n-------------\n");
+  for (uint8_t i = 0; i < num_active_tasks; i++) {
+    cprint("%d: ", i);
+    taskptr_type task_ptr = &kernel->schedule.queue.tasks[i];
+    print_task(task_ptr);
+  }
+  cprint("End of queue:\n-------------\n");
+}
+
 void select_next_task(void) {
   while (kernel->schedule.queue.queue_position == 0) {
+#if defined(VERBOSE_OUTPUT)
+    cprint("Rescheduling...\n");
+#endif  // defined(VERBOSE_OUTPUT)
     reschedule();
   }
-  cprint("Scheduled tasks:");
   kernel->schedule.queue.queue_position--;
   INDEX_OF_CURRENT_TASK =
       kernel->schedule.queue
@@ -90,7 +111,9 @@ void start_scheduler(void) {
   cprint("Scheduler started. Yielding...\n");
   k_yield();  // Contect swtich back after starting
   while (true) {
+#if defined(VERBOSE_OUTPUT)
     cprint("Selecting next task...\n");
+#endif  // defined (VERBOSE_OUTPUT)
     select_next_task();
     k_yield();
   }
