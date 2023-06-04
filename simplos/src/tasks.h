@@ -15,6 +15,6 @@
 void test_fn1(void);
 void test_fn2(void);
 void test_fn3(void);
-void idle_fn(void);
+void run_idle_fn(void);
 
 #endif

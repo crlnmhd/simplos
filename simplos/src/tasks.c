@@ -64,7 +64,7 @@ void wait_for_other(void) {
   print("It's finnished!\n");
 }
 
-void idle_fn(void) {
+void run_idle_fn(void) {
   print("Starting scheduler\n");
   spawn(start_scheduler, 0, "OS sched");  // yields emidiatly.
   print("Running static tests\n");

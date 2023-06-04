@@ -58,6 +58,6 @@ int main(void) {
   /* Run idle function. Should never leave this. */
   sei();
   ENABLE_MT();
-  idle_fn();
+  run_idle_fn();
   FATAL_ERROR("UNREACHABLE END OF MAIN\n");
 }
