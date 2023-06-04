@@ -100,7 +100,7 @@ CFLAGS := -Wall $\
 
 FRAMEWORK := wiring
 
-.PHONY: %.compdb_entry compile_commands.json dir all
+.PHONY: %.compdb_entry compile_commands dir all
 
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
 %.compdb_entry: %.c
@@ -112,7 +112,7 @@ FRAMEWORK := wiring
 
 COMPDB_ENTRIES = $(addsuffix .compdb_entry, $(basename $(SOURCES)))
 
-compile_commands.json: $(COMPDB_ENTRIES)
+compile_commands: $(COMPDB_ENTRIES)
 	@echo "[" > $@.tmp
 	@cat $^ >> $@.tmp
 	@sed '$$d' < $@.tmp > $@
@@ -129,7 +129,7 @@ dir:
 	mkdir -p $(OBJ)/tests
 
 # Target to compile and generate database for clangd.
-build: compile_commands.json dir all
+build: compile_commands dir all
 
 all: $(OBJECTS) $(ASM_OBJECTS)
 	$(CC) $(CFLAGS) $^ -o build/simplos.out
