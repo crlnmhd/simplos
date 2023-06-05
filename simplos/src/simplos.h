@@ -28,9 +28,9 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 //clang-format on
 
 extern volatile uint16_t task_sp;
-
 extern volatile Kernel internal_kernel; 
 extern Kernel volatile *volatile kernel; 
+extern volatile uint16_t next_task_sp;
 
 
 #define DO_PRAGMA_(x) _Pragma(#x)

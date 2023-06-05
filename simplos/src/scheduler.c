@@ -97,7 +97,8 @@ void select_next_task(void) {
   } else {
     kernel->schedule.queue.queue_position--;
   }
-  next_task_sp = INDEX_OF_CURRENT_TASK;
+  next_task_sp =
+      kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].task_sp_adr;
 }
 void schedule_tasks(void) { reschedule(); }
 
