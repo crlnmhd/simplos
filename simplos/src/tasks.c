@@ -67,8 +67,6 @@ void wait_for_other(void) {
 void run_idle_fn(void) {
   print("Starting scheduler\n");
   spawn(start_scheduler, 0, "OS sched");  // yields emidiatly.
-  print("Running static tests\n");
-  run_static_tests();
   print("Starting idle function\n");
 
 #if defined(RUN_TESTS)
