@@ -89,9 +89,6 @@ enum Task_Status task_status(pid_type pid);
 
 void kill_current_task(void);
 
-#define STRINGIFY_WRAPPER(X) #X
-#define AS_STRING(X) STRINGIFY_WRAPPER(X)
-
 #define SAVE_CONTEXT()                    \
   asm volatile(                           \
       "push  r0                    \n\t"  \
