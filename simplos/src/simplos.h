@@ -31,6 +31,7 @@ extern volatile uint16_t task_sp;
 extern volatile Kernel internal_kernel; 
 extern Kernel volatile *volatile kernel; 
 extern volatile uint16_t next_task_sp;
+extern volatile uint16_t scheduler_task_sp;
 
 
 #define DO_PRAGMA_(x) _Pragma(#x)
