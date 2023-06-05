@@ -104,6 +104,7 @@ void schedule_tasks(void) { reschedule(); }
 
 void start_scheduler(void) {
   cprint("Scheduler started. Yielding...\n");
+  scheduler_task_sp = SP + num_context_switch_overhead_bytes();
   k_yield();  // Contect swtich back after starting
   while (true) {
 #if defined(VERBOSE_OUTPUT)

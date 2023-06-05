@@ -85,6 +85,8 @@ void init_schedule(void);
  */
 void init_memory(void);
 
+uint16_t num_context_switch_overhead_bytes(void);
+
 Simplos_Task *get_task(pid_type pid);
 enum Task_Status task_status(pid_type pid);
 
