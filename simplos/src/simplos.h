@@ -181,37 +181,25 @@ void kill_current_task(void);
 
 #define SET_SP()                  \
   asm volatile(                   \
-      "push r26             \n\t" \
-      "push r27             \n\t" \
-      "push r28             \n\t" \
-      "push r29             \n\t" \
       "ldi  r26, lo8(%0)    \n\t" \
       "ldi  r27, hi8(%0)    \n\t" \
       "ld   r28, x+         \n\t" \
       "ld   r29, x+         \n\t" \
       "out  __SP_L__, r28   \n\t" \
-      "out  __SP_H__, r29   \n\t" ::"i"(&task_sp));
+      "out  __SP_H__, r29   \n\t" \
+      : /*No outputs*/            \
+      : "i"(&task_sp));
 
 #define SAVE_SP()                 \
   asm volatile(                   \
-      "push r26             \n\t" \
-      "push r27             \n\t" \
-      "push r16             \n\t" \
-      "push r17             \n\t" \
       "ldi  r26, lo8(%0)    \n\t" \
       "ldi  r27, hi8(%0)    \n\t" \
-      "ldi  r17, 0x4        \n\t" \
       "in   r16, __SP_L__   \n\t" \
-      "add  r16, r17        \n\t" \
       "st   x+, r16         \n\t" \
       "in   r16, __SP_H__   \n\t" \
-      "clr  r17             \n\t" \
-      "adc  r16, r17        \n\t" \
       "st   x+, r16         \n\t" \
-      "pop  r17             \n\t" \
-      "pop  r16             \n\t" \
-      "pop  r27             \n\t" \
-      "pop  r26             \n\t" ::"i"(&task_sp));
+      : /* No outputs*/           \
+      : "i"(&task_sp));
 
 #define SET_SP_TO_OS_TASK_SP()      \
   asm volatile(                     \
@@ -222,10 +210,6 @@ void kill_current_task(void);
 
 #define SELECT_SCHEDULED_TASK_OR_SCHEDULER_OLD() \
   asm volatile(                                  \
-      "push r26                  \n\t"           \
-      "push r27                  \n\t"           \
-      "push r16                  \n\t"           \
-      "push r17                  \n\t"           \
       "ldi r26, lo8(%[next_sp])  \n\t"           \
       "ldi r27, hi8(%[next_sp])  \n\t"           \
       "ld  r16, x+               \n\t"           \
@@ -234,21 +218,11 @@ void kill_current_task(void);
       "ldi r27, hi8(%[task_sp])  \n\t"           \
       "st x+, r16                \n\t"           \
       "st x,  r17                \n\t"           \
-      "pop r17                   \n\t"           \
-      "pop r16                   \n\t"           \
-      "pop r27                   \n\t"           \
-      "pop r26                   \n\t"           \
       : /* No outputs */                         \
       : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp));
 
 #define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                   \
   asm volatile(                                                \
-      "push r26                         \n\t"                  \
-      "push r27                         \n\t"                  \
-      "push r28                         \n\t"                  \
-      "push r29                         \n\t"                  \
-      "push r16                         \n\t"                  \
-      "push r17                         \n\t"                  \
       "ldi r26, lo8(%[next_sp])         \n\t"                  \
       "ldi r27, hi8(%[next_sp])         \n\t"                  \
       "ldi r28, lo8(%[task_sp])         \n\t"                  \
@@ -265,12 +239,6 @@ void kill_current_task(void);
       "ldi r27, hi8(%[scheduler_sp])    \n\t"                  \
       "st y+, r26                       \n\t"                  \
       "st y,  r27                       \n\t"                  \
-      "pop r17                          \n\t"                  \
-      "pop r16                          \n\t"                  \
-      "pop r29                          \n\t"                  \
-      "pop r28                          \n\t"                  \
-      "pop r27                          \n\t"                  \
-      "pop r26                          \n\t"                  \
       : /* No outputs */                                       \
       : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp), \
         [scheduler_sp] "i"(&scheduler_task_sp));
