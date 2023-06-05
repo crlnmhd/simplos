@@ -32,7 +32,7 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  // pre_scheduler_self_checks();
+  pre_scheduler_self_checks();
 
   /* Set up  timer interrupt for tick counting. */
   init_scheduler_interupts();
