@@ -43,7 +43,7 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
                                               char const *name);
 #if defined(SW_TIME_MEASSREMENTS)
 // "return" the value of timer3.
-#define GET_TICK_COUNTER() TCNT3
+static inline uint16_t get_tick_counter(void){return TCNT3};
 
 #define RESET_TICK_COUNTER() \
   CLEAR_IO_REG(TCNT3L);      \
