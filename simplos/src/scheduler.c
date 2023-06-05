@@ -16,6 +16,8 @@ void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
                       const uint8_t end_index);
 void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
                       volatile uint8_t *out_priority_list);
+void handle_previous_task(taskptr_type prev);
+void prepare_next_task(taskptr_type next);
 
 void print_queue(uint8_t num_active_tasks);
 
@@ -106,7 +108,45 @@ void start_scheduler(void) {
 #if defined(VERBOSE_OUTPUT)
     cprint("Selecting next task...\n");
 #endif  // defined (VERBOSE_OUTPUT)
+    taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
+    handle_previous_task(prev);
     select_next_task();
+    taskptr_type next = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
+    prepare_next_task(next);
     k_yield();
   }
+}
+
+void handle_previous_task(taskptr_type prev) {
+  cprint("printing task:\n");
+  print_task(prev);
+  assert_task_pointer_integrity(prev);
+
+  if (prev->status == RUNNING) {
+    // The previous task has been killed.
+    prev->task_sp_adr = task_sp;
+    prev->status = READY;
+#if defined(VERBOSE_OUTPUT)
+    print_schedule();
+#endif  // defined (VERBOSE_OUTPUT)
+    assert_task_pointer_integrity(prev);
+
+#if defined(VERBOSE_OUTPUT)
+    cprint("saving previous task %d's SP 0x%X\n", prev->task_memory_block,
+           prev->task_sp_adr);
+#endif
+  }
+}
+
+void prepare_next_task(taskptr_type next) {
+#if defined(VERBOSE_OUTPUT)
+  cprint("printing next:\n");
+  print_task(next);
+  assert_task_pointer_integrity(next);
+#endif  // defined VERBOSE_OUTPUT
+  next->status = RUNNING;
+  task_sp = next->task_sp_adr;
+#if defined(VERBOSE_OUTPUT)
+  cprint("Setting next_sp to 0x%X\n", task_sp);
+#endif  // defined VERBOSE_OUTPUT
 }
