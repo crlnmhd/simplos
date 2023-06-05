@@ -138,6 +138,50 @@ void kill_current_task(void);
       : /* No outputs*/                   \
       : "i"(&task_sp));
 
+#define SAVE_SP()                 \
+  asm volatile(                   \
+      "ldi  r26, lo8(%0)    \n\t" \
+      "ldi  r27, hi8(%0)    \n\t" \
+      "in   r16, __SP_L__   \n\t" \
+      "st   x+, r16         \n\t" \
+      "in   r16, __SP_H__   \n\t" \
+      "st   x+, r16         \n\t" \
+      : /* No outputs*/           \
+      : "i"(&task_sp));
+
+#define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                   \
+  asm volatile(                                                \
+      "ldi r26, lo8(%[next_sp])         \n\t"                  \
+      "ldi r27, hi8(%[next_sp])         \n\t"                  \
+      "ldi r28, lo8(%[task_sp])         \n\t"                  \
+      "ldi r29, hi8(%[task_sp])         \n\t"                  \
+      "ld  r16, x+                      \n\t"                  \
+      "ld  r17, x                       \n\t"                  \
+      "or  r16, r17                     \n\t"                  \
+      "cpi r16, 0                       \n\t"                  \
+      "brne .+5;                        \n\t"                  \
+      "ldi r16,0                        \n\t"                  \
+      "st x+, r16                       \n\t"                  \
+      "st x,  r16                       \n\t"                  \
+      "ldi r26, lo8(%[scheduler_sp])    \n\t"                  \
+      "ldi r27, hi8(%[scheduler_sp])    \n\t"                  \
+      "st y+, r26                       \n\t"                  \
+      "st y,  r27                       \n\t"                  \
+      : /* No outputs */                                       \
+      : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp), \
+        [scheduler_sp] "i"(&scheduler_task_sp));
+
+#define SET_SP()                  \
+  asm volatile(                   \
+      "ldi  r26, lo8(%0)    \n\t" \
+      "ldi  r27, hi8(%0)    \n\t" \
+      "ld   r28, x+         \n\t" \
+      "ld   r29, x+         \n\t" \
+      "out  __SP_L__, r28   \n\t" \
+      "out  __SP_H__, r29   \n\t" \
+      : /*No outputs*/            \
+      : "i"(&task_sp));
+
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
       "ldi  r26, lo8(%0)           \n\t" \
@@ -182,71 +226,6 @@ void kill_current_task(void);
       "pop  r0                     \n\t" \
       : /*No outputs*/                   \
       : "i"(&task_sp));
-
-#define SET_SP()                  \
-  asm volatile(                   \
-      "ldi  r26, lo8(%0)    \n\t" \
-      "ldi  r27, hi8(%0)    \n\t" \
-      "ld   r28, x+         \n\t" \
-      "ld   r29, x+         \n\t" \
-      "out  __SP_L__, r28   \n\t" \
-      "out  __SP_H__, r29   \n\t" \
-      : /*No outputs*/            \
-      : "i"(&task_sp));
-
-#define SAVE_SP()                 \
-  asm volatile(                   \
-      "ldi  r26, lo8(%0)    \n\t" \
-      "ldi  r27, hi8(%0)    \n\t" \
-      "in   r16, __SP_L__   \n\t" \
-      "st   x+, r16         \n\t" \
-      "in   r16, __SP_H__   \n\t" \
-      "st   x+, r16         \n\t" \
-      : /* No outputs*/           \
-      : "i"(&task_sp));
-
-#define SET_SP_TO_OS_TASK_SP()      \
-  asm volatile(                     \
-      "ldi r26, lo8(%0)       \n\t" \
-      "ldi r27, hi8(%0)       \n\t" \
-      "out __SP_L__, r26      \n\t" \
-      "out __SP_H__, r27      \n\t" \
-      : /* No outputs */            \
-      : "i"(OS_STACK_START));
-#define SELECT_SCHEDULED_TASK_OR_SCHEDULER_OLD() \
-  asm volatile(                                  \
-      "ldi r26, lo8(%[next_sp])  \n\t"           \
-      "ldi r27, hi8(%[next_sp])  \n\t"           \
-      "ld  r16, x+               \n\t"           \
-      "ld  r17, x                \n\t"           \
-      "ldi r26, lo8(%[task_sp])  \n\t"           \
-      "ldi r27, hi8(%[task_sp])  \n\t"           \
-      "st x+, r16                \n\t"           \
-      "st x,  r17                \n\t"           \
-      : /* No outputs */                         \
-      : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp));
-
-#define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                   \
-  asm volatile(                                                \
-      "ldi r26, lo8(%[next_sp])         \n\t"                  \
-      "ldi r27, hi8(%[next_sp])         \n\t"                  \
-      "ldi r28, lo8(%[task_sp])         \n\t"                  \
-      "ldi r29, hi8(%[task_sp])         \n\t"                  \
-      "ld  r16, x+                      \n\t"                  \
-      "ld  r17, x                       \n\t"                  \
-      "or  r16, r17                     \n\t"                  \
-      "cpi r16, 0                       \n\t"                  \
-      "brne .+5;                        \n\t"                  \
-      "ldi r16,0                        \n\t"                  \
-      "st x+, r16                       \n\t"                  \
-      "st x,  r16                       \n\t"                  \
-      "ldi r26, lo8(%[scheduler_sp])    \n\t"                  \
-      "ldi r27, hi8(%[scheduler_sp])    \n\t"                  \
-      "st y+, r26                       \n\t"                  \
-      "st y,  r27                       \n\t"                  \
-      : /* No outputs */                                       \
-      : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp), \
-        [scheduler_sp] "i"(&scheduler_task_sp));
 
 #define CONTEXT_SWTICH()                \
   SAVE_CONTEXT();                       \
