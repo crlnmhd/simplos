@@ -53,7 +53,7 @@ NO_MT void init_schedule(void) {
 
 __attribute__((noinline, naked)) void k_yield(void) {
   asm volatile("cli");
-  context_switch();
+  CONTEXT_SWTICH();
   asm volatile(
       "sei  \n\t"
       "ret  \n\t");
@@ -61,7 +61,7 @@ __attribute__((noinline, naked)) void k_yield(void) {
 
 // Timer interupt for context switching
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-  context_switch();
+  CONTEXT_SWTICH();
   reti();
 }
 

@@ -147,7 +147,6 @@ void prepare_next_task(taskptr_type next) {
   assert_task_pointer_integrity(next);
 #endif  // defined VERBOSE_OUTPUT
   next->status = RUNNING;
-  task_sp = next->task_sp_adr;
 #if defined(VERBOSE_OUTPUT)
   cprint("Setting next_sp to 0x%X\n", task_sp);
 #endif  // defined VERBOSE_OUTPUT

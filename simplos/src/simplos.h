@@ -220,50 +220,70 @@ void kill_current_task(void);
       "out __SP_L__, r26      \n\t" \
       "out __SP_H__, r27      \n\t" ::"i"(OS_STACK_START));
 
-static inline __attribute__((always_inline, unused)) void context_switch(void) {
-  SAVE_CONTEXT();
-  SAVE_SP();
-  SCILENT_DISABLE_MT();
-  SET_SP_TO_OS_TASK_SP();
+#define SELECT_SCHEDULED_TASK_OR_SCHEDULER_OLD() \
+  asm volatile(                                  \
+      "push r26                  \n\t"           \
+      "push r27                  \n\t"           \
+      "push r16                  \n\t"           \
+      "push r17                  \n\t"           \
+      "ldi r26, lo8(%[next_sp])  \n\t"           \
+      "ldi r27, hi8(%[next_sp])  \n\t"           \
+      "ld  r16, x+               \n\t"           \
+      "ld  r17, x                \n\t"           \
+      "ldi r26, lo8(%[task_sp])  \n\t"           \
+      "ldi r27, hi8(%[task_sp])  \n\t"           \
+      "st x+, r16                \n\t"           \
+      "st x,  r17                \n\t"           \
+      "pop r17                   \n\t"           \
+      "pop r16                   \n\t"           \
+      "pop r27                   \n\t"           \
+      "pop r26                   \n\t"           \
+      : /* No outputs */                         \
+      : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp));
 
-  taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
-  cprint("printing task:\n");
-  print_task(prev);
-  assert_task_pointer_integrity(prev);
+#define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                   \
+  asm volatile(                                                \
+      "push r26                         \n\t"                  \
+      "push r27                         \n\t"                  \
+      "push r28                         \n\t"                  \
+      "push r29                         \n\t"                  \
+      "push r16                         \n\t"                  \
+      "push r17                         \n\t"                  \
+      "ldi r26, lo8(%[next_sp])         \n\t"                  \
+      "ldi r27, hi8(%[next_sp])         \n\t"                  \
+      "ldi r28, lo8(%[task_sp])         \n\t"                  \
+      "ldi r29, hi8(%[task_sp])         \n\t"                  \
+      "ld  r16, x+                      \n\t"                  \
+      "ld  r17, x                       \n\t"                  \
+      "or  r16, r17                     \n\t"                  \
+      "cpi r16, 0                       \n\t"                  \
+      "brne .+5;                        \n\t"                  \
+      "ldi r16,0                        \n\t"                  \
+      "st x+, r16                       \n\t"                  \
+      "st x,  r16                       \n\t"                  \
+      "ldi r26, lo8(%[scheduler_sp])    \n\t"                  \
+      "ldi r27, hi8(%[scheduler_sp])    \n\t"                  \
+      "st y+, r26                       \n\t"                  \
+      "st y,  r27                       \n\t"                  \
+      "pop r17                          \n\t"                  \
+      "pop r16                          \n\t"                  \
+      "pop r29                          \n\t"                  \
+      "pop r28                          \n\t"                  \
+      "pop r27                          \n\t"                  \
+      "pop r26                          \n\t"                  \
+      : /* No outputs */                                       \
+      : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp), \
+        [scheduler_sp] "i"(&scheduler_task_sp));
 
-  if (prev->status == RUNNING) {
-    // The previous task has been killed.
-    prev->task_sp_adr = task_sp;
-    prev->status = READY;
-#if defined(VERBOSE_OUTPUT)
-    print_schedule();
-#endif                                    // VERBOSE_OUTPUT
-    assert_task_pointer_integrity(prev);  // FIXME put this check eralier so
-                                          // errors will be easier to detect.
-#if defined(VERBOSE_OUTPUT)
-    cprint("saving task %d's SP 0x%X\n", prev->task_memory_block,
-           prev->task_sp_adr);
-#endif
-  }
-  select_next_task();
-  taskptr_type task = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
-
-#if defined(VERBOSE_OUTPUT)
-  cprint("printing task:\n");
-  print_task(task);
-  assert_task_pointer_integrity(task);
-#endif  // defined VERBOSE_OUTPUT
-  task->status = RUNNING;
-  task_sp = task->task_sp_adr;
-#if defined(VERBOSE_OUTPUT)
-  cprint("Setting task_sp to 0x%X\n", task_sp);
-#endif  // defined VERBOSE_OUTPUT
-
-  RESET_TIMER();
-  SET_SP();
-  RESTORE_CONTEXT();
+#define CONTEXT_SWTICH()                \
+  SAVE_CONTEXT();                       \
+  SAVE_SP();                            \
+  SCILENT_DISABLE_MT();                 \
+  SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
+  RESET_TIMER();                        \
+  SET_SP();                             \
+  RESTORE_CONTEXT();                    \
   SCILENT_ENABLE_MT();
-}
 
 typedef uint8_t Index;
 void set_task_name(Index task_index, const char *name);
