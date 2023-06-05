@@ -52,10 +52,11 @@ NO_MT void init_schedule(void) {
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
-  cli();
+  asm volatile("cli");
   context_switch();
-  sei();
-  asm volatile("ret");
+  asm volatile(
+      "sei  \n\t"
+      "ret  \n\t");
 }
 
 // Timer interupt for context switching

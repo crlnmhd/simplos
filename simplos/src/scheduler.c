@@ -30,7 +30,7 @@ void reschedule(void) {
 
   prioritize_tasks(kernel->schedule.queue.tasks, num_active_tasks,
                    kernel->schedule.queue.task_index_queue);
-  kernel->schedule.queue.queue_position = num_active_tasks - 1;
+  kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
 #if defined(VERBOSE_OUTPUT)
   print_queue(num_active_tasks);
 #endif  // defined(VERBOSE_OUTPUT)
