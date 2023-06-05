@@ -94,21 +94,21 @@ void kill_current_task(void);
 
 #define SAVE_CONTEXT()                    \
   asm volatile(                           \
-      "push  r0                    \n\t"  \
-      "in    r0, __SREG__          \n\t"  \
-      "push  r0                    \n\t"  \
-      "push  r1                    \n\t"  \
-      "clr   r1                    \n\t"  \
-      "push  r2                    \n\t"  \
-      "push  r3                    \n\t"  \
-      "push  r4                    \n\t"  \
-      "push  r5                    \n\t"  \
-      "push  r6                    \n\t"  \
-      "push  r7                    \n\t"  \
-      "push  r8                    \n\t"  \
-      "push  r9                    \n\t"  \
-      "push  r10                   \n\t"  \
-      "push  r11                   \n\t"  \
+      "push  r0                     \n\t" \
+      "in    r0, __SREG__           \n\t" \
+      "push  r0                     \n\t" \
+      "push  r1                     \n\t" \
+      "clr   r1                     \n\t" \
+      "push  r2                     \n\t" \
+      "push  r3                     \n\t" \
+      "push  r4                     \n\t" \
+      "push  r5                     \n\t" \
+      "push  r6                     \n\t" \
+      "push  r7                     \n\t" \
+      "push  r8                     \n\t" \
+      "push  r9                     \n\t" \
+      "push  r10                    \n\t" \
+      "push  r11                    \n\t" \
       "push  r12                    \n\t" \
       "push  r13                    \n\t" \
       "push  r14                    \n\t" \
@@ -134,7 +134,9 @@ void kill_current_task(void);
       "in    r0, __SP_L__           \n\t" \
       "st    x+, r0                 \n\t" \
       "in    r0, __SP_H__           \n\t" \
-      "st    x+, r0                 \n\t" ::"i"(&task_sp));
+      "st    x+, r0                 \n\t" \
+      : /* No outputs*/                   \
+      : "i"(&task_sp));
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
@@ -177,7 +179,9 @@ void kill_current_task(void);
       "pop  r1                     \n\t" \
       "pop  r0                     \n\t" \
       "out  __SREG__, r0           \n\t" \
-      "pop  r0                     \n\t" ::"i"(&task_sp));
+      "pop  r0                     \n\t" \
+      : /*No outputs*/                   \
+      : "i"(&task_sp));
 
 #define SET_SP()                  \
   asm volatile(                   \
@@ -206,8 +210,9 @@ void kill_current_task(void);
       "ldi r26, lo8(%0)       \n\t" \
       "ldi r27, hi8(%0)       \n\t" \
       "out __SP_L__, r26      \n\t" \
-      "out __SP_H__, r27      \n\t" ::"i"(OS_STACK_START));
-
+      "out __SP_H__, r27      \n\t" \
+      : /* No outputs */            \
+      : "i"(OS_STACK_START));
 #define SELECT_SCHEDULED_TASK_OR_SCHEDULER_OLD() \
   asm volatile(                                  \
       "ldi r26, lo8(%[next_sp])  \n\t"           \
