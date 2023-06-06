@@ -167,10 +167,10 @@ inline Index create_simplos_task(const char *name, const uint8_t priority) {
 }
 
 uint16_t num_context_switch_overhead_bytes(void) {
-  const uint8_t num_registers = 32;
-  const uint8_t num_pc_bytes = 3;
-  const uint8_t num_sreg_bytes = 1;
-  return (num_pc_bytes + num_registers + num_sreg_bytes);
+  const uint16_t num_registers = 32;
+  const uint16_t num_pc_bytes = 3;
+  const uint16_t num_sreg_bytes = 1;
+  return num_pc_bytes + num_registers + num_sreg_bytes;
 }
 
 void kill_current_task(void) {
