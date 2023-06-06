@@ -158,15 +158,16 @@ void kill_current_task(void);
       "ld  r16, x+                      \n\t"                  \
       "ld  r17, x                       \n\t"                  \
       "or  r16, r17                     \n\t"                  \
-      "cpi r16, 0                       \n\t"                  \
-      "brne .+5;                        \n\t"                  \
-      "ldi r16,0                        \n\t"                  \
-      "st x+, r16                       \n\t"                  \
-      "st x,  r16                       \n\t"                  \
-      "ldi r26, lo8(%[scheduler_sp])    \n\t"                  \
-      "ldi r27, hi8(%[scheduler_sp])    \n\t"                  \
-      "st y+, r26                       \n\t"                  \
-      "st y,  r27                       \n\t"                  \
+      "cpse r16, __zero_reg__           \n\t"                  \
+      "rjmp .+4                         \n\t"                  \
+      "ldi r30, lo8(%[scheduler_sp])    \n\t"                  \
+      "ldi r31, hi8(%[scheduler_sp])    \n\t"                  \
+      "ld  r16, z+                      \n\t"                  \
+      "ld  r17, z                       \n\t"                  \
+      "st  y+, r16                      \n\t"                  \
+      "st  y,  r17                      \n\t"                  \
+      "st  x, __zero_reg__              \n\t"                  \
+      "st  -x, __zero_reg__             \n\t"                  \
       : /* No outputs */                                       \
       : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp), \
         [scheduler_sp] "i"(&scheduler_task_sp));
