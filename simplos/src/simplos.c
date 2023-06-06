@@ -66,7 +66,7 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
 }
 
 NO_MT void init_kernel(void) {
-  kernel->schedule.queue.queue_position = TASK_QUEUE_LENGTH - 1;
+  kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
     set_task_name(i, "");
