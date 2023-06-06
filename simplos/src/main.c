@@ -11,9 +11,8 @@
 
 // Extern global variable to modify the stack pointer using macros from
 // simplos.h
-
 volatile Kernel internal_kernel_location
-    __attribute((section(".kernel_data_location")));
+    __attribute((section(".kernel_data_location"))) = {0};
 volatile Kernel *volatile kernel = &internal_kernel_location;
 
 volatile uint16_t task_sp __attribute__((section(".task_sp_location"))) = 0;
@@ -21,6 +20,7 @@ volatile uint16_t next_task_sp
     __attribute((section(".next_task_sp_location"))) = 0;
 volatile uint16_t scheduler_task_sp
     __attribute((section(".scheduler_task_sp_location"))) = 0;
+
 int main(void) {
   cli();
   SP = INITIAL_STACK_START;
