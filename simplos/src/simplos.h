@@ -59,6 +59,9 @@ extern volatile uint16_t scheduler_task_sp;
 #define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() \
   GCC_IGNORE_BEGIN("-Wdiscarded-qualifiers")
 #define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
+#else // other tools like cppcheck
+#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
+#define END_DISCARD_VOLATILE_QUALIFIER_WARNING()
 #endif  // __GNUC__
 // clang-format on
 
