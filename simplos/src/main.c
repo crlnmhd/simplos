@@ -50,7 +50,8 @@ int main(void) {
 #endif  // defined SW_TIME_MEASSREMENTS
 
   uint8_t index = create_simplos_task("idle_fn", 0);
-  INDEX_OF_CURRENT_TASK = index;
+  kernel->schedule.queue.task_index_queue[0] = index;
+  kernel->schedule.queue.queue_position = 0;
 
   const uint8_t margin_to_main = 10;
 
