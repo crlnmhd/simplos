@@ -157,9 +157,10 @@ void kill_current_task(void);
       "ldi r29, hi8(%[task_sp])         \n\t"                  \
       "ld  r16, x+                      \n\t"                  \
       "ld  r17, x                       \n\t"                  \
-      "or  r16, r17                     \n\t"                  \
-      "cpse r16, __zero_reg__           \n\t"                  \
-      "rjmp .+4                         \n\t"                  \
+      "mov r19, r16                     \n\t"                  \
+      "or  r19, r17                     \n\t"                  \
+      "cpse r19, __zero_reg__           \n\t"                  \
+      "rjmp .+8                         \n\t"                  \
       "ldi r30, lo8(%[scheduler_sp])    \n\t"                  \
       "ldi r31, hi8(%[scheduler_sp])    \n\t"                  \
       "ld  r16, z+                      \n\t"                  \
