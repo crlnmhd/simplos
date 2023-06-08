@@ -122,7 +122,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
       "nop                  \n\t"
       : /* No outputs */
       : /* No inputs */
-      : "r16", "r17", "r18", "r19"
+      : /* No clobbers */
       : return_point);
 
   SAVE_CONTEXT();
