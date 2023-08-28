@@ -89,6 +89,7 @@ CFLAGS := -Wall $\
 					-Wno-aggressive-loop-optimizations $\
 					-Wno-unknown-attributes $\
 					-fno-omit-frame-pointer $\
+					-fno-common $\
 					$(DEFINES) $\
 					-mmcu=$(uP) $\
 					-I$(AVRINC) $\
