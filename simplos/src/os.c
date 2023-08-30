@@ -10,9 +10,9 @@
 
 void __attribute__((noinline)) yield(void) {
   k_yield();
-  ASSERT_EQ(read_mm_adr(0x505), 0x0011, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x505), 0x0011, "0x%X",
             "unexpected upper end of return address");
-  ASSERT_EQ(read_mm_adr(0x507), 0x00b6, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x507), 0x00b6, "0x%X",
             "unexpected lower end of return address");
 }
 

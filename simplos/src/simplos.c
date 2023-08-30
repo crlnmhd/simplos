@@ -214,14 +214,14 @@ void init_memory(void) {
        (size_t)canary_adr >= CANARY_END; canary_adr--) {
     write_mm(canary_adr, CANARY_VALUE);
   }
-  ASSERT_EQ(read_mm_adr(0x204), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x204), CANARY_VALUE, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_mm_adr(0x203), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x203), CANARY_VALUE, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_mm_adr(0x202), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x202), CANARY_VALUE, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_mm_adr(0x201), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x201), CANARY_VALUE, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_mm_adr(0x200), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x200), CANARY_VALUE, "0x%X",
             "Failed to write register os stack canary!");
 }
