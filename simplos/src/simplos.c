@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "hal.h"
 #include "io_helpers.h"
 #include "memory.h"
 #include "memory_layout.h"
@@ -211,7 +212,7 @@ enum Task_Status task_status(pid_type pid) {
 void init_memory(void) {
   for (uint8_t *canary_adr = (uint8_t *)CANARY_START;
        (size_t)canary_adr >= CANARY_END; canary_adr--) {
-    *canary_adr = CANARY_VALUE;
+    write_mm(canary_adr, CANARY_VALUE);
   }
   ASSERT_EQ(*(uint8_t *)0x204, CANARY_VALUE, "0x%X",
             "Failed to write register-os stack canary!");
