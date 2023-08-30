@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "hal.h"
 #include "io_helpers.h"
 #include "memory_layout.h"
 #include "simplos.h"
@@ -13,9 +14,9 @@ void __attribute__((noinline)) yield(void) {
   //  asm volatile("nop");
   //  cprint("Hi from yield!\n");
   k_yield();
-  ASSERT_EQ((*(uint16_t *)0x505), 0x0011, "0x%X",
+  ASSERT_EQ(read_mm_adr(0x505), 0x0011, "0x%X",
             "unexpected upper end of return address");
-  ASSERT_EQ((*(uint8_t *)0x507), 0x00b6, "0x%X",
+  ASSERT_EQ(read_mm_adr(0x507), 0x00b6, "0x%X",
             "unexpected lower end of return address");
   //  cprint("SP post pop 0x%X\n", SP);
 }

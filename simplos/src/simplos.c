@@ -214,16 +214,17 @@ void init_memory(void) {
        (size_t)canary_adr >= CANARY_END; canary_adr--) {
     write_mm(canary_adr, CANARY_VALUE);
   }
-  ASSERT_EQ(*(uint8_t *)0x204, CANARY_VALUE, "0x%X",
-            "Failed to write register-os stack canary!");
-  ASSERT_EQ(*(uint8_t *)0x203, CANARY_VALUE, "0x%X",
-            "Failed to write register-os stack canary!");
-  ASSERT_EQ(*(uint8_t *)0x202, CANARY_VALUE, "0x%X",
-            "Failed to write register-os stack canary!");
-  ASSERT_EQ(*(uint8_t *)0x201, CANARY_VALUE, "0x%X",
-            "Failed to write register-os stack canary!");
-  ASSERT_EQ(*(uint8_t *)0x200, CANARY_VALUE, "0x%X",
-            "Failed to write register-os stack canary!");
+  ASSERT_EQ(read_mm_adr(0x204), CANARY_VALUE, "0x%X",
+            "Failed to write canary between registers and stack!");
+  ASSERT_EQ(read_mm_adr(0x203), CANARY_VALUE, "0x%X",
+            "Failed to write canary between registers and stack!");
+  ASSERT_EQ(read_mm_adr(0x202), CANARY_VALUE, "0x%X",
+            "Failed to write canary between registers and stack!");
+  ASSERT_EQ(read_mm_adr(0x201), CANARY_VALUE, "0x%X",
+            "Failed to write canary between registers and stack!");
+  ASSERT_EQ(read_mm_adr(0x200), CANARY_VALUE, "0x%X",
+            "Failed to write register os stack canary!");
+
   /*
   for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i) {
     kernel->heap_mapping[i] = 0xFF;
