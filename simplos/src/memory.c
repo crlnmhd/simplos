@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <stdint.h>
 
+#include "hal.h"
 #include "io_helpers.h"
 #include "memory.h"
 #include "simplos_types.h"
@@ -58,7 +59,7 @@ void assert_task_pointer_integrity(taskptr_type task) {
   // Check canaries.
   for (uint8_t *canary_byte = (uint8_t *)CANARY_START;
        canary_byte >= (uint8_t *)CANARY_END; canary_byte--) {
-    ASSERT_EQ(*canary_byte, CANARY_VALUE, "0x%X",
+    ASSERT_EQ(read_mm(canary_byte), CANARY_VALUE, "0x%X",
               "Canary has been changed! The OS stack has likely overflown\n");
   }
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
