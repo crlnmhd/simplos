@@ -1,7 +1,5 @@
 #include "simplos.h"
 
-#include <avr/interrupt.h>
-#include <avr/io.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>

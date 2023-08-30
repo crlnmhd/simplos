@@ -1,8 +1,6 @@
 #ifndef SIMPLOS_TYPES_H_
 #define SIMPLOS_TYPES_H_
 
-#include <avr/io.h>
-#include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
 

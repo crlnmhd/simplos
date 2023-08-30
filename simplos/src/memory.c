@@ -1,7 +1,6 @@
 #include "memory_layout.h"
 #include "simplos.h"
 #define _GNU_SOURCE
-#include <avr/io.h>
 #include <stdint.h>
 
 #include "hal.h"

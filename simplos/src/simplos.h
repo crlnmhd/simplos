@@ -1,14 +1,6 @@
 #if !defined(SIMPLOS_H_)
 #define SIMPLOS_H_
 
-#include <avr/interrupt.h>
-#include <avr/io.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <util/atomic.h>
-
 #include "io_helpers.h"
 #include "memory.h"
 #include "scheduler.h"
