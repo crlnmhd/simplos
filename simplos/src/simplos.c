@@ -224,11 +224,4 @@ void init_memory(void) {
             "Failed to write canary between registers and stack!");
   ASSERT_EQ(read_mm_adr(0x200), CANARY_VALUE, "0x%X",
             "Failed to write register os stack canary!");
-
-  /*
-  for (uint16_t i = 0; i < HEAP_PAGE_SIZE; ++i) {
-    kernel->heap_mapping[i] = 0xFF;
-  }
-  return 0;
-  */
 }

@@ -84,7 +84,7 @@ void init_kernel(void);
 void init_schedule(void);
 
 /*
- * Initialise heap mapping. Sets free chunks to 0xFF (U8).
+ * Initialise heap mapping and canaries.
  */
 void init_memory(void);
 
