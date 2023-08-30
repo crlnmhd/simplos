@@ -32,7 +32,7 @@ NO_MT void uart_init(void) {
   UCSR0B = _BV(RXEN0) | _BV(TXEN0);   /* Enable RX and TX */
 }
 
-NO_MT int uart_putchar(char c, FILE *stream) {
+NO_MT int16_t uart_putchar(char c, FILE *stream) {
   if (c == '\n') {
     uart_putchar('\r', stream);
   }
@@ -41,7 +41,7 @@ NO_MT int uart_putchar(char c, FILE *stream) {
   return 0;
 }
 
-NO_MT int uart_getchar(__attribute__((unused)) FILE *stream) {
+NO_MT int16_t uart_getchar(__attribute__((unused)) FILE *stream) {
   loop_until_bit_is_set(UCSR0A, RXC0);
   return UDR0;
 }

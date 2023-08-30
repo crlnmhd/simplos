@@ -9,8 +9,8 @@
 
 void uart_init(void);
 
-int uart_putchar(char c, FILE *);
+int16_t uart_putchar(char c, FILE *);
 
-int uart_getchar(FILE *);
+int16_t uart_getchar(FILE *);
 
 #endif  // SERIAL_H_

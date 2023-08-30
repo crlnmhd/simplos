@@ -66,7 +66,8 @@ void prioritize_tasks(taskptr_type volatile tasks,
   for (uint16_t priority = 0; priority < UINT8_MAX; priority++) {
     for (uint8_t i = 0; num_remaining > 0 && i < num_tasks_in_queue; i++) {
       if (tasks[i].priority == priority) {
-        const int sort_index = num_tasks_in_queue - num_remaining;
+        const uint8_t sort_index =
+            (uint8_t)(num_tasks_in_queue - num_remaining);
         out_priority_list[sort_index] = i;
         num_remaining--;
       }
