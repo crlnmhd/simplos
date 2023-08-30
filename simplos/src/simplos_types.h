@@ -46,8 +46,8 @@ typedef struct Kernel_type {
   struct StackRange task_RAM_ranges[TASKS_MAX];
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;
-  size_t heap_start;  // dynamically determined by the RAM needed for the init
-                      // section (main function).
+  uint16_t heap_start;  // dynamically determined by the RAM needed for the init
+                        // section (main function).
   uint16_t pid_cnt;
 } Kernel_type;
 typedef Kernel_type volatile Kernel;
