@@ -34,11 +34,13 @@ void *malloc(size_t bytes);
 // void mutex_lock(mutex* mtx);
 // void mutex_unlock(mutex* mtx);
 
-#define print(fmt, ...)                    \
+#define print(fmt, ...) printf_impl(PSTR(fmt), ##__VA_ARGS__)
+
+#define printf_impl(fmt, ...)              \
   do {                                     \
     uint8_t internal_kernel_sreg__ = SREG; \
     cli();                                 \
-    printf_P(PSTR(fmt), ##__VA_ARGS__);    \
+    printf_P(fmt, ##__VA_ARGS__);          \
     SREG = internal_kernel_sreg__;         \
   } while (0)
 
