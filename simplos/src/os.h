@@ -38,10 +38,6 @@ void *malloc(size_t bytes);
 
 #define print(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
-#define HALT_EXEC()  \
-  print("Halting!"); \
-  cli();             \
-  for (;;)           \
-    ;
+#define HALT_EXEC() halt();
 
 #endif  // OS_H_

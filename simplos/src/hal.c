@@ -23,3 +23,12 @@ void printf_flash(const char *fmt, ...) {
   va_end(args);
   SREG = sreg_at_entry;  // also restores interupt flag
 }
+
+__attribute__((noreturn)) void halt(void) {
+  printf_flash(PSTR("HALTING!\n"));
+
+  cli();
+  for (;;) {
+  }
+  __builtin_unreachable();
+}

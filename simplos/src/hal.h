@@ -12,4 +12,6 @@ uint8_t read_from_mm_adr(const uint16_t mem_adr);
 
 void printf_flash(const char *fmt, ...);
 
+__attribute__((noreturn)) void halt(void);
+
 #endif  // HAL_H_
