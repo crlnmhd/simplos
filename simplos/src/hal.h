@@ -14,4 +14,11 @@ void printf_flash(const char *fmt, ...);
 
 __attribute__((noreturn)) void halt_exec(void);
 
+static inline __attribute__((always_inline)) void disable_interrupts(void) {
+  asm volatile("cli" ::: "memory");
+}
+static inline __attribute__((always_inline)) void enable_interrupts(void) {
+  asm volatile("sei" ::: "memory");
+}
+
 #endif  // HAL_H_

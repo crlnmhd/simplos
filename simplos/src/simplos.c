@@ -102,7 +102,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
 #endif  // SW_TIME_MEASSREMNTS
   INDEX_OF_CURRENT_TASK = new_task_index;
 
-  cli();
+  disable_interrupts();
   asm goto(
       "rcall .+0            \n\t"  // pushes PC (3 bytes) onto the
       // stack
@@ -128,8 +128,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
       : return_point);
 
   SAVE_CONTEXT();
-
-  sei();
+  enable_interrupts();
   old_task->task_sp_adr = task_sp;
 
   task_sp = kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].task_sp_adr;
@@ -176,7 +175,7 @@ uint16_t num_context_switch_overhead_bytes(void) {
 }
 
 void kill_current_task(void) {
-  cli();
+  disable_interrupts();
   ENABLE_MT();
 
   uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK;

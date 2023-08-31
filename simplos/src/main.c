@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "hal.h"
 #include "memory_layout.h"
 #include "scheduler.h"
 #include "serial.h"
@@ -21,7 +22,7 @@ volatile uint16_t scheduler_task_sp
     __attribute((section(".scheduler_task_sp_location"))) = 0;
 
 int main(void) {
-  cli();
+  disable_interrupts();
   SP = INITIAL_STACK_START;
 
   /* Set up serial communication */
@@ -59,7 +60,7 @@ int main(void) {
   SET_SP();
 
   /* Run idle function. Should never leave this. */
-  sei();
+  enable_interrupts();
   ENABLE_MT();
   run_idle_fn();
   FATAL_ERROR("UNREACHABLE END OF MAIN\n");

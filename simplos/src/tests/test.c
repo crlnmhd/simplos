@@ -1,4 +1,6 @@
+#include "../hal.h"
 #include "../timers.h"
+
 #if defined(RUN_TESTS)
 #include <avr/pgmspace.h>
 
@@ -33,7 +35,7 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
 #define TEST_ASSERT(cond, msg)                \
   if (!(bool)(cond)) {                        \
     uint8_t sreg = SREG;                      \
-    cli();                                    \
+    disable_interrupts();                     \
     print_from_prg_mem(" FAILED!\n");         \
     print_from_prg_mem("ASSERTION FAILED! "); \
     print_from_prg_mem(msg);                  \
@@ -45,7 +47,7 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
 #define TEST_ASSERT_EQ(recieved, expected, fmt, msg) \
   if ((expected) != (recieved)) {                    \
     uint8_t sreg = SREG;                             \
-    cli();                                           \
+    disable_interrupts();                            \
     print_from_prg_mem(" FAILED\n");                 \
     print_from_prg_mem(                              \
         "ASSERT_EQUAL ERROR! "                       \

@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "hal.h"
 #include "simplos_types.h"
 
 // Disable clang warning
@@ -37,7 +38,7 @@ _Pragma("clang diagnostic pop")
 
 #define ASSERT(cond, msg)                    \
   if (!(bool)(cond)) {                       \
-    cli();                                   \
+    disable_interrupts();                    \
     print_from_prg_mem("ASSERTION ERROR! "); \
     print_from_prg_mem(msg);                 \
     print_from_prg_mem("\n");                \
@@ -46,7 +47,7 @@ _Pragma("clang diagnostic pop")
 
 #define ASSERT_EQ(recieved, expected, fmt, msg) \
   if ((expected) != (recieved)) {               \
-    cli();                                      \
+    disable_interrupts();                       \
     print_from_prg_mem(                         \
         "ASSERT_EQUAL ERROR! "                  \
         "Expected: " fmt ", Got: " fmt "\n",    \
@@ -56,7 +57,7 @@ _Pragma("clang diagnostic pop")
   }
 
 #define FATAL_ERROR(str, ...)             \
-  cli();                                  \
+  disable_interrupts();                   \
   print_from_prg_mem("FATAL ERROR!\n");   \
   print_from_prg_mem(str, ##__VA_ARGS__); \
   print_from_prg_mem("\n");               \

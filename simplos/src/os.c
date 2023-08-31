@@ -46,7 +46,7 @@ void wait_for_task_finnish(pid_t pid) {
 }
 
 __attribute__((noreturn)) void terminate(void) {
-  cli();
+  disable_interrupts();
   cprint("Simplos terminating...\n");
   print_timing_data();
   halt();
