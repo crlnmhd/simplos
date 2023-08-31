@@ -19,10 +19,6 @@ _Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
 
 #define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
 
-#define HALT \
-  for (;;)   \
-    ;
-
 #if defined(DEBUG_OUTPUT)
 #define cprint(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 #else
@@ -42,7 +38,7 @@ _Pragma("clang diagnostic pop")
     print_from_prg_mem("ASSERTION ERROR! "); \
     print_from_prg_mem(msg);                 \
     print_from_prg_mem("\n");                \
-    HALT                                     \
+    halt_exec();                             \
   }
 
 #define ASSERT_EQ(recieved, expected, fmt, msg) \
@@ -53,7 +49,7 @@ _Pragma("clang diagnostic pop")
         "Expected: " fmt ", Got: " fmt "\n",    \
         expected, recieved);                    \
     print_from_prg_mem(msg "\n");               \
-    HALT                                        \
+    halt_exec();                                \
   }
 
 #define FATAL_ERROR(str, ...)             \
@@ -61,7 +57,7 @@ _Pragma("clang diagnostic pop")
   print_from_prg_mem("FATAL ERROR!\n");   \
   print_from_prg_mem(str, ##__VA_ARGS__); \
   print_from_prg_mem("\n");               \
-  HALT
+  halt_exec();
 
 // Safe print from the os task
 #define OS_SAFE_PRINT(fmt, ...)     \
