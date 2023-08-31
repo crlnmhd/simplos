@@ -10,6 +10,8 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #include <stdint.h>
 #include <stdio.h>
 
+#include "hal.h"
+
 typedef uint16_t pid_t;
 
 // clang-format on
@@ -34,15 +36,7 @@ void *malloc(size_t bytes);
 // void mutex_lock(mutex* mtx);
 // void mutex_unlock(mutex* mtx);
 
-#define print(fmt, ...) printf_impl(PSTR(fmt), ##__VA_ARGS__)
-
-#define printf_impl(fmt, ...)              \
-  do {                                     \
-    uint8_t internal_kernel_sreg__ = SREG; \
-    cli();                                 \
-    printf_P(fmt, ##__VA_ARGS__);          \
-    SREG = internal_kernel_sreg__;         \
-  } while (0)
+#define print(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
 #define HALT_EXEC()  \
   print("Halting!"); \
