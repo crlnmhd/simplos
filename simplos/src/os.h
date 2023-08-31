@@ -38,6 +38,6 @@ void *malloc(size_t bytes);
 
 #define print(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
-#define HALT_EXEC() halt();
+__attribute__((noreturn)) void halt(void);
 
 #endif  // OS_H_

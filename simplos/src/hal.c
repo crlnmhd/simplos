@@ -24,9 +24,7 @@ void printf_flash(const char *fmt, ...) {
   SREG = sreg_at_entry;  // also restores interupt flag
 }
 
-__attribute__((noreturn)) void halt(void) {
-  printf_flash(PSTR("HALTING!\n"));
-
+__attribute__((noreturn)) void halt_exec(void) {
   cli();
   for (;;) {
   }

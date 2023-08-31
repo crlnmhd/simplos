@@ -53,6 +53,10 @@ void terminate(void) {
     ;
 }
 
+__attribute__((noreturn)) void halt(void) {
+  print("HALTING\n");
+  halt_exec();
+}
 void *malloc(size_t bytes) {
   if (bytes == 0) {
     return NULL;
