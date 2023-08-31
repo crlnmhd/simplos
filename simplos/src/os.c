@@ -45,12 +45,11 @@ void wait_for_task_finnish(pid_t pid) {
   }
 }
 
-void terminate(void) {
+__attribute__((noreturn)) void terminate(void) {
   cli();
   cprint("Simplos terminating...\n");
   print_timing_data();
-  for (;;)
-    ;
+  halt();
 }
 
 __attribute__((noreturn)) void halt(void) {

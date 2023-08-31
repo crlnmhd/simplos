@@ -26,7 +26,7 @@ void kill_curr_task(void);
 
 void wait_for_task_finnish(pid_t);
 
-void terminate(void);
+__attribute__((noreturn)) void terminate(void);
 /*
  * Attempts to allocate 'bytes' of continuous memory. Returns NULL on failure.
  * */
