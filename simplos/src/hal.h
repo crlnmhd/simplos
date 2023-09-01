@@ -33,4 +33,8 @@ void clear_tick_counter(void);
   asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"( \
       ((uint16_t)(&(io_reg)-0x20))));
 
+#define RESET_TIMER()   \
+  CLEAR_IO_REG(TCNT1L); \
+  CLEAR_IO_REG(TCNT1H);
+
 #endif  // HAL_H_
