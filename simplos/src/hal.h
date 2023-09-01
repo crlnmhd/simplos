@@ -26,8 +26,11 @@ void init_measurement_ticks(void);
 uint16_t get_tick_counter(void);  // TODO: inline mem access for performance?
 void clear_tick_counter(void);
 
-#define CLEAR_IO_REG(io_reg)                                               \
-  asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"(_SFR_IO_ADDR( \
-      io_reg)));  // TODO: avoid relying on macro. Direct mem access?
+// offset caused by registers.
+// NOTE: avoids exposing avr architecture macros
+// Macro for context switch compatability.
+#define CLEAR_IO_REG(io_reg)                                  \
+  asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"( \
+      ((uint16_t)(&(io_reg)-0x20))));
 
 #endif  // HAL_H_

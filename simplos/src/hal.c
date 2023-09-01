@@ -6,8 +6,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "io_helpers.h"  // FIXME: avoid this import
-
 void write_mm(uint8_t *const mem_ptr, const uint8_t value) { *mem_ptr = value; }
 
 uint8_t read_mm(uint8_t *const mem_ptr) { return *mem_ptr; }
