@@ -4,8 +4,6 @@
 #include <avr/interrupt.h>
 
 #include "io_helpers.h"
-// 781210 = (16*10^6) / (2*1024) - 1 (must be <65536) //FIXME
-#define TIMER_COMPARE_MATCH 781  // aprox 100 ms
 
 #define SCILENT_ENABLE_MT()                                             \
   asm volatile(                                                         \
