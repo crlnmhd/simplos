@@ -11,8 +11,6 @@
 
 #define INLINED static inline __attribute__((always_inline))
 
-#define INTERNAL_LED_PORT PORTB
-#define INTERNAL_LED PORTB5
 // clang-format off
 #if defined(__clang__)
 _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")

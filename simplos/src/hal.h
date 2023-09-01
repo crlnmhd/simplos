@@ -32,5 +32,8 @@ uint16_t get_tick_counter(void);  // TODO: inline mem access for performance?
 void clear_tick_counter(void);
 
 void TIMER1_COMPA_vect(void);
+
+#define INTERNAL_LED_PORT PORTB
+#define INTERNAL_LED PORTB5
 // Timer interupt for context switching
 #endif  // HAL_H_
