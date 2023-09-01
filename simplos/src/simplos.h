@@ -4,7 +4,6 @@
 #include "io_helpers.h"
 #include "memory.h"
 #include "scheduler.h"
-#include "serial.h"
 #include "simplos_types.h"
 #include "tasks.h"
 #include "timers.h"

@@ -4,7 +4,6 @@
 #include "hal.h"
 #include "memory_layout.h"
 #include "scheduler.h"
-#include "serial.h"
 #include "simplos.h"
 #include "tests/test.h"
 #include "timers.h"

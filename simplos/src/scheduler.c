@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include "io_helpers.h"
-#include "serial.h"
 #include "simplos.h"
 #include "simplos_types.h"
 #include "timers.h"

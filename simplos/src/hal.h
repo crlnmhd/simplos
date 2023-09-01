@@ -2,8 +2,9 @@
 #define HAL_H_
 
 #include <stdarg.h>
+#include <stdio.h>
 
-#include "hal_context_switch.h"
+#include "hal/hal_context_switch.h"
 #include "stdint.h"
 
 extern volatile uint16_t task_sp;
@@ -32,6 +33,10 @@ uint16_t get_tick_counter(void);  // TODO: inline mem access for performance?
 void clear_tick_counter(void);
 
 void TIMER1_COMPA_vect(void);
+
+void uart_init(void);
+int16_t uart_putchar(char c, FILE *);
+int16_t uart_getchar(FILE *);
 
 #define INTERNAL_LED_PORT PORTB
 #define INTERNAL_LED PORTB5

@@ -1,4 +1,4 @@
-#include "hal.h"
+#include "../hal.h"
 
 #include <avr/interrupt.h>
 #include <avr/io.h>

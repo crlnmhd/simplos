@@ -132,6 +132,7 @@ dir:
 	mkdir -p $(OBJ)
 	mkdir -p $(OBJ)/asm
 	mkdir -p $(OBJ)/tests
+	mkdir -p $(OBJ)/hal
 
 # Target to compile and generate database for clangd.
 build: compile_commands dir all

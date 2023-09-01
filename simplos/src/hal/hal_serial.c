@@ -1,8 +1,6 @@
 #pragma GCC push_options
 #pragma GCC optimize("Os")
 
-#include "serial.h"
-
 #include <avr/io.h>
 #include <stdio.h>
 #include <util/delay.h>
@@ -12,7 +10,7 @@
 #include <util/setbaud.h>
 #pragma GCC diagnostic pop
 
-#include "timers.h"
+#include "../timers.h"
 
 /*
   Initiate serial communication, taken from
