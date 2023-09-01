@@ -1,8 +1,6 @@
 #ifndef TIMERS_H
 #define TIMERS_H
 
-#include <avr/interrupt.h>
-
 #include "io_helpers.h"
 
 #define ENABLE_MT()    \
@@ -26,8 +24,6 @@ void reset_tick_counter(void) { clear_tick_counter(); }
 #endif  // SW_TIME_MEASSREMENTS
 
 void init_scheduler_interupts(void);
-
-void TIMER1_COMPA_vect(void);
 
 #if defined(SW_TIME_MEASSREMENTS)
 /*

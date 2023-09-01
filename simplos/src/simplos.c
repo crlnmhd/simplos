@@ -61,12 +61,6 @@ __attribute__((noinline, naked)) void k_yield(void) {
       : "memory");
 }
 
-// Timer interupt for context switching
-ISR(TIMER1_COMPA_vect, ISR_NAKED) {
-  CONTEXT_SWTICH();
-  reti();
-}
-
 NO_MT void init_kernel(void) {
   kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {

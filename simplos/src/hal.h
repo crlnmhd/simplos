@@ -3,7 +3,12 @@
 
 #include <stdarg.h>
 
+#include "hal_context_switch.h"
 #include "stdint.h"
+
+extern volatile uint16_t task_sp;
+extern volatile uint16_t next_task_sp;
+extern volatile uint16_t scheduler_task_sp;
 
 void write_mm(uint8_t *const mem_ptr, const uint8_t value);
 uint8_t read_mm(uint8_t *const mem_ptr);
@@ -26,33 +31,6 @@ void init_measurement_ticks(void);
 uint16_t get_tick_counter(void);  // TODO: inline mem access for performance?
 void clear_tick_counter(void);
 
-// offset caused by registers.
-// NOTE: avoids exposing avr architecture macros
-// Macro for context switch compatability.
-#define CLEAR_IO_REG(io_reg)                                  \
-  asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"( \
-      ((uint16_t)(&(io_reg)-0x20))));
-
-#define RESET_TIMER()   \
-  CLEAR_IO_REG(TCNT1L); \
-  CLEAR_IO_REG(TCNT1H);
-
-#define SCILENT_ENABLE_MT()                                             \
-  asm volatile(                                                         \
-      "push r16                         \n\t "                          \
-      "lds r16, %[timer_adr]            \n\t "                          \
-      "ori r16, (1 << %[enable_bit])    \n\t "                          \
-      "sts %[timer_adr], r16            \n\t "                          \
-      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
-      [enable_bit] "I"(OCIE1A));  // Set enable bit for TIMSK1
-
-#define SCILENT_DISABLE_MT()                                            \
-  asm volatile(                                                         \
-      "push r16                         \n\t "                          \
-      "lds r16, %[timer_adr]            \n\t "                          \
-      "andi r16, ~(1 << %[enable_bit])  \n\t "                          \
-      "sts %[timer_adr], r16            \n\t "                          \
-      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
-      [enable_bit] "I"(OCIE1A));  // Unset enable bit for TMSK1
-
+void TIMER1_COMPA_vect(void);
+// Timer interupt for context switching
 #endif  // HAL_H_

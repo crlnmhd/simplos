@@ -63,3 +63,8 @@ void clear_tick_counter(void) {
   CLEAR_IO_REG(TCNT3L);
   CLEAR_IO_REG(TCNT3H);
 }
+
+ISR(TIMER1_COMPA_vect, ISR_NAKED) {
+  CONTEXT_SWTICH();
+  reti();
+}
