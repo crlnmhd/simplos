@@ -30,3 +30,29 @@ __attribute__((noreturn)) void halt_exec(void) {
   }
   __builtin_unreachable();
 }
+
+void setup_interupt_timer(__attribute__((unused)) const uint16_t frequenzy_hz) {
+  const uint16_t timer_compare_match =
+      781;  // FIXME: calcualte based on arument
+
+  TCCR1A = 0;  // set entire TCCR1A register to 0
+  TCCR1B = 0;  // same for TCCR1B
+  TCNT1 = 0;   // initialize counter value to 0
+  // set compare match register to 10 Hz
+  OCR1A = timer_compare_match;
+  // turn on CTC mode
+  TCCR1B |= (1 << WGM12);
+  // Set CS10 and CS12 bits for 1024 prescaler
+  TCCR1B |= (1 << CS12) | (1 << CS10);
+}
+
+void init_measurement_ticks(void) {
+  TCCR3A = 0;  // set entire TCCR3A register to 0
+  TCCR3B = 0;  // same for TCCR1B
+  TCNT3 = 0;   // initialize counter value to 0
+  // set compare match register to 10 Hz
+  // Use normal mode.
+  // TCCR2B |= (0 << WGM32);
+  // Set CS32 for 256 prescaler
+  TCCR3B |= 1 << CS30;
+}

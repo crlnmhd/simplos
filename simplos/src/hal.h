@@ -21,4 +21,6 @@ static inline __attribute__((always_inline)) void enable_interrupts(void) {
   asm volatile("sei" ::: "memory");
 }
 
+void setup_interupt_timer(const uint16_t frequenzy_hz);
+void init_measurement_ticks(void);
 #endif  // HAL_H_
