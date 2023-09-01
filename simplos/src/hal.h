@@ -6,7 +6,6 @@
 #include "stdint.h"
 
 void write_mm(uint8_t *const mem_ptr, const uint8_t value);
-
 uint8_t read_mm(uint8_t *const mem_ptr);
 uint8_t read_from_mm_adr(const uint16_t mem_adr);
 
@@ -26,4 +25,9 @@ void init_measurement_ticks(void);
 
 uint16_t get_tick_counter(void);  // TODO: inline mem access for performance?
 void clear_tick_counter(void);
+
+#define CLEAR_IO_REG(io_reg)                                               \
+  asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"(_SFR_IO_ADDR( \
+      io_reg)));  // TODO: avoid relying on macro. Direct mem access?
+
 #endif  // HAL_H_
