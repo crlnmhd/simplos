@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "hal/hal_context_switch.h"
+#include "hal/context_switch_macros.h"
 #include "stdint.h"
 
 extern volatile uint16_t task_sp;
