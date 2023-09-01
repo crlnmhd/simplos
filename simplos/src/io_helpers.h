@@ -58,13 +58,6 @@ _Pragma("clang diagnostic pop")
   print_from_prg_mem("\n");               \
   halt_exec();
 
-// Safe print from the os task
-#define OS_SAFE_PRINT(fmt, ...)     \
-  uint16_t old_sp = SP();           \
-  SP = kernel->schedule.os_task_sp; \
-  cprint(fmt, ##__VA_ARGS__);       \
-  SP = old_sp;
-
 #define WARNING(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 
         void print_task(taskptr_type);
