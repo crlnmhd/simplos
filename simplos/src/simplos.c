@@ -98,7 +98,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
 
 #if defined(SW_TIME_MEASSREMENTS)
   old_task->time_counter += GET_TICK_COUNTER();
-  RESET_TICK_COUNTER();
+  reset_tick_counter();
 #endif  // SW_TIME_MEASSREMNTS
   INDEX_OF_CURRENT_TASK = new_task_index;
 

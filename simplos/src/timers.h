@@ -45,7 +45,7 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
 // "return" the value of timer3.
 uint16_t get_tick_counter(void){return get_tick_counter()};
 
-#define RESET_TICK_COUNTER() clear_tick_counter()
+void reset_tick_counter(void) { clear_tick_counter(); }
 
 #endif  // SW_TIME_MEASSREMENTS
 
