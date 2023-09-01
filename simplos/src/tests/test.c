@@ -1,4 +1,5 @@
 #include "../hal.h"
+#include "../io_helpers.h"
 #include "../timers.h"
 
 #if defined(RUN_TESTS)
@@ -10,8 +11,6 @@
   test_statistics.skipped += 1;                                  \
   /* This is the least of the security concerns, so let it be.*/ \
   printf_P(PSTR(function_name));
-
-#define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
 
 static bool test_single_yeild(void);
 static bool test_multiple_yield(void);

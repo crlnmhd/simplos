@@ -16,7 +16,7 @@ _Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
 // clang-format on
 #endif  // __clang__
 
-#define print_from_prg_mem(fmt, ...) printf_P(PSTR(fmt), ##__VA_ARGS__)
+#define print_from_prg_mem(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
 #if defined(DEBUG_OUTPUT)
 #define cprint(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
