@@ -16,20 +16,14 @@ __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
                                               uint8_t const priority,
                                               char const *name);
 #if defined(SW_TIME_MEASSREMENTS)
-
 uint16_t get_tick_counter(void){return get_tick_counter()};
-
 void reset_tick_counter(void) { clear_tick_counter(); }
-
 #endif  // SW_TIME_MEASSREMENTS
 
 void init_scheduler_interupts(void);
 
 #if defined(SW_TIME_MEASSREMENTS)
-/*
-  Enable timer ticks.
-*/
-void init_ticks(void);
+void init_ticks(void);  // Enable timer ticks.
 void print_cs_timing_data(void);
 #endif  // SW_TIME_MEASSREMENTS
 
