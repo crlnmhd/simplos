@@ -6,6 +6,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "io_helpers.h"  // FIXME: avoid this import
+
 void write_mm(uint8_t *const mem_ptr, const uint8_t value) { *mem_ptr = value; }
 
 uint8_t read_mm(uint8_t *const mem_ptr) { return *mem_ptr; }
@@ -55,4 +57,11 @@ void init_measurement_ticks(void) {
   // TCCR2B |= (0 << WGM32);
   // Set CS32 for 256 prescaler
   TCCR3B |= 1 << CS30;
+}
+
+uint16_t get_tick_counter(void) { return TCNT3; }
+
+void clear_tick_counter(void) {
+  CLEAR_IO_REG(TCNT3L);
+  CLEAR_IO_REG(TCNT3H);
 }

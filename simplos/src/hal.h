@@ -23,4 +23,7 @@ static inline __attribute__((always_inline)) void enable_interrupts(void) {
 
 void setup_interupt_timer(const uint16_t frequenzy_hz);
 void init_measurement_ticks(void);
+
+uint16_t get_tick_counter(void);  // TODO: inline mem access for performance?
+void clear_tick_counter(void);
 #endif  // HAL_H_
