@@ -10,8 +10,6 @@
 #include <util/setbaud.h>
 #pragma GCC diagnostic pop
 
-#include "../timers.h"
-
 /*
   Initiate serial communication, taken from
   https://appelsiini.net/2011/simple-usart-with-avr-libc/
