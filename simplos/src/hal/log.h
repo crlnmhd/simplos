@@ -13,7 +13,7 @@ struct Log {
   char *end;
 };
 
-struct Log init_log(char *buffer, const size_t buf_size);
 bool add_log_entry(struct Log *log, const char *entry);
+struct Log init_log(char *buffer, const size_t buf_size);
 bool log_contains_entry(struct Log *log, const char *expected_entry);
 #endif  // LOG_H_
