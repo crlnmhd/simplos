@@ -71,10 +71,10 @@ void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
       task->task_memory_block == 0
           ? OS_STACK_START + 1
           : task_default_sp((uint8_t)(task->task_memory_block - 1U));
-  bool const sp_within_bounds =
-      (lower_bound <= task->task_sp_adr && task->task_sp_adr <= upper_bound);
+  bool const sp_outside_bounds =
+      task->task_sp_adr < lower_bound || task->task_sp_adr > upper_bound;
 
-  if (!sp_within_bounds) {
+  if (sp_outside_bounds) {
     cprint("Current task sp: 0x%X and block: %u\nUpper: 0x%X, lower: 0x%X\n",
            task->task_sp_adr, task->task_memory_block, upper_bound,
            lower_bound);
