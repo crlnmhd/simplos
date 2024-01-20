@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "memory.h"
+#include "os.h"
 #include "scheduler.h"
 #include "simplos.h"
 #include "timers.h"
@@ -48,8 +49,8 @@ NO_MT void print_task(taskptr_type task) {
   // dprint("Debug -- task memory block: %d\n", task->task_memory_block);
 }
 
-NO_MT void print_schedule(void) {
-  cprint(" -- Schedule --\n");
+void print_schedule(void) {
+  print(" -- Schedule --\n");
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     Simplos_Task *task = &kernel->schedule.queue.tasks[i];
     // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
