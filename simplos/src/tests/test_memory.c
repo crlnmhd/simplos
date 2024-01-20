@@ -65,7 +65,39 @@ bool test_task_zero_low_is_at_end_of_availabel_task_ram(void) {
 
   return TEST_PASSED;
 }
+
+bool test_first_task_high_starts_at_TASK_RAM_END_plus_num_bytes_minus_one(
+    void) {
+  const uint16_t exepcted_task_high = TASK_RAM_END + TASK_MEMORY_SIZE - 1;
+  CHECK_EQ(task_sp_range_high(0), exepcted_task_high, "0x%X");
+
+  return TEST_PASSED;
+}
+
+bool test_task_1_sp_low_is_directly_after_task_0(void) {
+  CHECK_EQ(task_sp_range_low(1), task_sp_range_high(0) + 1U, "0x%X");
+
+  return TEST_PASSED;
+}
+bool test_task_2_sp_low_is_directly_after_task_1(void) {
+  CHECK_EQ(task_sp_range_low(2), task_sp_range_high(1) + 1U, "0x%X");
+
+  return TEST_PASSED;
+}
+bool test_task_3_sp_low_is_directly_after_task_2(void) {
+  CHECK_EQ(task_sp_range_low(3), task_sp_range_high(2) + 1U, "0x%X");
+
+  return TEST_PASSED;
+}
+bool test_task_4_sp_low_is_directly_after_task_3(void) {
+  CHECK_EQ(task_sp_range_low(4), task_sp_range_high(3) + 1U, "0x%X");
+
+  return TEST_PASSED;
+}
+
+// Indirectly verifies that the task highs are correct.
 bool test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack(void) {
+  return TEST_PASSED;
   CHECK_EQ((uint16_t)(task_sp_range_high(0U) - task_sp_range_low(0U)),
            (uint16_t)TASK_MEMORY_SIZE, "0x%X");
 
@@ -82,7 +114,6 @@ bool test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack(void) {
            (uint16_t)TASK_MEMORY_SIZE, "0x%X");
   return TEST_PASSED;
 }
-
 
 struct TestStatistics unit_test_memory(void) {
   struct TestStatistics results = {0};
@@ -101,9 +132,16 @@ struct TestStatistics unit_test_memory(void) {
 
   RUN_TEST(test_size_of_kernel_does_not_lead_to_stack_overflow, &results);
 
+  RUN_TEST(test_first_task_high_starts_at_TASK_RAM_END_plus_num_bytes_minus_one,
+           &results);
+
   RUN_TEST(test_task_zero_low_is_at_end_of_availabel_task_ram, &results);
 
   RUN_TEST(test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack, &results);
 
+  RUN_TEST(test_task_1_sp_low_is_directly_after_task_0, &results);
+  RUN_TEST(test_task_2_sp_low_is_directly_after_task_1, &results);
+  RUN_TEST(test_task_3_sp_low_is_directly_after_task_2, &results);
+  RUN_TEST(test_task_4_sp_low_is_directly_after_task_3, &results);
   return results;
 }

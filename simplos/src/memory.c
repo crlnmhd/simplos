@@ -42,17 +42,14 @@ uint16_t task_sp_range_high(uint8_t const task_memory_block) {
   }
   // Stack grows toward smaller values.
   const uint16_t sp_adr =
-      TASK_RAM_END + ((task_memory_block + 1U) * TASK_MEMORY_SIZE);
+      TASK_RAM_END + ((task_memory_block + 1U) * TASK_MEMORY_SIZE) - 1;
   return sp_adr;
 }
 uint16_t task_sp_range_low(uint8_t const task_memory_block) {
   if (task_memory_block == 0) {
     return TASK_RAM_END;
   } else {
-    const uint16_t high_limit_of_preceeding_task = task_sp_range_high(
-        (uint8_t)(task_memory_block - 1U));  // FIXME: this is a bug.
-                                             // Should be +1
-    return high_limit_of_preceeding_task;
+    return task_sp_range_high(task_memory_block) - TASK_MEMORY_SIZE + 1;
   }
 }
 
