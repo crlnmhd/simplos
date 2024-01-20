@@ -19,7 +19,7 @@ void configure_heap_location(const uint8_t margin_to_main, Kernel *kernel) {
   cprint("%u bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
 }
 
-void check_task_configuration_uses_all_available_memory(void) {
+void warn_if_task_memory_can_not_be_divided_evenly_between_tasks(void) {
   // Warn if not all available task memory has been allocated due to sub-optimal
   // configuration.
   const uint16_t available_task_stack_size = TASK_RAM_START - TASK_RAM_END;

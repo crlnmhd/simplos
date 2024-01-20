@@ -12,8 +12,7 @@
 #include "timers.h"
 
 void init_task_list(Task_Queue *queue) {
-  check_task_configuration_uses_all_available_memory();
-
+  warn_if_task_memory_can_not_be_divided_evenly_between_tasks();
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_type task = (taskptr_type)&queue->tasks[i];
     task->task_memory_block = i;

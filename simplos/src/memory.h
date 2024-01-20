@@ -24,7 +24,7 @@ void assert_task_pointer_integrity(taskptr_type task_block, Kernel *kernel);
 
 uint16_t task_memory_size(void);
 
-void check_task_configuration_uses_all_available_memory(void);
+void warn_if_task_memory_can_not_be_divided_evenly_between_tasks(void);
 
 void configure_heap_location(const uint8_t margin_to_main, Kernel *kernel);
 #endif  // MEMORY_H_
