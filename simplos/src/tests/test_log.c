@@ -1,8 +1,8 @@
 #include "../hal/log.h"
+#include "../io_helpers.h"
 #include "string.h"
 #include "test.h"
 #include "test_suite.h"
-
 bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   const uint8_t buf_size = 3;
   char buf[buf_size];
@@ -43,6 +43,7 @@ bool test_adds_message_to_the_end_of_the_given_buffer(void) {
       (memcmp_buffer_and_expected_string == 0);
 
   CHECK_TRUE(buffer_starts_with_expected_message);
+
   return TEST_PASSED;
 }
 

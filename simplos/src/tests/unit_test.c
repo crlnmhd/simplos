@@ -1,4 +1,5 @@
 #include "../hal/hal.h"
+#include "../simplos_types.h"
 #include "test.h"
 #include "test_suite.h"
 

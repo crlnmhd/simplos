@@ -1,3 +1,4 @@
+#include "../hal/hal.h"
 #include "../scheduler.h"
 #include "test.h"
 #include "test_suite.h"

@@ -3,8 +3,7 @@
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
-
-#include "../hal/hal.h"
+#include <stdio.h>  // printf_P
 
 #if !defined(MOCK_HAL) && \
     !defined(__clang__)  // FIXME: just define separate run mode
