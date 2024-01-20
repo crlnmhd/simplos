@@ -9,8 +9,8 @@
       ((uint16_t)(&(io_reg)-0x20))));
 
 #define RESET_TIMER()   \
-  CLEAR_IO_REG(TCNT1L); \
-  CLEAR_IO_REG(TCNT1H);
+  CLEAR_IO_REG(TCNT1H); \
+  CLEAR_IO_REG(TCNT1L);
 
 #define SCILENT_ENABLE_MT()                                             \
   asm volatile(                                                         \

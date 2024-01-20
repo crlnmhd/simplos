@@ -86,8 +86,8 @@ void init_measurement_ticks(void) {
 uint16_t get_tick_counter(void) { return TCNT3; }
 
 void clear_tick_counter(void) {
-  CLEAR_IO_REG(TCNT3L);
   CLEAR_IO_REG(TCNT3H);
+  CLEAR_IO_REG(TCNT3L);
 }
 
 ISR(TIMER1_COMPA_vect, ISR_NAKED) {
