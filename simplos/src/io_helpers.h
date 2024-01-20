@@ -7,27 +7,18 @@
 #include "hal/hal.h"  // used by macros
 #include "simplos_types.h"
 
-// Disable clang warning
-#if defined(__clang__)
-// clang-format off
-_Pragma("clang diagnostic push")
-_Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
-// clang-format on
-#endif  // __clang__
+void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
+                                            const char *fmt,
+                                            ...);
 
 #define print_from_prg_mem(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
 #if defined(DEBUG_OUTPUT)
 #define cprint(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 #else
-#define cprint(fmt, ...) \
-  { ; };
-#endif
-
-// clang-format off
-#if defined(__clang__)
-_Pragma("clang diagnostic pop")
-#endif
+#define cprint(unused, ...) \
+  do_nothing_ignoreing_passed_parameters(PSTR(unused), ##__VA_ARGS__)
+#endif  // defined(DEBUG_OUTPUT)
 
 #define ASSERT(cond, msg)                    \
   if (!(bool)(cond)) {                       \

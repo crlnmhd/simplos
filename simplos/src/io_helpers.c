@@ -79,6 +79,13 @@ void print_timing_data(__attribute__((unused)) Kernel *kernel) {
   cprint("Printing timing data: DISABLED\n");
 #endif
 }
+
+void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
+                                            const char *fmt,
+                                            ...) {
+  // Nothing
+}
+
 // void print_task_stack(Simplos_Task * task){
 //   size_t const stack_start = task_default_sp(task->task_memory_block);
 //   DISABLE_MT();
