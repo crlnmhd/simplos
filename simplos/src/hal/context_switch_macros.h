@@ -109,7 +109,8 @@
       "st  -x, __zero_reg__             \n\t"                  \
       : /* No outputs */                                       \
       : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp), \
-        [scheduler_sp] "i"(&scheduler_task_sp));
+        [scheduler_sp] "i"(&scheduler_task_sp)                 \
+      : "r16", "r17", "r18", "r26", "r27", "r28", "r29", "r30", "r31");
 
 #define SET_SP()                  \
   asm volatile(                   \
