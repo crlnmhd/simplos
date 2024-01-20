@@ -87,17 +87,20 @@ void print_queue(uint8_t num_active_tasks) {
   cprint("End of queue:\n-------------\n");
 }
 
-void select_next_task(void) {
-  if (kernel->schedule.queue.queue_position == 0) {
+void select_next_task(Kernel *kernel_ptr) {
+  if (kernel_ptr->schedule.queue.queue_position == 0) {
 #if defined(VERBOSE_OUTPUT)
     cprint("Rescheduling...\n");
 #endif  // defined(VERBOSE_OUTPUT)
     reschedule();
   } else {
-    kernel->schedule.queue.queue_position--;
+    kernel_ptr->schedule.queue.queue_position--;
   }
-  next_task_sp =
-      kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].task_sp_adr;
+  const uint16_t new_task_index =
+      kernel_ptr->schedule.queue
+          .task_index_queue[kernel_ptr->schedule.queue.queue_position];
+
+  next_task_sp = kernel_ptr->schedule.queue.tasks[new_task_index].task_sp_adr;
 }
 void schedule_tasks(void) { reschedule(); }
 
@@ -110,7 +113,7 @@ void start_scheduler(void) {
 #endif  // defined (VERBOSE_OUTPUT)
     taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
     handle_previous_task(prev);
-    select_next_task();
+    select_next_task(kernel);
     taskptr_type next = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
     prepare_next_task(next);
     k_yield();
