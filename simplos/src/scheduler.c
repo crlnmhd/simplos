@@ -170,7 +170,7 @@ void assert_stack_pointer_points_to_valid_return_address(
 
   const uint32_t invalid_bit_mask =
       0x00FE0000;  // PC is 17 bits wide, upper byte is never copied.
-  ASSERT_EQ(task_PC & invalid_bit_mask, 0, "0x%X",
+  ASSERT_EQ(task_PC & invalid_bit_mask, 0UL, "0x%lX",
             "Unexpected PC value found on task stack");
 }
 
