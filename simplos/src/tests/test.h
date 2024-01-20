@@ -58,7 +58,6 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
   run_test_function(fn, PSTR(#fn), test_statistics);
 
 #define debug_printf(fmt, ...) debug_printf_flash(PSTR(fmt), ##__VA_ARGS__)
-#define dprint_flash_str(str) printf_P(str);
 
 void debug_printf_flash(const char *fmt, ...);
 #endif  // defined(TESTS_H_)
