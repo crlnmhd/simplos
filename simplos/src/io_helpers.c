@@ -50,13 +50,13 @@ void print_task(taskptr_type task, Kernel *kernel) {
 }
 
 void print_schedule(Kernel *kernel) {
-  print(" -- Schedule --\n");
+  cprint(" -- Schedule --\n");
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     Simplos_Task *task = &kernel->schedule.queue.tasks[i];
     // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
     print_task(task, kernel);
   }
-  cprint(" --  end of schedule --\n")
+  cprint(" --  end of schedule --\n");
 }
 
 void print_timing_data(__attribute__((unused)) Kernel *kernel) {
