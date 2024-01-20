@@ -22,7 +22,6 @@ int main(void) {
 #ifdef MOCK_HAL
 #error "Can not run simplos on mock hal"
 #else
-
   disable_interrupts();
   SP = INITIAL_STACK_START;
 
@@ -55,8 +54,6 @@ int main(void) {
   task_sp = global_kernel->schedule.queue.tasks[index].task_sp_adr;
   SET_SP();
 
-  enable_interrupts();
-  ENABLE_MT();
   run_idle_fn();
   FATAL_ERROR("UNREACHABLE END OF MAIN\n");
 #endif  // MOCK_HAL
