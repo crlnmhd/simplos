@@ -1,7 +1,54 @@
-#!/usr/bin/bash
+#!/bin/bash
+# Credit: https://stackoverflow.com/a/69110051
 
-set -eo pipefail
+backup_dir='./pre-commit-hook-backup'
+if [ -e "$backup_dir" ]
+then
+    printf '"%s" already exists!\n' "$backup_dir" 1>&2
+    exit 1
+fi
 
-pushd simplos
-make run_unit_tests
-popd
+intent_to_add_list_file="$backup_dir/intent-to-add"
+remove_intent_to_add() {
+    git diff --name-only --diff-filter=A | tr '\n' '\0' >"$intent_to_add_list_file"
+    xargs -0 -r -- git reset --quiet -- <"$intent_to_add_list_file"
+}
+readd_intent_to_add() {
+    xargs -0 -r -- git add --intent-to-add --force -- <"$intent_to_add_list_file"
+}
+
+backup_merge_info() {
+    echo 'If you can see this, tests in the `pre-commit` hook went wrong. You need to fix this manually.' >"$backup_dir/README"
+    find ./.git -name 'MERGE_*' -exec cp {} "$backup_dir" \;
+}
+restore_merge_info() {
+    find "$backup_dir" -name 'MERGE_*' -exec mv {} ./.git \;
+}
+
+create_stash() {
+    git stash push --include-untracked --keep-index --quiet --message='Backed up state for the pre-commit hook (if you can see it, something went wrong)'
+}
+restore_stash() {
+    git reset --hard --quiet
+    git clean -d --force --quiet
+    git stash pop --index --quiet
+}
+
+run_tests() (
+    set +e
+    ./simplos.sh run-unit-tests &> /dev/null
+    echo $?
+)
+
+set -e
+mkdir "$backup_dir"
+remove_intent_to_add
+backup_merge_info
+create_stash
+tests_result=$(run_tests)
+restore_stash
+restore_merge_info
+readd_intent_to_add
+rm -r "$backup_dir"
+exit "$tests_result"
+

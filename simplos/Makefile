@@ -223,7 +223,7 @@ show-size:
 debug:
 	$(AVR_GDB) $(LATEST_EXECUTABLE_SOFTLINK) -x debug_config.gdb
 
-run_unit_tests:
+run_unit_tests: build_tests
 	$(SIMAVR) -v -v -v -m $(uP) $(LATEST_EXECUTABLE_SOFTLINK) 2> >(tee $(UNIT_TEST_OUTPUT_FILE) >&2)
 	@sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g" -i $(UNIT_TEST_OUTPUT_FILE)
 	@grep "All tests passed" $(UNIT_TEST_OUTPUT_FILE) > /dev/null
