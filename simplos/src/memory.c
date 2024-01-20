@@ -36,21 +36,22 @@ INLINED bool in_region(size_t address, size_t region_start, size_t region_end) {
 }
 
 uint16_t task_sp_range_high(uint8_t const task_memory_block) {
+  const uint16_t index_increments =
+      TASK_MEMORY_SIZE - 1U;  // Task stack begins at increment 0, so max
+                              // increment is TASK_MEMORY_SIZE -1
+  return task_sp_range_low(task_memory_block) + index_increments;
+}
+
+/*
+ * Points to the first byte of 'task_memory_block', i.e. the one following
+ * [start of current task sp = 0], 1, ... TASK_MEMORY_SIZE - 1.
+ * */
+uint16_t task_sp_range_low(uint8_t const task_memory_block) {
   if (task_memory_block >= TASKS_MAX) {
     FATAL_ERROR("(task_sp_rane_high()): Memory block '%u' is INVALID!",
                 task_memory_block);
   }
-  // Stack grows toward smaller values.
-  const uint16_t sp_adr =
-      TASK_RAM_END + ((task_memory_block + 1U) * TASK_MEMORY_SIZE) - 1;
-  return sp_adr;
-}
-uint16_t task_sp_range_low(uint8_t const task_memory_block) {
-  if (task_memory_block == 0) {
-    return TASK_RAM_END;
-  } else {
-    return task_sp_range_high(task_memory_block) - TASK_MEMORY_SIZE + 1;
-  }
+  return TASK_RAM_END + (TASK_MEMORY_SIZE * task_memory_block);
 }
 
 void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
