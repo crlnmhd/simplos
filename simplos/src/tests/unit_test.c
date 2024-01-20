@@ -32,6 +32,8 @@ int main(void) {
   stdout = stdin = &uart_file;
 
   RUN_TEST_SUITE(unit_test_scheduler, "Scheduler");
+
+  RUN_TEST_SUITE(unit_test_context_switch, "Context switching");
   dprintf("Test suite completed.\n");
   return 0;
 }
