@@ -71,24 +71,6 @@ void run_idle_fn(void) {
   spawn(worker_1_fn, 1, "worker1");
   spawn(worker_2_fn, 1, "worker2");
 
-  shared_x = 1;
-  // pid_t const p1 = spawn(sum_to_ten, 1, "sto10_1");
-  //  pid_t const p2 = spawn(sum_to_ten, 1, "sto10_2");
-
-  // print("Sum to ten workers %u and %u started\n", p1, p2);
-
-  print("Hi. Fuck Putin\n");
-  // print("Adr of shared_x 0x%X\n", &shared_x);
-  print("SP is : 0x%X\n", SP);
-  // print("Val of shared_x 0x%X\n", shared_x);
-  print("SP is : 0x%X\n", SP);
-  // while (shared_x != 45 * 2) {
-  //   print("shared x:%d\n", shared_x);
-  //   ;
-  // }
-  // print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());
-  print("Heavy duty shared memory calculations performed!\n");
-
   wait_for_other();
 
   terminate();
