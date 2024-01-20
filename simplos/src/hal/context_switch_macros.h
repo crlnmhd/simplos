@@ -19,7 +19,8 @@
       "ori r16, (1 << %[enable_bit])    \n\t "                          \
       "sts %[timer_adr], r16            \n\t "                          \
       "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
-      [enable_bit] "I"(OCIE1A));  // Set enable bit for TIMSK1
+      [enable_bit] "I"(OCIE1A)                                          \
+      : "memory");  // Set enable bit for TIMSK1
 
 #define SCILENT_DISABLE_MT()                                            \
   asm volatile(                                                         \
@@ -28,7 +29,8 @@
       "andi r16, ~(1 << %[enable_bit])  \n\t "                          \
       "sts %[timer_adr], r16            \n\t "                          \
       "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
-      [enable_bit] "I"(OCIE1A));  // Unset enable bit for TMSK1
+      [enable_bit] "I"(OCIE1A)                                          \
+      : "memory");  // Unset enable bit for TMSK1
 
 #define SAVE_CONTEXT()                    \
   asm volatile(                           \
