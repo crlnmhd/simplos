@@ -111,7 +111,7 @@ void start_scheduler_with_os_kernel(void) {
 void start_scheduler(Kernel *kernel) {
   SCILENT_DISABLE_MT();
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
-      SCHEDULER;
+      SCHEDULING;
 
   SET_RETURN_POINT(scheduler_loop_entry_point);
   SAVE_CONTEXT()
@@ -149,8 +149,9 @@ void start_scheduler(Kernel *kernel) {
 
 void handle_previous_task(taskptr_type prev, Kernel *kernel) {
   assert_task_pointer_integrity(prev, kernel);
-  if (prev->status == SCHEDULER) {
+  if (prev->status == SCHEDULING) {
     prev->task_sp_adr = scheduler_task_sp;
+    prev->status = PAUSED_SCHEDULER;
   } else if (prev->status == RUNNING) {
     prev->task_sp_adr = prev_task_sp;
     prev->status = READY;
@@ -196,5 +197,9 @@ void prepare_next_task(taskptr_type next,
   print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
   assert_task_pointer_integrity(next, kernel);
-  next->status = RUNNING;
+  if (next->status == PAUSED_SCHEDULER) {
+    next->status = SCHEDULING;
+  } else {
+    next->status = RUNNING;
+  }
 }

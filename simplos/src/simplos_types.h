@@ -8,7 +8,14 @@
 
 #define TASKS_MAX 5U
 
-enum Task_Status { SLEEPING, READY, RUNNING, EMPTY, SCHEDULER };
+enum Task_Status {
+  SLEEPING,
+  READY,
+  RUNNING,
+  EMPTY,
+  SCHEDULING,
+  PAUSED_SCHEDULER
+};
 
 typedef struct Simplos_Task_type {
   uint32_t time_counter;
