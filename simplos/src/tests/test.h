@@ -41,7 +41,6 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
 
 #define CHECK_EQ_MSG(recieved, expected, fmt, msg) \
   if ((expected) == (recieved)) {                  \
-    dprintf("\nIn %s:\n", __func__);               \
     dprintf(                                       \
         "ASSERT_EQUAL ERROR! "                     \
         "Expected: " fmt ", Got: " fmt "\n",       \
