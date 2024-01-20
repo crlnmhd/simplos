@@ -3,7 +3,6 @@
 #define MEMORY_H_
 #include <stdint.h>
 
-#include "memory_layout.h"
 #include "simplos_types.h"
 
 enum MEM_REGION {
