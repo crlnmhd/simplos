@@ -45,6 +45,8 @@ DEFINES += -DINITIAL_STACK_START=$(INITIAL_STACK_START)
 DEFINES += -DPRIORITY_SCHEDULING
 
 ########## End of define configurations ###############
+SHELL := /usr/bin/env bash
+
 
 SRC := src
 OBJ := build
@@ -192,6 +194,7 @@ flash:
 		-U flash:w:build/out.hex
 
 clean:
+	@echo "cleaning..."
 	@if [ -d build ]; then 	\
 		rm -r build;					\
 	fi
@@ -199,7 +202,7 @@ clean:
 		rm -r tests;					\
 	fi
 	@rm -f src/*.compbd_entry
-	@echo "cleaning..."
+	@rm -f unit_test_output.log
 
 log:
 	rm -f gdb.log
@@ -216,7 +219,10 @@ debug:
 	$(AVR_GDB) $(LATEST_EXECUTABLE_SOFTLINK) -x debug_config.gdb
 
 run_unit_tests:
-	$(SIMAVR) -v -v -v -m $(uP) $(LATEST_EXECUTABLE_SOFTLINK)
+	$(SIMAVR) -v -v -v -m $(uP) $(LATEST_EXECUTABLE_SOFTLINK) 2> >(tee unit_test_output.log >&2)
+	sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g" -i unit_test_output.log
+	grep "All tests passed" unit_test_output.log
+
 
 debug_simulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) $(SIMPLOS_EXECUTABLE)
