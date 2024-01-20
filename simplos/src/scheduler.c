@@ -23,7 +23,7 @@ void reschedule(Kernel *kernel) {
   if (active_task_mask == 0) {
     FATAL_ERROR("Error, no tasks avalable to schedule!");
   }
-  prioritize_tasks(kernel->schedule.queue.tasks, active_task_mask,
+  prioritize_tasks(kernel->schedule.queue.tasks,
                    kernel->schedule.queue.task_index_queue);
 
   uint8_t num_active_tasks = 0;
@@ -50,7 +50,6 @@ uint8_t get_active_tasks_mask(Kernel *kernel) {
 }
 
 void prioritize_tasks(taskptr_type volatile tasks,
-                      const uint8_t active_tasks_mask,
                       volatile uint8_t *out_priority_list) {
   uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
