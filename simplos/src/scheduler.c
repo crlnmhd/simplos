@@ -18,15 +18,20 @@ void prepare_next_task(taskptr_type next, Kernel *kernel);
 void print_queue(uint8_t num_active_tasks, Kernel *kernel);
 
 void reschedule(Kernel *kernel) {
-  const uint8_t num_active_tasks = get_active_tasks(
-      (uint8_t *)kernel->schedule.queue.task_index_queue, TASKS_MAX, kernel);
+  const uint8_t active_task_mask = get_active_tasks_mask(kernel);
 
-  if (num_active_tasks == 0) {
+  if (active_task_mask == 0) {
     FATAL_ERROR("Error, no tasks avalable to schedule!");
   }
-
-  prioritize_tasks(kernel->schedule.queue.tasks, num_active_tasks,
+  prioritize_tasks(kernel->schedule.queue.tasks, active_task_mask,
                    kernel->schedule.queue.task_index_queue);
+
+  uint8_t num_active_tasks = 0;
+  for (uint8_t i = 0; i < TASKS_MAX; i++) {
+    if (active_task_mask & (uint8_t)(1 << i)) {
+      num_active_tasks++;
+    }
+  }
   kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
 
 #if defined(VERBOSE_OUTPUT)
@@ -34,29 +39,26 @@ void reschedule(Kernel *kernel) {
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
-uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
-                         Kernel *kernel) {
-  uint8_t active_task_counter = 0;
-  for (uint8_t i = 0; i < num_tasks; ++i) {
+uint8_t get_active_tasks_mask(Kernel *kernel) {
+  uint8_t active_task_mask = 0;
+  for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     if (kernel->schedule.queue.tasks[i].status == READY) {
-      tasks_block_list[active_task_counter] = i;
-      active_task_counter++;
+      active_task_mask |= (uint8_t)(1U << i);
     }
   }
-  return active_task_counter;
+  return active_task_mask;
 }
 
 void prioritize_tasks(taskptr_type volatile tasks,
-                      const uint8_t num_tasks_in_queue,
+                      const uint8_t active_tasks_mask,
                       volatile uint8_t *out_priority_list) {
-  uint8_t num_remaining = num_tasks_in_queue;
+  uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
-    for (uint8_t i = 0; num_remaining > 0 && i < num_tasks_in_queue; i++) {
-      if (tasks[i].priority == priority) {
-        const uint8_t sort_index =
-            (uint8_t)(num_tasks_in_queue - num_remaining);
-        out_priority_list[sort_index] = i;
-        num_remaining--;
+    for (uint8_t i = 0; i < TASKS_MAX; i++) {
+      const bool task_is_active = active_tasks_mask & (1 << i);
+      if (task_is_active && tasks[i].priority == priority) {
+        out_priority_list[num_sored] = i;
+        num_sored++;
       }
     }
   }

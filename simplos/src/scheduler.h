@@ -10,20 +10,20 @@ void select_next_task(Kernel *);
 void start_scheduler(Kernel *);
 
 /*
+ * reschedules. Public to make it testable.
+ * */
+void reschedule(Kernel *kernel);
+/*
  * Sets the priority order of the tasks queue in out_priority_list.
  * In decreasing order of priority.
  * */
-void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
+void prioritize_tasks(taskptr_type tasks, const uint8_t active_tasks_mask,
                       volatile uint8_t *out_priority_list);
 
 /*
- * fills list tasks_block_list of length num_tasks unique active tasks.
- * Return value: the number of unique tasks.
- *
- * Note: any values of tasks_block_list[<return_value -1>] have no meening.
+ * Creates a mask where the bit N is set iff the task with index N is active.
  * */
-uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
-                         Kernel *kernel);
+uint8_t get_active_tasks_mask(Kernel *kernel);
 /*
  * Wrapper around start_scheduler that injects the (global) kernel.
  *
