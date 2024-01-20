@@ -28,10 +28,12 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
   ASSERT(name_length <= FUNCTION_NAME_MAX_LENGTH,
          "Function name length exceeded.");
 
-  uint16_t const pid = spawn_task(fn, priority, name);
+  uint16_t const spawned_task_pid = spawn_task(fn, priority, name);
 
-  cprint("done spawning task \"%s\"---- new pid is %u\n", name, pid);
-  return pid;
+  cprint("done spawning task \"%s\"---- new pid is %u\n", name,
+         spawned_task_pid);
+
+  return spawned_task_pid;
 }
 
 void kill_curr_task(void) { kill_current_task(); }
