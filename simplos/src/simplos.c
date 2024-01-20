@@ -86,7 +86,7 @@ void verify_that_kernel_is_uninitilized(Kernel *kernel) {
 pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
                     Kernel *kernel) {
   disable_interrupts();
-  DISABLE_MT();
+  SCILENT_DISABLE_MT();
   uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
 
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[new_task_index];
