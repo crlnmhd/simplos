@@ -12,10 +12,6 @@ volatile uint16_t next_task_sp = 0;
 volatile uint16_t scheduler_task_sp = 0;
 
 void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name) {
-  dprintf("Running unit tests for: \n");
-  dprint_flash_str(name);
-  dprintf("\n");
-
   struct TestStatistics test_results = test_entry();
   if (test_results.failed > 0) {
     dprintf("FAILED: %d, ", test_results.failed);
