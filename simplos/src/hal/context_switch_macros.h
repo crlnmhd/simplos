@@ -87,12 +87,11 @@
       : /* No outputs*/           \
       : "i"(&task_sp));
 
+// REWORK to not use r28, r29. They are needed as frame pointers.
 #define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                   \
   asm volatile(                                                \
       "ldi r26, lo8(%[next_sp])         \n\t"                  \
       "ldi r27, hi8(%[next_sp])         \n\t"                  \
-      "ldi r28, lo8(%[task_sp])         \n\t"                  \
-      "ldi r29, hi8(%[task_sp])         \n\t"                  \
       "ld  r16, x+                      \n\t"                  \
       "ld  r17, x                       \n\t"                  \
       "mov r18, r16                     \n\t"                  \
@@ -103,6 +102,8 @@
       "ldi r31, hi8(%[scheduler_sp])    \n\t"                  \
       "ld  r16, z+                      \n\t"                  \
       "ld  r17, z                       \n\t"                  \
+      "ldi r28, lo8(%[task_sp])         \n\t"                  \
+      "ldi r29, hi8(%[task_sp])         \n\t"                  \
       "st  y+, r16                      \n\t"                  \
       "st  y,  r17                      \n\t"                  \
       "st  x, __zero_reg__              \n\t"                  \
