@@ -1,5 +1,12 @@
 #include "../hal.h"
 
+#ifdef TEST_HAL
+HardwareState state = {.interrupt_enabled = false};
+void halt_exec(void) { ; }
+void enable_interrupts(void) { state.interrupt_enabled = true; }
+void disable_interrupts(void) { state.interrupt_enabled = false; }
+#else  // TEST_HAL
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -68,3 +75,4 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   CONTEXT_SWTICH();
   reti();
 }
+#endif  // TEST_HAL
