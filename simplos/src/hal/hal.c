@@ -41,7 +41,7 @@ uint8_t read_from_mm_adr(const uint16_t mem_adr) {
 }
 
 void printf_flash(const char *fmt, ...) {
-  uint8_t sreg_at_entry = SREG;
+  const uint8_t sreg_at_entry = SREG;
   disable_interrupts();
   va_list args;
   va_start(args, fmt);
