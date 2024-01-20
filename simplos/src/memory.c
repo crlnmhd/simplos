@@ -45,6 +45,16 @@ uint16_t task_sp_range_high(uint8_t const task_memory_block) {
       TASK_RAM_END + ((task_memory_block + 1U) * TASK_MEMORY_SIZE);
   return sp_adr;
 }
+uint16_t task_sp_range_low(uint8_t const task_memory_block) {
+  if (task_memory_block == 0) {
+    return OS_STACK_START + 1U;
+  } else {
+    const uint16_t high_limit_of_preceeding_task = task_sp_range_high(
+        (uint8_t)(task_memory_block - 1U));  // FIXME: this is a bug.
+                                             // Should be +1
+    return high_limit_of_preceeding_task;
+  }
+}
 
 void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
 #if defined(VERBOSE_OUTPUT)
@@ -67,10 +77,7 @@ void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
 
   verify_canaries();
   uint16_t const upper_bound = task_sp_range_high(task->task_memory_block);
-  uint16_t const lower_bound =
-      task->task_memory_block == 0
-          ? OS_STACK_START + 1
-          : task_sp_range_high((uint8_t)(task->task_memory_block - 1U));
+  uint16_t const lower_bound = task_sp_range_low(task->task_memory_block);
 
   bool const sp_outside_bounds =
       task->task_sp_adr < lower_bound || task->task_sp_adr > upper_bound;

@@ -19,8 +19,7 @@ void init_task_list(Task_Queue *queue) {
     task->time_counter = 0;
     task->task_sp_adr = task_sp_range_high(task->task_memory_block);
     cprint("Initiating mem block %u at 0x%X-0x%X\n", i,
-           task->task_sp_adr - TASK_MEMORY_SIZE,
-           task->task_sp_adr);  // TODO: use new fn
+           task_sp_range_low(task->task_memory_block), task->task_sp_adr);
     task->status = EMPTY;
   }
 }
