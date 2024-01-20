@@ -65,7 +65,5 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
     SREG = sreg_at_entry;               \
   }
 
-#define dprint_flash_str(str) printf_P(str);
-
 void debug_printf_flash(const char *fmt, ...);
 #endif  // defined(TESTS_H_)
