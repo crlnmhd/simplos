@@ -54,6 +54,7 @@ bool test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_
 
   return TEST_PASSED;
 }
+
 bool test_get_num_active_tasks_counts_all_tasks_marked_as_ready_as_active(
     void) {
   Kernel_type given_kernel = {0};
@@ -76,6 +77,31 @@ bool test_get_num_active_tasks_counts_all_tasks_marked_as_ready_as_active(
   return TEST_PASSED;
 }
 
+bool test_get_active_tasks_places_indices_of_tasks_with_status_ready_in_task_index_list(
+    void) {
+  Kernel_type given_kernel = {0};
+  Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
+
+  // Cover all non-ready task types
+  schedule_with_three_active_tasks->queue.tasks[0].status = PAUSED_SCHEDULER;
+  schedule_with_three_active_tasks->queue.tasks[1].status = READY;
+  schedule_with_three_active_tasks->queue.tasks[2].status = EMPTY;
+  schedule_with_three_active_tasks->queue.tasks[3].status = READY;
+  schedule_with_three_active_tasks->queue.tasks[4].status = READY;
+  uint8_t prioritized_task_indices[5] = {0};
+
+  get_active_tasks(prioritized_task_indices, 5, &given_kernel);
+
+  // NOTE: The implemnetation returns these in their task order. This is not
+  // given, but still use it for testing to avoid havin to do something clever.
+
+  CHECK_EQ(prioritized_task_indices[0], 1U, "%u");
+  CHECK_EQ(prioritized_task_indices[1], 3U, "%u");
+  CHECK_EQ(prioritized_task_indices[2], 4U, "%u");
+
+  return TEST_PASSED;
+}
+
 struct TestStatistics unit_test_scheduler(void) {
   struct TestStatistics results = {0};
   RUN_TEST(
@@ -92,5 +118,8 @@ struct TestStatistics unit_test_scheduler(void) {
   RUN_TEST(test_get_num_active_tasks_counts_all_tasks_marked_as_ready_as_active,
            &results);
 
+  RUN_TEST(
+      test_get_active_tasks_places_indices_of_tasks_with_status_ready_in_task_index_list,
+      &results);
   return results;
 }
