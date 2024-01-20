@@ -120,14 +120,21 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   enable_interrupts();
   fn();
   disable_interrupts();
-  DISABLE_MT();
+  SCILENT_DISABLE_MT();
   cprint("Function finnished\n");
+
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status = EMPTY;
+  cprint("HI \n");
   kernel->task_names[INDEX_OF_CURRENT_TASK(kernel)][0] = '\0';
+  cprint("HI 2 \n");
 
-  k_yield();  // re-enable interrupts.
+  // k_yield();  // re-enable interrupts.
 
-  cprint("Task killed");
+  cprint("Task killed\n");
+  ENABLE_MT();
+  enable_interrupts();
+
+  asm volatile("ret" ::: "memory");  // fn is a void function.
 
 return_point:
   return new_task_pid;

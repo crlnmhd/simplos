@@ -6,37 +6,33 @@
 #include "os.h"
 #include "scheduler.h"
 
-// extern
-// volatile uint8_t shared_x = 5;
+volatile uint8_t shared_x = 5;
 
 void worker_1_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
     print("worker 1: %u%%\n", i);
-    for (uint16_t j = 0; j < UINT16_MAX; ++j) {
+    for (uint16_t j = 0; j < UINT16_MAX / 8; ++j) {
       ;
     }
   }
+  print("1 DONE\n");
 }
 
 void worker_2_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
     print("worker 2: %u%%\n", i);
-    for (uint16_t j = 0; j < UINT16_MAX; ++j) {
+    for (uint16_t j = 0; j < UINT16_MAX / 8; ++j) {
       ;
     }
   }
+  print("2 DONE\n");
 }
 
 void sum_to_ten(void) {
   uint8_t res = 0;
   for (uint8_t i = 1; i < 10; ++i) {
-    res = (uint8_t)(res + i);
+    res++;
     yield();
-    yield();
-  }
-  for (uint16_t i = 0; i < UINT16_MAX; ++i) {
-    // do nothing
-    ;
   }
   print("res from sum is:%u\n", res);
   // print("shared_x is:%d\n", shared_x);
@@ -75,11 +71,11 @@ void run_idle_fn(void) {
   spawn(worker_1_fn, 1, "worker1");
   spawn(worker_2_fn, 1, "worker2");
 
-  // shared_x = 1;
-  pid_t const p1 = spawn(sum_to_ten, 1, "sto10_1");
-  pid_t const p2 = spawn(sum_to_ten, 1, "sto10_2");
+  shared_x = 1;
+  // pid_t const p1 = spawn(sum_to_ten, 1, "sto10_1");
+  //  pid_t const p2 = spawn(sum_to_ten, 1, "sto10_2");
 
-  print("Sum to ten workers %u and %u started\n", p1, p2);
+  // print("Sum to ten workers %u and %u started\n", p1, p2);
 
   print("Hi. Fuck Putin\n");
   // print("Adr of shared_x 0x%X\n", &shared_x);
@@ -90,7 +86,6 @@ void run_idle_fn(void) {
   //   print("shared x:%d\n", shared_x);
   //   ;
   // }
-  print("Voff voff mjau mjau\n");
   // print("pids are p1: %d and p2 : %d. My PID is : %d \n", p1, p2, pid());
   print("Heavy duty shared memory calculations performed!\n");
 
