@@ -24,7 +24,7 @@ void combine_statistics(struct TestStatistics *statistics,
   printf_P(PSTR(function_name));
 
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
-                       struct TestStatistics statistics);
+                       struct TestStatistics *statistics);
 
 #define TEST_ASSERT(cond, msg)                \
   if (!(bool)(cond)) {                        \

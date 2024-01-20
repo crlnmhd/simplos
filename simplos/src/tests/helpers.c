@@ -1,13 +1,13 @@
 #include "test.h"
 
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
-                       struct TestStatistics statistics) {
+                       struct TestStatistics *statistics) {
   dprintf("Testing: %s\n", function_name);
   if (!fn_ptr()) {
-    statistics.failed = (uint8_t)(statistics.failed + 1U);
+    statistics->failed = (uint8_t)(statistics->failed + 1U);
     dprintf(" failed");
   } else {
-    statistics.passed = (uint8_t)(statistics.passed + 1U);
+    statistics->passed = (uint8_t)(statistics->passed + 1U);
   }
 }
 

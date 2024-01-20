@@ -19,13 +19,13 @@ struct TestStatistics unit_test_yields(void) {
 
   RUN_TEST(test_long_running_function,
            "test that a long running function can work for a while.",
-           test_statistics);
+           &test_statistics);
   RUN_TEST(test_single_yeild, "test single yield does not crash the OS",
-           test_statistics);
+           &test_statistics);
   RUN_TEST(test_double_yeild, "test double yield does not crash the OS",
-           test_statistics);
+           &test_statistics);
   RUN_TEST(test_multiple_yield, "test multiple yield does not crash",
-           test_statistics);
+           &test_statistics);
 
   return test_statistics;
 }
