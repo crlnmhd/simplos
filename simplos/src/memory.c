@@ -99,10 +99,6 @@ void verify_canaries(void) {
   }
 }
 
-uint16_t task_memory_size(void) {
-  return (TASK_RAM_START - TASK_RAM_END) / TASKS_MAX;
-}
-
 enum MEM_REGION memory_region(taskptr_type adr, Kernel *kernel) {
   const size_t sp = adr->task_sp_adr;
   if (in_region(sp, REGISTERS_START, 0)) {
