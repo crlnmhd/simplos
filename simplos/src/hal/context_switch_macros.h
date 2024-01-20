@@ -31,9 +31,10 @@
       : "r16", "r17", "r18", "r19"                                            \
       : return_point);
 
-// offset caused by registers.
-// NOTE: avoids exposing avr architecture macros
-// Macro for context switch compatability.
+/*
+ * NOTE: call with high register first for 16 bits registers.
+ * NOTE: avoids exposing avr architecture macros
+ * */
 #define CLEAR_IO_REG(io_reg)                                  \
   asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"( \
       ((uint16_t)(&(io_reg)-0x20))));
@@ -116,30 +117,31 @@
       : "r16", "r26", "r27", "memory");
 
 // REWORK to not use r28, r29. They are needed as frame pointers.
-#define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                           \
-  asm volatile(                                                        \
-      "ldi r26, lo8(%[next_sp])         \n\t"                          \
-      "ldi r27, hi8(%[next_sp])         \n\t"                          \
-      "ld  r16, x+                      \n\t"                          \
-      "ld  r17, x                       \n\t"                          \
-      "mov r18, r16                     \n\t"                          \
-      "or  r18, r17                     \n\t"                          \
-      "cpse r18, __zero_reg__           \n\t"                          \
-      "rjmp .+8                         \n\t"                          \
-      "ldi r30, lo8(%[scheduler_sp])    \n\t"                          \
-      "ldi r31, hi8(%[scheduler_sp])    \n\t"                          \
-      "ld  r16, z+                      \n\t"                          \
-      "ld  r17, z                       \n\t"                          \
-      "ldi r30, lo8(%[task_sp])         \n\t"                          \
-      "ldi r31, hi8(%[task_sp])         \n\t"                          \
-      "st  z+, r16                      \n\t"                          \
-      "st  z,  r17                      \n\t"                          \
-      "st  x, __zero_reg__              \n\t"                          \
-      "st  -x, __zero_reg__             \n\t"                          \
-      : /* No outputs */                                               \
-      : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp),         \
-        [scheduler_sp] "i"(&scheduler_task_sp)                         \
-      : "r16", "r17", "r18", "r19", "r20", "r26", "r27", "r30", "r31", \
+#define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                                   \
+  asm volatile(                                                                \
+      "ldi r26, lo8(%[next_sp])         \n\t" /* Sheduled task, if any */      \
+      "ldi r27, hi8(%[next_sp])         \n\t"                                  \
+      "ld  r16, x+                      \n\t"                                  \
+      "ld  r17, x                       \n\t"                                  \
+      "mov r18, r16                     \n\t"                                  \
+      "or  r18, r17                     \n\t" /* Are r16 and r17 empty? */     \
+      "cpse r18, __zero_reg__           \n\t"                                  \
+      "rjmp .+8                         \n\t" /* Select scheduler task's SP if \
+                                                 not task is scheduled*/       \
+      "ldi r30, lo8(%[scheduler_sp])    \n\t"                                  \
+      "ldi r31, hi8(%[scheduler_sp])    \n\t"                                  \
+      "ld  r16, z+                      \n\t"                                  \
+      "ld  r17, z                       \n\t"                                  \
+      "ldi r30, lo8(%[task_sp])         \n\t" /* Set the chosen SP*/           \
+      "ldi r31, hi8(%[task_sp])         \n\t"                                  \
+      "st  z+, r16                      \n\t"                                  \
+      "st  z,  r17                      \n\t"                                  \
+      "st  x, __zero_reg__              \n\t"                                  \
+      "st  -x, __zero_reg__             \n\t"                                  \
+      : /* No outputs */                                                       \
+      : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp),                 \
+        [scheduler_sp] "i"(&scheduler_task_sp)                                 \
+      : "r16", "r17", "r18", "r19", "r20", "r26", "r27", "r30", "r31",         \
         "memory");
 
 #define SET_SP()                  \
