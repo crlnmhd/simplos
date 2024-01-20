@@ -50,6 +50,7 @@ DEFINES += -DPRIORITY_SCHEDULING
 SRC := src
 OBJ := build
 DEBUG_BUILD := tests
+LOG_DIR := log
 
 UNIT_TESTS_SRC := src/tests
 TEST_SOURCES := $(wildcard $(UNIT_TESTS_SRC)/*.c)
@@ -117,7 +118,7 @@ DATA_SECTIONS :=	-Wl,--section-start=.data=$(DATA_SECTION_START) $\
 
 FRAMEWORK := wiring
 
-.PHONY: %.compdb_entry compile_commands dir all all_test
+.PHONY: %.compdb_entry compile_commands dir all all_test log
 
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
 %.compdb_entry: %.c
@@ -145,6 +146,7 @@ dir:
 	mkdir -p $(OBJ)/asm
 	mkdir -p $(OBJ)/tests
 	mkdir -p $(OBJ)/hal
+	mkdir -p $(LOG_DIR)
 	mkdir -p $(DEBUG_BUILD)
 	mkdir -p $(DEBUG_BUILD)/hal
 
@@ -192,6 +194,11 @@ clean:
 	fi
 	@rm -f src/*.compbd_entry
 	@echo "cleaning..."
+
+log:
+	rm -f gdb.log
+	$(AVR_GDB) $(EXECUTABLE) -x  log_execution.gdb
+	mv gdb.log $(LOG_DIR)/simplos_$$(date +%Y%m%d_%H%M%S).log
 
 sim:
 	$(SIMAVR) -v -v -v -g -m $(uP) $(EXECUTABLE)
