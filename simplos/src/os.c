@@ -78,6 +78,7 @@ NORETURN void terminate(void) {
   cprint("Simplos terminating...\n");
   print_timing_data(get_os_kernel());
   halt();
+  __builtin_unreachable();
 }
 
 NORETURN void halt(void) {
