@@ -20,6 +20,13 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
   do_nothing_ignoreing_passed_parameters(PSTR(unused), ##__VA_ARGS__)
 #endif  // defined(DEBUG_OUTPUT)
 
+#if defined(VERBOSE_OUTPUT)
+#define verbose_print(fmt, ...) debug_print(fmt, ##__VA_ARGS__)
+#else
+#define ververbose_print(unused, ...) \
+  do_nothing_ignoreing_passed_parameters(PSTR(unused), ##__VA_ARGS__)
+#endif  // defined(VERBOSE_OUTPUT)
+
 #define ASSERT(cond, msg)                    \
   if (!(bool)(cond)) {                       \
     disable_interrupts();                    \

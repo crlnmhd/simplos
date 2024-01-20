@@ -29,9 +29,7 @@ uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
     taskptr_type task = (Simplos_Task *)&queue->tasks[i];
     // Take if available
     if (task->status == EMPTY) {
-#if defined(VERBOSE_OUTPUT)
-      debug_print("Initiating space for new function at block %u\n", i);
-#endif  // VERBOSE_OUTPUT
+      verbose_print("Initiating space for new function at block %u\n", i);
       task->priority = priority;
       task->status = READY;
       task->task_sp_adr = task_sp_range_high(task->task_memory_block);

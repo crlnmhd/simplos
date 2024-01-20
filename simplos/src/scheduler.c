@@ -92,9 +92,7 @@ void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
 
 void select_next_task(Kernel *kernel_ptr) {
   if (kernel_ptr->schedule.queue.queue_position == 0) {
-#if defined(VERBOSE_OUTPUT)
-    debug_print("Rescheduling...\n");
-#endif  // defined(VERBOSE_OUTPUT)
+    verbose_print("Rescheduling...\n");
     reschedule(kernel_ptr);
   } else {
     kernel_ptr->schedule.queue.queue_position--;
@@ -127,10 +125,8 @@ void start_scheduler(Kernel *kernel) {
     asm volatile("nop");
     asm volatile("nop");
     SCILENT_DISABLE_MT();
-#if defined(VERBOSE_OUTPUT)
-    debug_print("################## BEGIN SCHEDULING\n\n");
-    debug_print("Selecting next task...\n");
-#endif  // defined (VERBOSE_OUTPUT)
+    verbose_print("################## BEGIN SCHEDULING\n\n");
+    verbose_print("Selecting next task...\n");
     taskptr_type prev =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
 #if defined(VERBOSE_OUTPUT)
@@ -143,15 +139,13 @@ void start_scheduler(Kernel *kernel) {
     select_next_task(kernel);
     taskptr_type next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+    verbose_print("Selected next task: \n");
 #if defined(VERBOSE_OUTPUT)
-    debug_print("Selected next task: \n");
     print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
     prepare_next_task(next, kernel);
-#if defined(VERBOSE_OUTPUT)
-    debug_print("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
-    debug_print("################## END SCHEDULING\n\n");
-#endif          // defined VERBOSE_OUTPUT
+    verbose_print("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
+    verbose_print("################## END SCHEDULING\n\n");
     k_yield();  // enables MT
   }
 }
@@ -200,10 +194,10 @@ void assert_stack_pointer_points_to_valid_return_address(
 
 void prepare_next_task(taskptr_type next,
                        __attribute__((unused)) Kernel *kernel) {
+  verbose_print("printing next:\n");
 #if defined(VERBOSE_OUTPUT)
-  debug_print("printing next:\n");
   print_task(next, kernel);
-  assert_task_pointer_integrity(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
+  assert_task_pointer_integrity(next, kernel);
   next->status = RUNNING;
 }

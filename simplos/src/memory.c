@@ -56,9 +56,7 @@ uint16_t task_sp_range_low(uint8_t const task_memory_block) {
 }
 
 void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
-#if defined(VERBOSE_OUTPUT)
-  debug_print("\nVerifying task\n");
-#endif  // VERBOSE_OUTPUT
+  verbose_print("\nVerifying task\n");
   ASSERT_EQ(memory_region(task, kernel), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
 
