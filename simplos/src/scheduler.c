@@ -21,14 +21,12 @@ void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
                       volatile uint8_t *out_priority_list);
 void handle_previous_task(taskptr_type prev, Kernel *kernel);
 void prepare_next_task(taskptr_type next, Kernel *kernel);
-
 void print_queue(uint8_t num_active_tasks, Kernel *kernel);
 
 void reschedule(Kernel *kernel) {
-  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING();
   const uint8_t num_active_tasks = get_active_tasks(
-      kernel->schedule.queue.task_index_queue, TASKS_MAX, kernel);
-  END_DISCARD_VOLATILE_QUALIFIER_WARNING();
+      (uint8_t *)kernel->schedule.queue.task_index_queue, TASKS_MAX, kernel);
+
   if (num_active_tasks == 0) {
     FATAL_ERROR("Error, no tasks avalable to schedule!");
   }
@@ -36,6 +34,7 @@ void reschedule(Kernel *kernel) {
   prioritize_tasks(kernel->schedule.queue.tasks, num_active_tasks,
                    kernel->schedule.queue.task_index_queue);
   kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
+
 #if defined(VERBOSE_OUTPUT)
   print_queue(num_active_tasks, kernel);
 #endif  // defined(VERBOSE_OUTPUT)
