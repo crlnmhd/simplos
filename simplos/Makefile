@@ -179,9 +179,9 @@ $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
 
 
-flash: build
-	avr-size --mcu=$(uP) -A -x $(SIMPLOS_EXECUTABLE)
-	avr-objcopy -O ihex --strip-debug -R .eeprom $(SIMPLOS_EXECUTABLE) build/out.hex
+flash:
+	avr-size --mcu=$(uP) -C -x $(LATEST_EXECUTABLE_SOFTLINK)
+	avr-objcopy -O ihex --strip-debug -R .eeprom $(LATEST_EXECUTABLE_SOFTLINK) build/out.hex
 	avrdude -c $(FRAMEWORK) \
 		-p $(uP) \
 		-D -P $(SERIAL) \
