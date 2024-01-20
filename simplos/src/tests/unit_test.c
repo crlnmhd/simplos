@@ -18,23 +18,23 @@ volatile uint16_t scheduler_task_sp = 0;
 
 void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name,
                     struct TestStatistics *total_results) {
-  struct TestStatistics test_results = test_entry();
-  if (test_results.failed == 0 && test_results.skipped == 0) {
+  struct TestStatistics test_suite_results = test_entry();
+  if (test_suite_results.failed == 0 && test_suite_results.skipped == 0) {
     debug_printf("PASSED: all.\n");
   } else {
     debug_printf("\n--- %S ---\n", name);
-    if (test_results.passed > 0) {
-      debug_printf("PASSED: %u.\n", test_results.passed);
+    if (test_suite_results.passed > 0) {
+      debug_printf("PASSED: %u.\n", test_suite_results.passed);
     }
-    if (test_results.skipped > 0) {
-      debug_printf("SKIPPED: %u.\n", test_results.skipped);
+    if (test_suite_results.skipped > 0) {
+      debug_printf("SKIPPED: %u.\n", test_suite_results.skipped);
     }
-    if (test_results.failed > 0) {
-      debug_printf("FAILED: %u.\n", test_results.failed);
+    if (test_suite_results.failed > 0) {
+      debug_printf("FAILED: %u.\n", test_suite_results.failed);
     }
     debug_printf("\n%S\n\n", PSTR("--- end ---"));  // FIXME???
   }
-  combine_statistics(total_results, &test_results);
+  combine_statistics(total_results, &test_suite_results);
 }
 
 void print_total_test_results(struct TestStatistics *results) {
