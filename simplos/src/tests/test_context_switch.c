@@ -59,25 +59,6 @@ bool test_setup_and_check_of_stack_canaries_do_not_trigger_when_called_directly(
   // Tests the test helpers
 }
 
-bool test_enable_disable_mt_macros(void) {
-  uint8_t num_failiures = 0;
-  SETUP_STACK_CANARIES();
-
-  const uint8_t original_timsk1_content = TIMSK1;
-  TIMSK1 = 0;
-  SCILENT_ENABLE_MT();
-  CHECK_EQ(TIMSK1, 1 << OCIE1A, "0x%X");
-  SCILENT_DISABLE_MT();
-  CHECK_EQ(TIMSK1, 0, "0x%X");
-  TIMSK1 = 0xFF;
-  SCILENT_DISABLE_MT();
-  CHECK_EQ(TIMSK1, 0xFF ^ 1 << OCIE1A, "0x%X");
-  TIMSK1 = original_timsk1_content;
-
-  CHECK_STACK_CANARIES(num_failiures);
-  return TEST_PASSED;
-}
-
 bool test_setup_and_check_of_stack_canaries_detect_additional_bytes_pushed(
     void) {
   uint8_t num_failiures = 0;
@@ -143,6 +124,39 @@ bool test_setup_and_check_of_stack_canaries_detect_changes_to_third_canary_byte(
   return num_failiures != 0;
 }
 
+bool test_enable_mt_sets_enable_bit_for_tmsk1(void) {
+  uint8_t num_failiures = 0;
+  SETUP_STACK_CANARIES();
+
+  const uint8_t original_timsk1_content = TIMSK1;
+  TIMSK1 = 0;
+  SCILENT_ENABLE_MT();
+  CHECK_EQ(TIMSK1, 1 << OCIE1A, "0x%X");
+
+  TIMSK1 = original_timsk1_content;
+  CHECK_STACK_CANARIES(num_failiures);
+  CHECK_EQ(num_failiures, 0, "%u");
+  return TEST_PASSED;
+}
+
+bool test_enable_disable_mt_macros(void) {
+  uint8_t num_failiures = 0;
+  SETUP_STACK_CANARIES();
+
+  const uint8_t original_timsk1_content = TIMSK1;
+  TIMSK1 = 0;
+  SCILENT_ENABLE_MT();
+  CHECK_EQ(TIMSK1, 1 << OCIE1A, "0x%X");
+  SCILENT_DISABLE_MT();
+  CHECK_EQ(TIMSK1, 0, "0x%X");
+  TIMSK1 = 0xFF;
+  SCILENT_DISABLE_MT();
+  CHECK_EQ(TIMSK1, 0xFF ^ 1 << OCIE1A, "0x%X");
+  TIMSK1 = original_timsk1_content;
+
+  CHECK_STACK_CANARIES(num_failiures);
+  return TEST_PASSED;
+}
 bool test_select_scheduled_task_or_reschedule_selecte_schedled_task_when_available(
     void) {
   const uint16_t expected_scheduled_task_sp = 0x1234;
