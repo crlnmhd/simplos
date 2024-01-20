@@ -87,7 +87,9 @@ UNIT_TEST_FLAGS :=	-g $\
 										-DMOCK_HAL $\
 										-Wno-unused-parameter
 
-CFLAGS := -Wall $\
+
+CFLAGS := -Werror $\
+					-Wall $\
 					-pedantic $\
 					-Wextra $\
 					-Wstrict-prototypes $\
