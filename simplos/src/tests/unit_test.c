@@ -5,7 +5,8 @@
 #include "test.h"
 #include "test_suite.h"
 
-#define RUN_TEST_SUITE(entry_fn, name) (run_test_suite(entry_fn, PSTR(name)))
+#define RUN_TEST_SUITE(entry_fn, name, statistics) \
+  (run_test_suite(entry_fn, PSTR(name), statistics))
 
 volatile Kernel internal_kernel_location = {0};
 volatile Kernel *volatile kernel = &internal_kernel_location;
@@ -15,7 +16,8 @@ volatile uint16_t next_task_sp = 0;
 volatile uint16_t prev_task_sp = 0;
 volatile uint16_t scheduler_task_sp = 0;
 
-void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name) {
+void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name,
+                    struct TestStatistics *total_results) {
   struct TestStatistics test_results = test_entry();
   if (test_results.failed == 0 && test_results.skipped == 0) {
     debug_printf("PASSED: all.\n");
@@ -32,6 +34,7 @@ void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name) {
     }
     debug_printf("\n%S\n\n", PSTR("--- end ---"));  // FIXME???
   }
+  combine_statistics(total_results, &test_results);
 }
 int main(void) {
   uart_init();  // some tests can only be run on an AVR / simulator.
@@ -39,15 +42,18 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  RUN_TEST_SUITE(unit_test_hal_log, "Test the testing hal log");
+  struct TestStatistics test_results = {0};
 
-  RUN_TEST_SUITE(unit_test_scheduler, "Scheduler");
+  RUN_TEST_SUITE(unit_test_hal_log, "Test the testing hal log", &test_results);
 
-  RUN_TEST_SUITE(unit_test_context_switch, "Context switching");
+  RUN_TEST_SUITE(unit_test_scheduler, "Scheduler", &test_results);
 
-  RUN_TEST_SUITE(unit_test_spawning, "Task spawning");
+  RUN_TEST_SUITE(unit_test_context_switch, "Context switching", &test_results);
 
-  RUN_TEST_SUITE(unit_test_memory, "Memory");
+  RUN_TEST_SUITE(unit_test_spawning, "Task spawning", &test_results);
+
+  RUN_TEST_SUITE(unit_test_memory, "Memory", &test_results);
+
 
   debug_printf("Test suite completed\n.");
 
