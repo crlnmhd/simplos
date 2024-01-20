@@ -12,10 +12,8 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 #endif
 //clang-format on
 
-#if !defined(MOCK_HAL)
 extern volatile Kernel internal_kernel; 
 extern Kernel volatile *volatile global_kernel; 
-#endif // defined MOCK_HAL
 
 
 #define DO_PRAGMA_(x) _Pragma(#x)

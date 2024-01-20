@@ -109,6 +109,10 @@ void select_next_task(Kernel *kernel_ptr) {
 }
 void schedule_tasks(Kernel *kernel) { reschedule(kernel); }
 
+void start_scheduler_with_os_kernel(void) {
+  start_scheduler(global_kernel);
+}  // Note: see header
+
 void start_scheduler(Kernel *kernel) {
   SCILENT_DISABLE_MT();
   cprint("Scheduler started. Yielding...\n");

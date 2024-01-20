@@ -65,7 +65,7 @@ void wait_for_other(void) {
 
 void run_idle_fn(void) {
   print("Starting scheduler\n");
-  spawn(start_scheduler, 0, "OS sched");  // yields emidiatly.
+  spawn(start_scheduler_with_os_kernel, 0, "OS sched");  // yields emidiatly.
   print("Starting idle function\n");
 
   print("Testing context switch ratio\n");

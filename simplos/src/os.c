@@ -9,6 +9,15 @@
 #include "simplos_types.h"
 #include "timers.h"
 
+#ifdef MOCK_HAL  // FIXME: avoid knowledge about the mock hal
+#include <io_helpers.h>
+static Kernel *os_kernel_ptr = NULL;
+
+void set_os_kernel(Kernel *kernel) { os_kernel_ptr = kernel; }
+
+#endif  // MOCK_HAL
+
+void set_os_kernel(Kernel *kernel);
 void __attribute__((noinline)) yield(void) {
   k_yield();
   ASSERT_EQ(read_from_mm_adr(0x505), 0x0011, "0x%X",
@@ -17,12 +26,21 @@ void __attribute__((noinline)) yield(void) {
             "unexpected lower end of return address");
 }
 
-Kernel *get_os_kernel(void) { return global_kernel; }
+Kernel *get_os_kernel(void) {
+#ifdef MOCK_HAL
+  if (os_kernel_ptr == NULL) {
+    FATAL_ERROR("No os kernel set for mock hal\n");
+  }
+  return os_kernel_ptr;
+#else
+  return global_kernel;
+#endif
+}
 
 uint8_t rank(void) { return INDEX_OF_CURRENT_TASK(get_os_kernel()); }
 uint16_t pid(void) {
-  return global_kernel->schedule.queue
-      .tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
+  return get_os_kernel()
+      ->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
       .pid;
 }
 
@@ -44,7 +62,8 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
 void kill_curr_task(void) { kill_current_task(get_os_kernel()); }
 
 void set_priority(uint8_t const priority) {
-  global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
+  get_os_kernel()
+      ->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
       .priority = priority;
 }
 
