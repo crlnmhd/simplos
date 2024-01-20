@@ -169,11 +169,9 @@
 
 #define CONTEXT_SWTICH()                \
   SAVE_CONTEXT();                       \
-  SAVE_SP();                            \
   SCILENT_DISABLE_MT();                 \
   SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
   RESET_TIMER();                        \
-  SET_SP();                             \
   RESTORE_CONTEXT();                    \
   SCILENT_ENABLE_MT();
 
