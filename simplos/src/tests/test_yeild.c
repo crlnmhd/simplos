@@ -1,65 +1,21 @@
 #include "../hal.h"
 #include "../io_helpers.h"
-#include "../timers.h"
-
-#if defined(RUN_TESTS)
-#include <avr/pgmspace.h>
-
 #include "../os.h"
+#include "../timers.h"
 #include "test.h"
-#define SKIP_TEST(test_fn, function_name, test_statistics)       \
-  test_statistics.skipped += 1;                                  \
-  /* This is the least of the security concerns, so let it be.*/ \
-  printf_P(PSTR(function_name));
 
 static bool test_single_yeild(void);
 static bool test_multiple_yield(void);
 static bool test_long_running_function(void);
 
-void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
-                       struct TestStatistics statistics) {
-  print_from_prg_mem("Testing: ");
-  printf_P(function_name);
-  print_from_prg_mem("\n");
-  if (!fn_ptr()) {
-    statistics.failed = (uint8_t)(statistics.failed + 1U);
-    printf_P(function_name);  // In an 'OS' with so many security concerns, this
-                              // is the least of our problems.
-    print_from_prg_mem(" failed");
-  } else {
-    statistics.passed = (uint8_t)(statistics.passed + 1U);
-  }
+void run_tests(void) {
+  print("Running tests\n");
+  struct TestStatistics test_stats = run_all_tests();
+  print("\n");
+  print("%d tests PASSED\n", test_stats.passed);
+  print("%d tests FAILED\n", test_stats.failed);
+  print("%d tests SKIPPED \n", test_stats.skipped);
 }
-
-#define TEST_ASSERT(cond, msg)                \
-  if (!(bool)(cond)) {                        \
-    uint8_t sreg = SREG;                      \
-    disable_interrupts();                     \
-    print_from_prg_mem(" FAILED!\n");         \
-    print_from_prg_mem("ASSERTION FAILED! "); \
-    print_from_prg_mem(msg);                  \
-    print_from_prg_mem("\n");                 \
-    SREG = sreg;                              \
-    return false;                             \
-  }
-
-#define TEST_ASSERT_EQ(recieved, expected, fmt, msg) \
-  if ((expected) != (recieved)) {                    \
-    uint8_t sreg = SREG;                             \
-    disable_interrupts();                            \
-    print_from_prg_mem(" FAILED\n");                 \
-    print_from_prg_mem(                              \
-        "ASSERT_EQUAL ERROR! "                       \
-        "Expected: " fmt ", Got: " fmt "\n",         \
-        expected, recieved);                         \
-    print_from_prg_mem("%s\n", msg);                 \
-    SREG = sreg;                                     \
-    return false;                                    \
-  }
-
-// Wrapper to put 'function_name' string in program memory.
-#define RUN_TEST(fn, function_name, test_statistics) \
-  run_test_function(fn, PSTR(function_name), test_statistics);
 
 bool test_single_yeild(void) {
   print(" in fn task sp: 0x%X\n", SP);
@@ -153,14 +109,3 @@ struct TestStatistics run_all_tests(void) {
 
   return test_statistics;
 }
-
-void run_tests(void) {
-  print("Running tests\n");
-  struct TestStatistics test_stats = run_all_tests();
-  print("\n");
-  print("%d tests PASSED\n", test_stats.passed);
-  print("%d tests FAILED\n", test_stats.failed);
-  print("%d tests SKIPPED \n", test_stats.skipped);
-}
-
-#endif  // defined(RUN_TESTS)
