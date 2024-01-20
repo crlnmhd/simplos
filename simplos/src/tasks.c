@@ -5,7 +5,6 @@
 #include "io_helpers.h"
 #include "os.h"
 #include "scheduler.h"
-#include "tests/test.h"
 
 // extern
 // volatile uint8_t shared_x = 5;
@@ -68,10 +67,6 @@ void run_idle_fn(void) {
   print("Starting scheduler\n");
   spawn(start_scheduler, 0, "OS sched");  // yields emidiatly.
   print("Starting idle function\n");
-
-#if defined(RUN_TESTS)
-  run_tests();
-#endif  // defined(RUN_TESTS)
 
   print("Testing context switch ratio\n");
   spawn(worker_1_fn, 1, "worker1");
