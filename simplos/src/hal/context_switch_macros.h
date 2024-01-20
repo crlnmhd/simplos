@@ -85,7 +85,8 @@
       "in   r16, __SP_H__   \n\t" \
       "st   x+, r16         \n\t" \
       : /* No outputs*/           \
-      : "i"(&task_sp));
+      : "i"(&task_sp)             \
+      : "r16", "r17", "r26", "r27", "memory");
 
 // REWORK to not use r28, r29. They are needed as frame pointers.
 #define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                   \
@@ -122,7 +123,8 @@
       "out  __SP_L__, r28   \n\t" \
       "out  __SP_H__, r29   \n\t" \
       : /*No outputs*/            \
-      : "i"(&task_sp));
+      : "i"(&task_sp)             \
+      : "r16", "r17", "r26", "r27", "memory");
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
