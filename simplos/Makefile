@@ -51,9 +51,9 @@ SRC := src
 OBJ := build
 DEBUG_BUILD := tests
 
-TEST_SRC := src/tests
-TEST_SOURCES := $(wildcard $(TEST_SRC)/*.c)
-UNIT_TEST_OBJECTS := $(patsubst $(TEST_SRC)/%.c, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
+UNIT_TESTS_SRC := src/tests
+TEST_SOURCES := $(wildcard $(UNIT_TESTS_SRC)/*.c)
+UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.c, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
 ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c)
 MAIN_FILE := $(SRC)/main.c
@@ -162,10 +162,10 @@ $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) -I$(SRC) -c -g $< -o $@
 
 $(DEBUG_BUILD)/%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(TEST_SRC) -c -g $< -o $@
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
 
-$(DEBUG_BUILD)/%.unit_test.o: $(TEST_SRC)/%.c
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(TEST_SRC) -c -g $< -o $@
+$(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.c
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
 
 $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
