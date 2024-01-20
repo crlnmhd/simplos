@@ -1,3 +1,4 @@
+#include "../memory.h"
 #include "test.h"
 
 volatile uint16_t at_task_sp __attribute__((section(".task_sp_location"))) = 0;
@@ -59,6 +60,30 @@ bool test_size_of_kernel_does_not_lead_to_stack_overflow(void) {
   return TEST_PASSED;
 }
 
+bool test_task_zero_low_is_at_end_of_availabel_task_ram(void) {
+  CHECK_EQ(task_sp_range_low(0), TASK_RAM_END, "0x%X");
+
+  return TEST_PASSED;
+}
+bool test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack(void) {
+  CHECK_EQ((uint16_t)(task_sp_range_high(0U) - task_sp_range_low(0U)),
+           (uint16_t)TASK_MEMORY_SIZE, "0x%X");
+
+  CHECK_EQ((uint16_t)(task_sp_range_high(1U) - task_sp_range_low(1U)),
+           (uint16_t)TASK_MEMORY_SIZE, "0x%X");
+
+  CHECK_EQ((uint16_t)(task_sp_range_high(2U) - task_sp_range_low(2U)),
+           (uint16_t)TASK_MEMORY_SIZE, "0x%X");
+
+  CHECK_EQ((uint16_t)(task_sp_range_high(3U) - task_sp_range_low(3U)),
+           (uint16_t)TASK_MEMORY_SIZE, "0x%X");
+
+  CHECK_EQ((uint16_t)(task_sp_range_high(4U) - task_sp_range_low(4U)),
+           (uint16_t)TASK_MEMORY_SIZE, "0x%X");
+  return TEST_PASSED;
+}
+
+
 struct TestStatistics unit_test_memory(void) {
   struct TestStatistics results = {0};
   RUN_TEST(test_location_of_task_sp_is_readable_at_0x2100_to_0x2101, &results);
@@ -75,5 +100,10 @@ struct TestStatistics unit_test_memory(void) {
   RUN_TEST(test_location_of_kernel_data_starts_at_0x2102, &results);
 
   RUN_TEST(test_size_of_kernel_does_not_lead_to_stack_overflow, &results);
+
+  RUN_TEST(test_task_zero_low_is_at_end_of_availabel_task_ram, &results);
+
+  RUN_TEST(test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack, &results);
+
   return results;
 }

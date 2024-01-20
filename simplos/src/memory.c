@@ -47,7 +47,7 @@ uint16_t task_sp_range_high(uint8_t const task_memory_block) {
 }
 uint16_t task_sp_range_low(uint8_t const task_memory_block) {
   if (task_memory_block == 0) {
-    return OS_STACK_START + 1U;
+    return TASK_RAM_END;
   } else {
     const uint16_t high_limit_of_preceeding_task = task_sp_range_high(
         (uint8_t)(task_memory_block - 1U));  // FIXME: this is a bug.

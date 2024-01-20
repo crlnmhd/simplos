@@ -18,6 +18,8 @@
 #define OS_STACK_START 0x3F4U
 #define OS_STACK_END 0x205U
 
+// NOTE: there is an unused area between the 'OS' range and the first task that
+// is currently *not* verified with canaries.
 #define TASK_RAM_END 0x350U
 #define TASK_RAM_START 0xFFFU
 #define TASK_MEMORY_SIZE ((TASK_RAM_START - TASK_RAM_END) / TASKS_MAX)
