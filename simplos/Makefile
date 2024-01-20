@@ -89,14 +89,10 @@ UNIT_TEST_FLAGS :=	-g $\
 
 
 CFLAGS := -Werror $\
-					-Wall $\
 					-pedantic $\
+					-Wall $\
 					-Wextra $\
 					-Wstrict-prototypes $\
-					-fshort-enums $\
-					-fno-pie $\
-					-no-pie $\
-					-std=gnu17 $\
 					-Wshadow $\
 					-Wpointer-arith $\
 					-Wswitch-enum $\
@@ -104,8 +100,12 @@ CFLAGS := -Werror $\
 					-Wstrict-overflow $\
 					-Wno-aggressive-loop-optimizations $\
 					-Wno-unknown-attributes $\
+					-std=gnu17 $\
 					-fno-omit-frame-pointer $\
 					-fno-common $\
+					-fshort-enums $\
+					-fno-pie $\
+					-no-pie $\
 					$(DEFINES) $\
 					-mmcu=$(uP) $\
 					-I$(AVRINC) $\
