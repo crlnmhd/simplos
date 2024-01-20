@@ -8,6 +8,8 @@
 #include "simplos_types.h"
 #include "timers.h"
 
+bool assert_stack_pointer_points_to_valid_return_address(
+    uint16_t adr_of_saved_task);
 uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks);
 void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
                       const uint8_t end_index);
@@ -138,12 +140,17 @@ void handle_previous_task(taskptr_type prev) {
     print_schedule();
 #endif  // defined (VERBOSE_OUTPUT)
     assert_task_pointer_integrity(prev);
+    assert_stack_pointer_points_to_valid_return_address(prev->task_sp_adr);
 
 #if defined(VERBOSE_OUTPUT)
     cprint("saving previous task %d's SP 0x%X\n", prev->task_memory_block,
            prev->task_sp_adr);
 #endif
   }
+}
+bool assert_stack_pointer_points_to_valid_return_address(
+    uint16_t adr_of_saved_task) {
+  return true;
 }
 
 void prepare_next_task(taskptr_type next) {
