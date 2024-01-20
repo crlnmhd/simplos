@@ -1,10 +1,9 @@
+#include "../hal.h"
 #ifdef MOCK_HAL
+
 /*
  * Mock hall used for testing
  * */
-#include "../hal.h"
-
-#include "../tests/test.h"
 
 struct HardwareState state = {interrupt_enabled : false, halted : false};
 void halt_exec(void) { state.halted = true; }
@@ -30,8 +29,6 @@ void clear_tick_counter(void) {}
 #include <avr/pgmspace.h>
 #include <stdarg.h>
 #include <stdio.h>
-
-#include "../hal.h"
 
 void write_mm(uint8_t *const mem_ptr, const uint8_t value) { *mem_ptr = value; }
 

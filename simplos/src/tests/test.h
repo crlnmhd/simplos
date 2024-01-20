@@ -17,14 +17,6 @@ struct TestStatistics {
 void combine_statistics(struct TestStatistics *statistics,
                         struct TestStatistics *to_add);
 
-// todo: linked list that can hold commands?
-struct HardwareState {
-  bool interrupt_enabled;
-  bool halted;
-};
-
-extern struct HardwareState state;
-
 #define SKIP_TEST(test_fn, function_name, test_statistics)       \
   test_statistics.skipped += 1;                                  \
   /* This is the least of the security concerns, so let it be.*/ \

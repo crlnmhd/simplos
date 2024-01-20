@@ -2,6 +2,7 @@
 #define HAL_H_
 
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "hal/context_switch_macros.h"
@@ -10,7 +11,16 @@ extern volatile uint16_t task_sp;
 extern volatile uint16_t next_task_sp;
 extern volatile uint16_t scheduler_task_sp;
 
-#ifdef MOCK_HAL
+#ifdef MOCK_HAL  // FIXME: avoid if possible
+
+// TODO: save list of called commands?
+struct HardwareState {
+  bool interrupt_enabled;
+  bool halted;
+};
+
+extern struct HardwareState state;
+
 void halt_exec(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
