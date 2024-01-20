@@ -89,6 +89,22 @@ bool test_can_add_multiple_messages(void) {
 
   return true;
 }
+bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
+  const uint16_t sufficient_buffer_size = 15;
+  char buffer[sufficient_buffer_size];
+  struct Log log = init_log(buffer, sufficient_buffer_size);
+
+  const char *real_log_entry = "Start";
+  const char *not_in_log = "StartingWith";
+
+  bool successfully_added = add_log_entry(&log, real_log_entry);
+  CHECK_EQ(successfully_added, true, "%d");
+
+  CHECK_EQ(log_contains_entry(&log, not_in_log), false, "%d");
+
+  return true;
+}
+
 struct TestStatistics unit_test_hal_log(void) {
   struct TestStatistics test_resutls = {0};
 
@@ -104,6 +120,9 @@ struct TestStatistics unit_test_hal_log(void) {
   RUN_TEST(test_can_add_multiple_messages, &test_resutls);
 
   RUN_TEST(test_log_contains_entry_finds_entry_in_buffer, &test_resutls);
+
+  RUN_TEST(test_does_not_falsely_find_log_entires_finding_in_log,
+           &test_resutls);
 
   return test_resutls;
 }
