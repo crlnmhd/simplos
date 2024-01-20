@@ -25,12 +25,13 @@
       "push r17             \n\t"                                             \
       "push r16             \n\t"                                             \
       "cpse r1, r1          \n\t" /* Skip next instruction*/                  \
-      "jmp %l[return_point] \n\t" /* Target*/                                 \
+      "jmp %l[" #entrypoint_label                                             \
+      "] \n\t" /* Target*/                                                    \
       "nop                  \n\t"                                             \
       : /* No outputs */                                                      \
       : /* No inputs */                                                       \
       : "r16", "r17", "r18", "r19"                                            \
-      : return_point);
+      : entrypoint_label);
 
 /*
  * NOTE: call with high register first for 16 bits registers.
