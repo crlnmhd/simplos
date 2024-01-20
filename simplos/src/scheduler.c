@@ -142,6 +142,10 @@ void start_scheduler(Kernel *kernel) {
 }
 
 void handle_previous_task(taskptr_type prev, Kernel *kernel) {
+  if (prev->status == EMPTY) {
+    return;  // Validation of task sp is not required since the task is empty.
+  }
+
   if (prev->status == SCHEDULING) {
     prev->task_sp_adr = scheduler_task_sp;
     prev->status = PAUSED_SCHEDULER;
@@ -188,7 +192,9 @@ void prepare_next_task(taskptr_type next,
   print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
   assert_task_pointer_integrity(next, kernel);
-  if (next->status == PAUSED_SCHEDULER) {
+  if (next->status == EMPTY) {
+    FATAL_ERROR("Error, can not select an empty task!\n");
+  } else if (next->status == PAUSED_SCHEDULER) {
     next->status = SCHEDULING;
   } else {
     next->status = RUNNING;
