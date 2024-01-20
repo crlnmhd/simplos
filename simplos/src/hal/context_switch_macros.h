@@ -102,16 +102,16 @@
       "ldi r31, hi8(%[scheduler_sp])    \n\t"                  \
       "ld  r16, z+                      \n\t"                  \
       "ld  r17, z                       \n\t"                  \
-      "ldi r28, lo8(%[task_sp])         \n\t"                  \
-      "ldi r29, hi8(%[task_sp])         \n\t"                  \
-      "st  y+, r16                      \n\t"                  \
-      "st  y,  r17                      \n\t"                  \
+      "ldi r30, lo8(%[task_sp])         \n\t"                  \
+      "ldi r31, hi8(%[task_sp])         \n\t"                  \
+      "st  z+, r16                      \n\t"                  \
+      "st  z,  r17                      \n\t"                  \
       "st  x, __zero_reg__              \n\t"                  \
       "st  -x, __zero_reg__             \n\t"                  \
       : /* No outputs */                                       \
       : [next_sp] "i"(&next_task_sp), [task_sp] "i"(&task_sp), \
         [scheduler_sp] "i"(&scheduler_task_sp)                 \
-      : "r16", "r17", "r18", "r26", "r27", "r28", "r29", "r30", "r31");
+      : "r16", "r17", "r18", "r19", "r20", "r26", "r27", "r30", "r31");
 
 #define SET_SP()                  \
   asm volatile(                   \
