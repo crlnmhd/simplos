@@ -23,18 +23,6 @@ void combine_statistics(struct TestStatistics *statistics,
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
                        struct TestStatistics *statistics);
 
-#define TEST_ASSERT(cond, msg)                \
-  if (!(bool)(cond)) {                        \
-    uint8_t sreg = SREG;                      \
-    disable_interrupts();                     \
-    print_from_prg_mem(" FAILED!\n");         \
-    print_from_prg_mem("ASSERTION FAILED! "); \
-    print_from_prg_mem(msg);                  \
-    print_from_prg_mem("\n");                 \
-    SREG = sreg;                              \
-    return false;                             \
-  }
-
 #define CHECK_EQ_MSG(recieved, expected, fmt, msg) \
   if ((expected) != (recieved)) {                  \
     uint8_t sreg = SREG;                           \
