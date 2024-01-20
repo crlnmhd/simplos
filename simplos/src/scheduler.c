@@ -117,6 +117,10 @@ void start_scheduler(void) {
     select_next_task(kernel);
     taskptr_type next = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
     prepare_next_task(next);
+#if defined(VERBOSE_OUTPUT)
+    cprint("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
+#endif  // defined VERBOSE_OUTPUT
+    cprint("DEBUG: yeilding\n");
     k_yield();  // enables MT
   }
 }
@@ -149,7 +153,4 @@ void prepare_next_task(taskptr_type next) {
   assert_task_pointer_integrity(next);
 #endif  // defined VERBOSE_OUTPUT
   next->status = RUNNING;
-#if defined(VERBOSE_OUTPUT)
-  cprint("Setting next_sp to 0x%X\n", next_task_sp);
-#endif  // defined VERBOSE_OUTPUT
 }
