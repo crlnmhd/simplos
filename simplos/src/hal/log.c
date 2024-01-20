@@ -23,12 +23,13 @@ bool add_log_entry(struct Log *log, const char *message) {
 }
 
 struct Log init_log(char *buffer, const size_t buf_size) {
+  // FIXME: Handle insufficient buffer
   struct Log log = {
       .buffer = buffer, .num_buffer_bytes_remaining = buf_size, .end = buffer};
   return log;
 }
 
-bool contains(struct Log *log, const char *expected_entry) {
+bool log_contains_entry(struct Log *log, const char *expected_entry) {
   const uint16_t expected_entry_length = strlen(expected_entry);
 
   char *next_entry = log->buffer;

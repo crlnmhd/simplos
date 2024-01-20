@@ -51,7 +51,7 @@ bool test_adds_message_to_the_end_of_the_given_buffer(void) {
   return buffer_starts_with_expected_message;
 }
 
-bool test_contains_finds_entry_in_buffer(void) {
+bool test_log_contains_entry_finds_entry_in_buffer(void) {
   const uint16_t buffer_size = 10;
   char buffer[buffer_size];
   struct Log log = init_log(buffer, buffer_size);
@@ -60,7 +60,7 @@ bool test_contains_finds_entry_in_buffer(void) {
 
   bool successfully_added = add_log_entry(&log, entry);
   CHECK_EQ(successfully_added, true, "%d");
-  const bool b = contains(&log, entry);
+  const bool b = log_contains_entry(&log, entry);
   CHECK_EQ(b, true, "%d");
 
   return true;
@@ -82,9 +82,10 @@ bool test_can_add_multiple_messages(void) {
   successfully_added = add_log_entry(&log, entry_3);
   CHECK_EQ(successfully_added, true, "%d");
 
-  CHECK_EQ(contains(&log, entry_1), true, "%d");
-  CHECK_EQ(contains(&log, entry_3), true, "%d");  // try out of order access
-  CHECK_EQ(contains(&log, entry_2), true, "%d");
+  CHECK_EQ(log_contains_entry(&log, entry_1), true, "%d");
+  CHECK_EQ(log_contains_entry(&log, entry_3), true,
+           "%d");  // try out of order access
+  CHECK_EQ(log_contains_entry(&log, entry_2), true, "%d");
 
   return true;
 }
@@ -102,7 +103,7 @@ struct TestStatistics unit_test_hal_log(void) {
 
   RUN_TEST(test_can_add_multiple_messages, &test_resutls);
 
-  RUN_TEST(test_contains_finds_entry_in_buffer, &test_resutls);
+  RUN_TEST(test_log_contains_entry_finds_entry_in_buffer, &test_resutls);
 
   return test_resutls;
 }

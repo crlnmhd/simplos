@@ -15,5 +15,5 @@ struct Log {
 
 struct Log init_log(char *buffer, const size_t buf_size);
 bool add_log_entry(struct Log *log, const char *entry);
-bool contains(struct Log *log, const char *expected_entry);
+bool log_contains_entry(struct Log *log, const char *expected_entry);
 #endif  // LOG_H_
