@@ -60,7 +60,7 @@ uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue);
 /*
  * Set up kernel configuration.
  * */
-void init_kernel(void);
+void init_kernel(Kernel *kernel);
 
 /*
  * Set up the scheduler.

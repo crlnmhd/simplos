@@ -62,15 +62,15 @@ __attribute__((noinline, naked)) void k_yield(void) {
       : "memory");
 }
 
-NO_MT void init_kernel(void) {
-  global_kernel->schedule.queue.queue_position = 0;
+NO_MT void init_kernel(Kernel *kernel) {
+  kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
     set_task_name(i, "");
 
     // Set task RAM range.
     BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
-    struct StackRange *task_stack_range = &global_kernel->task_RAM_ranges[i];
+    struct StackRange *task_stack_range = &kernel->task_RAM_ranges[i];
     END_DISCARD_VOLATILE_QUALIFIER_WARNING()
     task_stack_range->high = task_default_sp(i);
     task_stack_range->low = task_default_sp(i) - task_memory_size();
