@@ -70,7 +70,7 @@ ASM_OBJECTS := $(patsubst $(ASM_SRC)/%.s, $(OBJ)/asm/%.o, $(ASM_SOURCES))
 ALL_OBJECTS := $(OBJECTS)
 ALL_OBJECTS += $(ASM_OBJECTS)
 
-EXECUTABLE := $(OBJ)/simplos.out
+SIMPLOS_EXECUTABLE := $(OBJ)/simplos.out
 UNIT_TESTS := $(DEBUG_BUILD)/unit_tests.out
 
 .DEFAULT_GOAL := build
@@ -156,8 +156,8 @@ build: compile_commands dir all
 build_tests: compile_commands dir all_test
 
 all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
-	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $^ -o $(EXECUTABLE)
-	avr-size -A -x $(EXECUTABLE)
+	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $^ -o $(SIMPLOS_EXECUTABLE)
+	avr-size -A -x $(SIMPLOS_EXECUTABLE)
 
 all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
 	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(UNIT_TESTS)
@@ -177,8 +177,8 @@ $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 
 
 flash: build
-	avr-size --mcu=$(uP) -A -x $(EXECUTABLE)
-	avr-objcopy -O ihex --strip-debug -R .eeprom $(EXECUTABLE) build/out.hex
+	avr-size --mcu=$(uP) -A -x $(SIMPLOS_EXECUTABLE)
+	avr-objcopy -O ihex --strip-debug -R .eeprom $(SIMPLOS_EXECUTABLE) build/out.hex
 	avrdude -c $(FRAMEWORK) \
 		-p $(uP) \
 		-D -P $(SERIAL) \
@@ -197,24 +197,24 @@ clean:
 
 log:
 	rm -f gdb.log
-	$(AVR_GDB) $(EXECUTABLE) -x  log_execution.gdb
+	$(AVR_GDB) $(SIMPLOS_EXECUTABLE) -x  log_execution.gdb
 	mv gdb.log $(LOG_DIR)/simplos_$$(date +%Y%m%d_%H%M%S).log
 
 sim:
-	$(SIMAVR) -v -v -v -g -m $(uP) $(EXECUTABLE)
+	$(SIMAVR) -v -v -v -g -m $(uP) $(SIMPLOS_EXECUTABLE)
 
 run_tests:
 	$(SIMAVR) -v -v -v -g -m $(uP) $(UNIT_TESTS)
 
 show-size:
-	avr-size --mcu=$(uP) -A -x $(EXECUTABLE)
+	avr-size --mcu=$(uP) -A -x $(SIMPLOS_EXECUTABLE)
 
 debug:
-	$(AVR_GDB) $(EXECUTABLE) -x debug_config.gdb
+	$(AVR_GDB) $(SIMPLOS_EXECUTABLE) -x debug_config.gdb
 
 debug_tests:
 	$(AVR_GDB) $(UNIT_TESTS) -x debug_config.gdb
 
 debug_siulator:
-	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) $(EXECUTABLE)
+	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) $(SIMPLOS_EXECUTABLE)
 
