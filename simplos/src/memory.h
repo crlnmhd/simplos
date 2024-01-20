@@ -1,9 +1,10 @@
 #define _GNU_SOURCE
 #ifndef MEMORY_H_
 #define MEMORY_H_
+#include <stdint.h>
+
 #include "memory_layout.h"
 #include "simplos_types.h"
-#include "stdint.h"
 
 enum MEM_REGION {
   REGISTERS = 0,
