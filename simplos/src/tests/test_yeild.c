@@ -38,7 +38,7 @@ bool test_single_yeild(void) {
   asm volatile("push r16");
   asm volatile("push r16");
   yield();
-  TEST_ASSERT_EQ(x, 42, "%d", "Yield caused funny issues");
+  CHECK_EQ_MSG(x, 42, "%d", "Yield caused funny issues");
   print("IT ALL WORKED!\n");
   return true;
 }
@@ -48,7 +48,7 @@ bool test_double_yeild(void) {
   yield();
   a++;
   yield();
-  TEST_ASSERT_EQ(a, 42, "%d", "Double yield caused funny issues");
+  CHECK_EQ_MSG(a, 42, "%d", "Double yield caused funny issues");
 
   int b = 41;
   {
@@ -62,7 +62,7 @@ bool test_double_yeild(void) {
     c++;
     yield();
   }
-  TEST_ASSERT_EQ(c, 42, "%d", "Double yield in scope caused funny issues");
+  CHECK_EQ_MSG(c, 42, "%d", "Double yield in scope caused funny issues");
   return true;
 }
 
@@ -83,8 +83,8 @@ bool test_multiple_yield(void) {
         (uint32_t)i * (uint32_t)i;  // perform some non_atomic calculations
     yield();
   }
-  TEST_ASSERT_EQ(test_var, 70210, "%d",
-                 "Numerical issue with aggressive task yielding");
+  CHECK_EQ_MSG(test_var, 70210, "%d",
+               "Numerical issue with aggressive task yielding");
   return true;
 }
 

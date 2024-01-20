@@ -35,18 +35,18 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
     return false;                             \
   }
 
-#define TEST_ASSERT_EQ(recieved, expected, fmt, msg) \
-  if ((expected) != (recieved)) {                    \
-    uint8_t sreg = SREG;                             \
-    disable_interrupts();                            \
-    print_from_prg_mem(" FAILED\n");                 \
-    print_from_prg_mem(                              \
-        "ASSERT_EQUAL ERROR! "                       \
-        "Expected: " fmt ", Got: " fmt "\n",         \
-        expected, recieved);                         \
-    print_from_prg_mem("%s\n", msg);                 \
-    SREG = sreg;                                     \
-    return false;                                    \
+#define CHECK_EQ_MSG(recieved, expected, fmt, msg) \
+  if ((expected) != (recieved)) {                  \
+    uint8_t sreg = SREG;                           \
+    disable_interrupts();                          \
+    print_from_prg_mem(" FAILED\n");               \
+    print_from_prg_mem(                            \
+        "ASSERT_EQUAL ERROR! "                     \
+        "Expected: " fmt ", Got: " fmt "\n",       \
+        expected, recieved);                       \
+    print_from_prg_mem("%s\n", msg);               \
+    SREG = sreg;                                   \
+    return false;                                  \
   }
 
 #define CHECK_EQ(recieved, expected, fmt)    \
