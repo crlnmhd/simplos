@@ -105,7 +105,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
 #endif  // SW_TIME_MEASSREMNTS
   INDEX_OF_CURRENT_TASK(kernel) = new_task_index;
 
-  MODIFY_RETURN_POINT_TO(return_point);
+  SET_RETURN_POINT(return_point);
 
   SAVE_CONTEXT();
   old_task->task_sp_adr = task_sp;

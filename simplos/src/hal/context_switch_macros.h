@@ -9,7 +9,8 @@
  * Note: the normal order of execution is preserved, except when ret/reti is
  * called.
  * */
-#define MODIFY_RETURN_POINT_TO(entrypoint_label)                              \
+
+#define SET_RETURN_POINT(entrypoint_label)                                    \
   asm goto(                                                                   \
       "rcall .+0            \n\t" /* pushes PC (3 bytes) onto the stack */    \
       "pop r16              \n\t"                                             \
