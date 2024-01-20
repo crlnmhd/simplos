@@ -175,7 +175,7 @@ Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
       return &kernel->schedule.queue.tasks[t];
     }
   }
-  ENABLE_MT();
+  SCILENT_ENABLE_MT();
   return NULL;
 }
 
