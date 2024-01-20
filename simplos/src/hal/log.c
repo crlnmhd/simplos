@@ -11,9 +11,8 @@ bool add_log_entry(struct Log *log, const char *message) {
   const size_t message_lenght_with_terminator = strlen(message) + 1;
   if (message_lenght_with_terminator > log->num_buffer_bytes_remaining) {
 #ifndef MOCK_HAL  // Surpess mesasge in test mode.
-    debug_print(
-        "Unable to add entry: '%s' to log. Insufficient buffer space.\n",
-        message);
+    WARNING("Unable to add entry: '%s' to log. Insufficient buffer space.\n",
+            message);
 #endif  // MOCK_HAL
     return false;
   }
