@@ -55,6 +55,15 @@ void assert_task_pointer_integrity(taskptr_type task) {
          "TASK MEMORY ERROR! Saved stack pointer 0x%X is outside allowed range "
          "for task\n.");
 
+  const uint16_t future_task_sp_adr_with_saved_registers =
+      task->task_sp_adr - num_context_switch_overhead_bytes();
+  ASSERT(mem_adr_belongs_to_task(future_task_sp_adr_with_saved_registers,
+                                 task->task_memory_block),
+         "(Future) TASK MEMORY ERROR! Future stack pointer, with saved "
+         "registers, 0x%X "
+         "is outside allowed range "
+         "for task\n.");
+
   verify_canaries();
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
   uint16_t const lower_bound =
