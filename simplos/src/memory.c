@@ -53,7 +53,7 @@ void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
 
   ASSERT(mem_adr_belongs_to_task(task->task_sp_adr, task->task_memory_block,
                                  kernel),
-         "TASK MEMORY ERROR! Saved stack pointer 0x%X is outside allowed range "
+         "TASK MEMORY ERROR! Saved stack pointer is outside allowed range "
          "for task\n.");
 
   const uint16_t future_task_sp_adr_with_saved_registers =
