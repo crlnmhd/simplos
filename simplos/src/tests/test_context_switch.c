@@ -42,29 +42,7 @@
       "pop r16                      \n\t"  \
       : "+r"(num_failures)                 \
       : /* No (pure) inputs */             \
-      : "r16", "r17", "r26");
-
-#define SETUP_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL() \
-  asm volatile(                                        \
-      "push r16         \n\t"                          \
-      "push r17         \n\t"                          \
-      "push r26         \n\t"                          \
-      "push r27         \n\t"                          \
-      "push r28         \n\t"                          \
-      "push r29         \n\t"                          \
-      : /* No outputs*/                                \
-      :);
-
-#define TEARDOWN_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL() \
-  asm volatile(                                           \
-      "pop r29         \n\t"                              \
-      "pop r28         \n\t"                              \
-      "pop r27         \n\t"                              \
-      "pop r26         \n\t"                              \
-      "pop r17         \n\t"                              \
-      "pop r16         \n\t"                              \
-      : /* No outputs*/                                   \
-      :);
+      : "memory");
 
 // Tests the test helpers
 bool test_setup_and_check_of_stack_canaries_do_not_trigger_when_called_directly(
@@ -147,9 +125,7 @@ bool test_select_scheduled_task_or_reschedule_selecte_schedled_task_when_availab
   task_sp = 0xFFFF;
   next_task_sp = expected_scheduled_task_sp;
 
-  SETUP_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
   SELECT_SCHEDULED_TASK_OR_SCHEDULER();
-  TEARDOWN_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
 
   CHECK_EQ(task_sp, expected_scheduled_task_sp, "0x%X");
   return true;
@@ -161,9 +137,7 @@ bool test_select_scheduled_task_or_reschedule_does_not_modify_scheduler_task_whe
   scheduler_task_sp = expected_scheduler_task_sp;
   next_task_sp = 0x1111;  // anything not 0
 
-  SETUP_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
   SELECT_SCHEDULED_TASK_OR_SCHEDULER();
-  TEARDOWN_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
 
   CHECK_EQ(scheduler_task_sp, expected_scheduler_task_sp, "0x%X");
   return true;
@@ -175,9 +149,7 @@ bool test_select_scheduled_task_or_reschedule_clears_next_task_sp_when_sheduled_
   scheduler_task_sp = expected_scheduler_task_sp;
   next_task_sp = 0x1111;  // anything not 0
 
-  SETUP_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
   SELECT_SCHEDULED_TASK_OR_SCHEDULER();
-  TEARDOWN_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
 
   CHECK_EQ(next_task_sp, 0, "0x%X");
   return true;
@@ -189,9 +161,7 @@ bool test_select_scheduled_task_or_reschedule_selects_scheduler_task_when_no_tas
   scheduler_task_sp = expected_scheduler_task_sp;
   next_task_sp = 0;  // no task scheduled
 
-  SETUP_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
   SELECT_SCHEDULED_TASK_OR_SCHEDULER();
-  TEARDOWN_SELECT_SCHEDULD_TASK_OR_SCHEDULER_CALL();
 
   CHECK_EQ(scheduler_task_sp, expected_scheduler_task_sp, "0x%X");
   CHECK_EQ(task_sp, expected_scheduler_task_sp, "0x%X");
