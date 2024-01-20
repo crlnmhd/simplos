@@ -85,6 +85,7 @@ void verify_that_kernel_is_uninitilized(Kernel *kernel) {
 
 pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
                     Kernel *kernel) {
+  disable_interrupts();
   DISABLE_MT();
   uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
 
@@ -112,10 +113,13 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   task_sp =
       kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].task_sp_adr;
   SET_SP();
+
   cprint("Calling function\n");
-  enable_interrupts();
+
   ENABLE_MT();
+  enable_interrupts();
   fn();
+  disable_interrupts();
   DISABLE_MT();
   cprint("Function finnished\n");
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status = EMPTY;
