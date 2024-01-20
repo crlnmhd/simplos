@@ -11,15 +11,6 @@ extern volatile uint16_t next_task_sp;
 extern volatile uint16_t scheduler_task_sp;
 
 #ifdef MOCK_HAL
-// todo: linked list that can hold commands?
-struct HardwareState {
-  bool interrupt_enabled;
-};
-
-extern HardwareState state;
-#endif
-
-#ifdef MOCK_HAL
 void halt_exec(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
