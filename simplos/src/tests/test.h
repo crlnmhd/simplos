@@ -2,6 +2,7 @@
 #define TESTS_H_
 #include <avr/pgmspace.h>
 #include <math.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -55,4 +56,7 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
 #define RUN_TEST(fn, function_name, test_statistics) \
   run_test_function(fn, PSTR(function_name), test_statistics);
 
+#define dprintf(fmt, ...) debug_printf_flash(PSTR(fmt), ##__VA_ARGS__)
+
+void debug_printf_flash(const char *fmt, ...);
 #endif  // defined(TESTS_H_)

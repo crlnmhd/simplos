@@ -1,3 +1,4 @@
+#include "../hal/hal.h"
 #include "test.h"
 #include "test_suite.h"
 
@@ -12,14 +13,22 @@ volatile uint16_t scheduler_task_sp = 0;
 
 void run_test_suite(struct TestStatistics (*test_entry)(void),
                     const char *name) {
-  print("Testing: %s ... ", name);
+  dprintf("Testing: %s ... ", name);
   struct TestStatistics test_results = test_entry();
   if (test_results.failed > 0) {
-    print("FAILED: %d ", test_results.failed);
+    dprintf("FAILED: %d ", test_results.failed);
   }
   if (test_results.failed > 0) {
-    print("SKIPPED: %d ", test_results.skipped);
+    dprintf("SKIPPED: %d ", test_results.skipped);
   }
-  print("PASSED: %d ", test_results.passed);
+  dprintf("PASSED: %d\n", test_results.passed);
 }
-int main(void) {}
+int main(void) {
+  uart_init();  // some tests can only be run on an AVR / simulator.
+  FILE uart_file =
+      FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
+  stdout = stdin = &uart_file;
+
+  dprintf("Test suite completed.\n");
+  return 0;
+}
