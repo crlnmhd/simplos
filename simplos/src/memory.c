@@ -35,9 +35,9 @@ INLINED bool in_region(size_t address, size_t region_start, size_t region_end) {
   return region_end <= address && address <= region_start;
 }
 
-uint16_t task_default_sp(uint8_t const task_memory_block) {
+uint16_t task_sp_range_high(uint8_t const task_memory_block) {
   if (task_memory_block >= TASKS_MAX) {
-    FATAL_ERROR("(task_default_sp()): Memory block '%u' is INVALID!",
+    FATAL_ERROR("(task_sp_rane_high()): Memory block '%u' is INVALID!",
                 task_memory_block);
   }
   // Stack grows toward smaller values.
@@ -66,11 +66,12 @@ void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
          "registers is outside allowed range for task\n.");
 
   verify_canaries();
-  uint16_t const upper_bound = task_default_sp(task->task_memory_block);
+  uint16_t const upper_bound = task_sp_range_high(task->task_memory_block);
   uint16_t const lower_bound =
       task->task_memory_block == 0
           ? OS_STACK_START + 1
-          : task_default_sp((uint8_t)(task->task_memory_block - 1U));
+          : task_sp_range_high((uint8_t)(task->task_memory_block - 1U));
+
   bool const sp_outside_bounds =
       task->task_sp_adr < lower_bound || task->task_sp_adr > upper_bound;
 

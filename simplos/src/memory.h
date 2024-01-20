@@ -17,7 +17,7 @@ enum MEM_REGION {
 
 enum MEM_REGION memory_region(taskptr_type, Kernel *kernel);
 
-uint16_t task_default_sp(uint8_t task_index);
+uint16_t task_sp_range_high(uint8_t task_index);
 
 void assert_task_pointer_integrity(taskptr_type task_block, Kernel *kernel);
 

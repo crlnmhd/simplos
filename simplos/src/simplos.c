@@ -17,7 +17,7 @@ void init_task_list(Task_Queue *queue) {
     taskptr_type task = (taskptr_type)&queue->tasks[i];
     task->task_memory_block = i;
     task->time_counter = 0;
-    task->task_sp_adr = task_default_sp(task->task_memory_block);
+    task->task_sp_adr = task_sp_range_high(task->task_memory_block);
     cprint("Initiating mem block %u at 0x%X-0x%X\n", i,
            task->task_sp_adr - task_memory_size(), task->task_sp_adr);
     task->status = EMPTY;
@@ -34,7 +34,7 @@ uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
 #endif  // VERBOSE_OUTPUT
       task->priority = priority;
       task->status = READY;
-      task->task_sp_adr = task_default_sp(task->task_memory_block);
+      task->task_sp_adr = task_sp_range_high(task->task_memory_block);
       task->pid = UINT16_MAX;
       return i;
     }
@@ -71,8 +71,8 @@ void init_kernel(Kernel *kernel) {
     BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
     struct StackRange *task_stack_range = &kernel->task_RAM_ranges[i];
     END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-    task_stack_range->high = task_default_sp(i);
-    task_stack_range->low = task_default_sp(i) - task_memory_size();
+    task_stack_range->high = task_sp_range_high(i);
+    task_stack_range->low = task_sp_range_high(i) - task_memory_size();
   }
 }
 
