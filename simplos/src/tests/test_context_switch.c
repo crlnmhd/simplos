@@ -64,9 +64,10 @@ bool test_setup_and_check_of_stack_canaries_detect_additional_bytes_pushed(
   SETUP_STACK_CANARIES();
   asm volatile("push r18" ::: "r18");
   CHECK_STACK_CANARIES(num_failiures);
-  asm volatile("pop r18" ::
-                   : "r18");  // reset the offset caused by previous push
 
+  asm volatile("pop r18" ::
+                   : "r16", "r17", "r26",
+                     "memory");  // reset the offset from the pushed register
   return num_failiures != 0;
 }
 
