@@ -77,6 +77,12 @@ NO_MT void init_kernel(void) {
   }
 }
 
+void verify_init_has_not_already_been_run(void) {
+  if (kernel->pid_cnt != 0) {
+    FATAL_ERROR("Attempted to re-run startup process. Memory wrap-arround?");
+  }
+}
+
 pid_type spawn_task(void (*fn)(void), uint8_t const priority,
                     char const *name) {
   DISABLE_MT();

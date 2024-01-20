@@ -21,7 +21,6 @@ int main(void) {
   SP = INITIAL_STACK_START;
 
   uart_init();
-
   FILE uart_file =
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
