@@ -30,7 +30,7 @@
 #define TASK_QUEUE_LENGTH 6U
 
 #include <stdint.h>
-struct StackRange {
+struct MemorySpan {
   uint16_t low;
   uint16_t high;
 };

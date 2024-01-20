@@ -21,8 +21,8 @@ void print_task(taskptr_type task, Kernel *kernel) {
   cprint(" PID: %u", task->pid);
   cprint(" Priority: %u", task->priority);
   cprint(" SP: 0x%X", task->task_sp_adr);
-  struct StackRange task_ram_range =
-      *(struct StackRange *)&kernel->task_RAM_ranges[task_index];
+  struct MemorySpan task_ram_range =
+      *(struct MemorySpan *)&kernel->task_RAM_ranges[task_index];
   cprint(" [0x%X - 0x%X]\n", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {
