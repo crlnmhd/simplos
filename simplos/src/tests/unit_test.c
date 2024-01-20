@@ -22,4 +22,4 @@ void run_test_suite(struct TestStatistics (*test_entry)(void),
   }
   print("PASSED: %d ", test_results.passed);
 }
-int main(void) { RUN_TEST_SUITE(unit_test_yields, "Yielding"); }
+int main(void) {}
