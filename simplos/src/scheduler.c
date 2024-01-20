@@ -49,8 +49,8 @@ uint8_t get_active_tasks_mask(Kernel *kernel) {
   return active_task_mask;
 }
 
-void prioritize_tasks(taskptr_type volatile tasks,
-                      volatile uint8_t *out_priority_list) {
+uint8_t prioritize_tasks(taskptr_type volatile tasks,
+                         volatile uint8_t *out_priority_list) {
   uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
     for (uint8_t i = 0; i < TASKS_MAX; i++) {
@@ -61,6 +61,7 @@ void prioritize_tasks(taskptr_type volatile tasks,
       }
     }
   }
+  return num_sored;
 }
 
 void print_queue(uint8_t num_active_tasks, Kernel *kernel) {

@@ -33,21 +33,57 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
   return true;
 }
 
+bool test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready(
+    void) {
+  Kernel_type given_kernel = {0};
+
+  given_kernel.schedule.queue.tasks[0].status = READY;
+  given_kernel.schedule.queue.tasks[1].status = READY;
+  given_kernel.schedule.queue.tasks[2].status = READY;
+  given_kernel.schedule.queue.tasks[3].status = READY;
+  given_kernel.schedule.queue.tasks[4].status = READY;
+
+  const uint8_t num_prioritized_tasks =
+      prioritize_tasks(given_kernel.schedule.queue.tasks,
+                       given_kernel.schedule.queue.task_index_queue);
+
+  CHECK_EQ(num_prioritized_tasks, TASKS_MAX, "%u");
+
+  return TEST_PASSED;
+}
+bool test_prioritize_tasks_returns_number_of_tasks_with_status_ready(void) {
+  Kernel_type given_kernel = {0};
+
+  given_kernel.schedule.queue.tasks[0].status = SLEEPING;
+  given_kernel.schedule.queue.tasks[1].status = READY;
+  given_kernel.schedule.queue.tasks[2].status = EMPTY;
+  given_kernel.schedule.queue.tasks[3].status = READY;
+  given_kernel.schedule.queue.tasks[4].status = READY;
+
+  const uint8_t num_prioritized_tasks =
+      prioritize_tasks(given_kernel.schedule.queue.tasks,
+                       given_kernel.schedule.queue.task_index_queue);
+
+  CHECK_EQ(num_prioritized_tasks, 3, "%u");
+
+  return TEST_PASSED;
+}
+
 bool test_reschedule_reschedules_all_tasks_with_staus_ready(void) {
   Kernel_type given_kernel = {0};
-  Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
+  Scheduler *schedule_with_only_active_tasks = &given_kernel.schedule;
 
-  schedule_with_three_active_tasks->queue.tasks[0].status = READY;
-  schedule_with_three_active_tasks->queue.tasks[1].status = READY;
-  schedule_with_three_active_tasks->queue.tasks[2].status = READY;
-  schedule_with_three_active_tasks->queue.tasks[3].status = READY;
-  schedule_with_three_active_tasks->queue.tasks[4].status = READY;
+  schedule_with_only_active_tasks->queue.tasks[0].status = READY;
+  schedule_with_only_active_tasks->queue.tasks[1].status = READY;
+  schedule_with_only_active_tasks->queue.tasks[2].status = READY;
+  schedule_with_only_active_tasks->queue.tasks[3].status = READY;
+  schedule_with_only_active_tasks->queue.tasks[4].status = READY;
 
-  schedule_with_three_active_tasks->queue.tasks[0].priority = 4;
-  schedule_with_three_active_tasks->queue.tasks[1].priority = 0;
-  schedule_with_three_active_tasks->queue.tasks[2].priority = 1;
-  schedule_with_three_active_tasks->queue.tasks[3].priority = 10;
-  schedule_with_three_active_tasks->queue.tasks[4].priority = 7;
+  schedule_with_only_active_tasks->queue.tasks[0].priority = 4;
+  schedule_with_only_active_tasks->queue.tasks[1].priority = 0;
+  schedule_with_only_active_tasks->queue.tasks[2].priority = 1;
+  schedule_with_only_active_tasks->queue.tasks[3].priority = 10;
+  schedule_with_only_active_tasks->queue.tasks[4].priority = 7;
 
   reschedule(&given_kernel);
 
@@ -145,5 +181,12 @@ struct TestStatistics unit_test_scheduler(void) {
 
   RUN_TEST(test_reschedule_does_not_reschedule_any_task_if_none_is_marke_ready,
            &results);
+
+  RUN_TEST(test_prioritize_tasks_returns_number_of_tasks_with_status_ready,
+           &results);
+
+  RUN_TEST(
+      test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready,
+      &results);
   return results;
 }

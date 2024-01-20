@@ -16,8 +16,11 @@ void reschedule(Kernel *kernel);
 /*
  * Sets the priority order of the tasks queue in out_priority_list.
  * In decreasing order of priority.
+ *
+ * Return: number of prioritzed tasks
  * */
-void prioritize_tasks(taskptr_type tasks, volatile uint8_t *out_priority_list);
+uint8_t prioritize_tasks(taskptr_type tasks,
+                         volatile uint8_t *out_priority_list);
 
 /*
  * Creates a mask where the bit N is set iff the task with index N is active.
