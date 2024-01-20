@@ -136,9 +136,13 @@ void start_scheduler(Kernel *kernel) {
 #endif  // defined (VERBOSE_OUTPUT)
     taskptr_type prev =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+#if defined(VERBOSE_OUTPUT)
     print_task(prev, kernel);
+#endif  // defined (VERBOSE_OUTPUT)
     handle_previous_task(prev, kernel);
+#if defined(VERBOSE_OUTPUT)
     print_task(prev, kernel);
+#endif  // defined (VERBOSE_OUTPUT)
     select_next_task(kernel);
     taskptr_type next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
@@ -176,7 +180,6 @@ void handle_previous_task(taskptr_type prev, Kernel *kernel) {
 }
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task) {
-  cprint("Task sp adr 0x%X\n", adr_of_saved_task);
   const uint8_t num_PC_bytes = 3;
   uint32_t task_PC = 0;
   const uint16_t on_stack_context_switch_overhead_after_saved_sp =
