@@ -5,7 +5,7 @@
  * Mock hall used for testing
  * */
 
-struct HardwareState state = {interrupt_enabled : false, halted : false};
+struct HardwareState state = {.interrupt_enabled = false, .halted = false};
 void halt_exec(void) { state.halted = true; }
 void enable_interrupts(void) { state.interrupt_enabled = true; }
 void disable_interrupts(void) { state.interrupt_enabled = false; }
