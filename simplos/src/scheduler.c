@@ -168,9 +168,9 @@ void assert_stack_pointer_points_to_valid_return_address(
   memcpy((void *)(&task_PC), (const uint16_t *)adr_of_saved_task,
          num_PC_bytes);  // Only copy the three bytes.
 
-  const uint32_t in_valid_bit_mask =
+  const uint32_t invalid_bit_mask =
       0x00FE0000;  // PC is 17 bits wide, upper byte is never copied.
-  ASSERT_EQ(task_PC & in_valid_bit_mask, 0, "0X%X",
+  ASSERT_EQ(task_PC & invalid_bit_mask, 0, "0x%X",
             "Unexpected PC value found on task stack");
 }
 
