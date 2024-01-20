@@ -19,5 +19,4 @@ void init_ticks(void) {
 #endif  // defined SW_TIME_MEASSREMENTS
 
 #if defined(SW_TIME_MEASSREMENTS)
-NO_MT void print_cs_timing_data(void) { cprint("TODO: print timers"); }
 #endif  // defined SW_TIME_MEASSREMENTS

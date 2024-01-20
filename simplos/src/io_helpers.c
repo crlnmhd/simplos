@@ -8,7 +8,7 @@
 #include "os.h"
 #include "simplos.h"
 
-NO_MT void print_task(taskptr_type task, Kernel *kernel) {
+void print_task(taskptr_type task, Kernel *kernel) {
   if (task == NULL) {
     FATAL_ERROR("Error, task is NULL\n");
   }
@@ -56,7 +56,7 @@ void print_schedule(Kernel *kernel) {
   cprint(" --  end of schedule --\n")
 }
 
-NO_MT void print_timing_data(__attribute__((unused)) Kernel *kernel) {
+void print_timing_data(__attribute__((unused)) Kernel *kernel) {
 #if defined(SW_TIME_MEASSREMENTS)
   cprint("Timing data:\nOS: %u\n", kernel->cs_time_counter);
   // FIXME risk of overflow!

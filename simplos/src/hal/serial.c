@@ -14,7 +14,7 @@
   Initiate serial communication, taken from
   https://appelsiini.net/2011/simple-usart-with-avr-libc/
 */
-NO_MT void uart_init(void) {
+void uart_init(void) {
   UBRR0H = UBRRH_VALUE;
   UBRR0L = UBRRL_VALUE;
 
@@ -28,7 +28,7 @@ NO_MT void uart_init(void) {
   UCSR0B = _BV(RXEN0) | _BV(TXEN0);   /* Enable RX and TX */
 }
 
-NO_MT int16_t uart_putchar(char c, FILE *stream) {
+int16_t uart_putchar(char c, FILE *stream) {
   if (c == '\n') {
     uart_putchar('\r', stream);
   }
@@ -37,7 +37,7 @@ NO_MT int16_t uart_putchar(char c, FILE *stream) {
   return 0;
 }
 
-NO_MT int16_t uart_getchar(__attribute__((unused)) FILE *stream) {
+int16_t uart_getchar(__attribute__((unused)) FILE *stream) {
   loop_until_bit_is_set(UCSR0A, RXC0);
   return UDR0;
 }

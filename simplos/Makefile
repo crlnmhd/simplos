@@ -27,8 +27,6 @@ DEFINES += -DF_CPU=$(CPU_FREQ)
 DEFINES += -DBAUD=$(BAUD)
 
 # Enables optimization. Use only for non threadsafe components.
-# DEFINES += -DNO_MT='__attribute__((optimize("Os")))'
-DEFINES += -DNO_MT='' # '__attribute__((optimize("Os")))'
 
 # Enable verbose output
 DEFINES += -DVERBOSE_OUTPUT

@@ -11,7 +11,7 @@
 #include "memory_layout.h"
 #include "timers.h"
 
-NO_MT void init_task_list(Task_Queue *queue) {
+void init_task_list(Task_Queue *queue) {
   check_task_configuration_uses_all_available_memory();
 
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
@@ -25,7 +25,7 @@ NO_MT void init_task_list(Task_Queue *queue) {
   }
 }
 
-NO_MT uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
+uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     taskptr_type task = (Simplos_Task *)&queue->tasks[i];
     // Take if available
@@ -45,7 +45,7 @@ NO_MT uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
   return 0;  // Never reached
 }
 
-NO_MT void init_schedule(Kernel *kernel) {
+void init_schedule(Kernel *kernel) {
   kernel->schedule.os_task_sp = OS_STACK_START;
   init_task_list(&(kernel->schedule.queue));
   kernel->cs_time_counter = 0;
@@ -62,7 +62,7 @@ __attribute__((noinline, naked)) void k_yield(void) {
       : "memory");
 }
 
-NO_MT void init_kernel(Kernel *kernel) {
+void init_kernel(Kernel *kernel) {
   kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
