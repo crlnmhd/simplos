@@ -13,6 +13,7 @@ INITIAL_STACK_START := 0x1FFF
 TASK_SP_LOCATION := 0x802100
 SCHEDULER_TASK_SP_LOCATION := 0x8020FE
 NEXT_TASK_SP_LOCATION := 0x8020FC
+PREV_TASK_SP_LOCATION := 0x8020FA
 KERNEL_DATA_LOCATION := 0x802102
 DATA_SECTION_START := 0x802000
 
@@ -111,6 +112,7 @@ CFLAGS := -Wall $\
 DATA_SECTIONS :=	-Wl,--section-start=.data=$(DATA_SECTION_START) $\
 									-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
 									-Wl,--section-start=.next_task_sp_location=$(NEXT_TASK_SP_LOCATION) $\
+									-Wl,--section-start=.prev_task_sp_location=$(PREV_TASK_SP_LOCATION) $\
 									-Wl,--section-start=.scheduler_task_sp_location=$(SCHEDULER_TASK_SP_LOCATION) $\
 									-Wl,--section-start=.kernel_data_location=$(KERNEL_DATA_LOCATION)
 

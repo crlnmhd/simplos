@@ -11,6 +11,8 @@ volatile Kernel internal_kernel_location
 volatile Kernel *volatile global_kernel = &internal_kernel_location;
 
 volatile uint16_t task_sp __attribute__((section(".task_sp_location"))) = 0;
+volatile uint16_t prev_task_sp
+    __attribute__((section(".prev_task_sp_location"))) = 0;
 volatile uint16_t next_task_sp
     __attribute((section(".next_task_sp_location"))) = 0;
 volatile uint16_t scheduler_task_sp

@@ -6,6 +6,7 @@
 
 extern volatile uint16_t task_sp;
 extern volatile uint16_t next_task_sp;
+extern volatile uint16_t prev_task_sp;
 extern volatile uint16_t scheduler_task_sp;
 
 /* noreturn hint must not be used with the tests, where the functions will still

@@ -5,6 +5,8 @@ volatile uint16_t at_scheduler_task_sp
     __attribute__((section(".scheduler_task_sp_location"))) = 0;
 volatile uint16_t at_next_task_sp
     __attribute__((section(".next_task_sp_location"))) = 0;
+volatile uint16_t at_prev_task_sp
+    __attribute__((section(".prev_task_sp_location"))) = 0;
 
 volatile Kernel at_kernel_location
     __attribute__((section(".kernel_data_location"))) = {0};
@@ -28,6 +30,13 @@ bool test_location_of_next_task_sp_is_readable_at_0x20FC_to_0x20FD(void) {
   CHECK_EQ((uint16_t)(&at_next_task_sp), (uint16_t)0x20FC, "0x%X");
   CHECK_EQ(*(uint8_t *)(0x20FC), 0xAB, "0x%X");
   CHECK_EQ(*(uint8_t *)(0x20FD), 0x89, "0x%X");
+  return TEST_PASSED;
+}
+bool test_location_of_prev_task_sp_is_readable_at_0x20FA_to_0x20FB(void) {
+  at_prev_task_sp = 0xCDEF;
+  CHECK_EQ((uint16_t)(&at_prev_task_sp), (uint16_t)0x20FA, "0x%X");
+  CHECK_EQ(*(uint8_t *)(0x20FA), 0xEF, "0x%X");
+  CHECK_EQ(*(uint8_t *)(0x20FB), 0xCD, "0x%X");
   return TEST_PASSED;
 }
 bool test_location_of_kernel_data_starts_at_0x2102(void) {
@@ -58,6 +67,9 @@ struct TestStatistics unit_test_memory(void) {
            &results);
 
   RUN_TEST(test_location_of_next_task_sp_is_readable_at_0x20FC_to_0x20FD,
+           &results);
+
+  RUN_TEST(test_location_of_prev_task_sp_is_readable_at_0x20FA_to_0x20FB,
            &results);
 
   RUN_TEST(test_location_of_kernel_data_starts_at_0x2102, &results);
