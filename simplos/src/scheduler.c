@@ -151,6 +151,6 @@ void prepare_next_task(taskptr_type next) {
 #endif  // defined VERBOSE_OUTPUT
   next->status = RUNNING;
 #if defined(VERBOSE_OUTPUT)
-  cprint("Setting next_sp to 0x%X\n", task_sp);
+  cprint("Setting next_sp to 0x%X\n", next_task_sp);
 #endif  // defined VERBOSE_OUTPUT
 }
