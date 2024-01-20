@@ -10,7 +10,7 @@ extern volatile uint16_t task_sp;
 extern volatile uint16_t next_task_sp;
 extern volatile uint16_t scheduler_task_sp;
 
-#ifdef TEST_HAL
+#ifdef MOCK_HAL
 // todo: linked list that can hold commands?
 struct HardwareState {
   bool interrupt_enabled;
@@ -19,7 +19,7 @@ struct HardwareState {
 extern HardwareState state;
 #endif
 
-#ifdef TEST_HAL
+#ifdef MOCK_HAL
 void halt_exec(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
@@ -32,7 +32,7 @@ static inline __attribute__((always_inline)) void disable_interrupts(void) {
 static inline __attribute__((always_inline)) void enable_interrupts(void) {
   asm volatile("sei" ::: "memory");
 }
-#endif  // TEST_HAL
+#endif  // MOCK_HAL
 
 void write_mm(uint8_t *const mem_ptr, const uint8_t value);
 uint8_t read_mm(uint8_t *const mem_ptr);
