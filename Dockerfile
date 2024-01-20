@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-RUN apt-get update && apt-get install gcc g++ make simavr avrdude gdb-avr git libmpc-dev libgmp3-dev libmpfr-dev flex wget tmux -y
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install gcc g++ make avrdude gdb-avr git libmpc-dev libgmp3-dev libmpfr-dev flex wget tmux libelf-dev pkg-config freeglut3-dev -y
 
 RUN mkdir /build_tools && mkdir /build_tools/avr_gcc && mkdir /build_tools/binutils && mkdir /build_tools/bin && mkdir /simplos
 
@@ -49,5 +49,16 @@ RUN echo "Downloading avr-libc..." && \
   ./configure --prefix=$PREFIX --build=`./config.guess` --host=avr --with-debug-info=dward-2 && \
   make -j $(nproc) && \
   make install
+
+RUN echo "Downloading simavr ..." && \
+  cd /build_tools && \
+  wget -q https://github.com/buserror/simavr/archive/refs/tags/v1.7.tar.gz && \
+  echo "Uncompressing simavr..." && \
+  tar -xf v1.7.tar.gz && \
+  rm v1.7.tar.gz && \
+  cd simavr-1.7 && \
+  echo "building simavr..." && \
+  make -j $(nproc) && \
+  make install RELEASE=1
 
 WORKDIR /simplos

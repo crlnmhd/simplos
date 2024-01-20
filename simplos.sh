@@ -65,6 +65,7 @@ is_installed() {
 
 build_dev_container() {
   echo "building dev container"
+
   podman build --rm -t avr_docker .
 }
 
@@ -77,7 +78,10 @@ enter_dev_container() {
   local mount_destination
   mount_destination="/simplos"
 
-  podman run -it --rm -v "${source_directory}:${mount_destination}":Z avr_docker bash -c "tmux -f tmux.conf && bash"
+  podman run -it --rm \
+    -v "${source_directory}:${mount_destination}":Z \
+    avr_docker bash \
+    -c "tmux -f tmux.conf && bash"
 }
 
 main "$@"
