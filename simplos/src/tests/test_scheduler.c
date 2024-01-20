@@ -33,6 +33,28 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
   return true;
 }
 
+bool test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_status_is_not_ready(
+    void) {
+  Kernel_type given_kernel = {0};
+  Scheduler *schedule_with_no_active_tasks = &given_kernel.schedule;
+
+  // Cover all non-ready task types
+  schedule_with_no_active_tasks->queue.tasks[0].status = SLEEPING;
+  schedule_with_no_active_tasks->queue.tasks[1].status = RUNNING;
+  schedule_with_no_active_tasks->queue.tasks[2].status = EMPTY;
+  schedule_with_no_active_tasks->queue.tasks[3].status = SCHEDULING;
+  schedule_with_no_active_tasks->queue.tasks[4].status = PAUSED_SCHEDULER;
+
+  uint8_t prioritized_task_indices[5] = {0};
+
+  const uint8_t recived =
+      get_active_tasks(prioritized_task_indices, 5, &given_kernel);
+
+  CHECK_EQ(recived, 0U, "%u");
+
+  return TEST_PASSED;
+}
+
 struct TestStatistics unit_test_scheduler(void) {
   struct TestStatistics results = {0};
   RUN_TEST(
@@ -41,6 +63,10 @@ struct TestStatistics unit_test_scheduler(void) {
 
   RUN_TEST(test_select_next_task_sets_next_task_sp_to_next_available_task,
            &results);
+
+  RUN_TEST(
+      test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_status_is_not_ready,
+      &results);
 
   return results;
 }
