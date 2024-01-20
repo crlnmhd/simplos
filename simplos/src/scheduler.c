@@ -1,6 +1,8 @@
 #include "scheduler.h"
 
 #include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 
 #include "hal/context_switch_macros.h"
 #include "io_helpers.h"
@@ -8,7 +10,7 @@
 #include "simplos_types.h"
 #include "timers.h"
 
-bool assert_stack_pointer_points_to_valid_return_address(
+void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
 uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks);
 void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
@@ -148,9 +150,17 @@ void handle_previous_task(taskptr_type prev) {
 #endif
   }
 }
-bool assert_stack_pointer_points_to_valid_return_address(
+void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task) {
-  return true;
+  const uint8_t num_PC_bytes = 3;
+  uint32_t task_PC = 0;
+  memcpy((void *)(&task_PC), (const uint16_t *)adr_of_saved_task,
+         num_PC_bytes);  // Only copy the three bytes.
+
+  const uint32_t in_valid_bit_mask =
+      0x00FE0000;  // PC is 17 bits wide, upper byte is never copied.
+  ASSERT_EQ(task_PC & in_valid_bit_mask, 0, "0X%X",
+            "Unexpected PC value found on task stack");
 }
 
 void prepare_next_task(taskptr_type next) {
