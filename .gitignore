@@ -4,6 +4,7 @@
 .cache
 *.out
 build
+latest_executable
 log
 compile_commands.json
 .clang-tidy
