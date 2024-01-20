@@ -3,7 +3,6 @@
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>  // printf_P
 
 #if !defined(MOCK_HAL) && \
     !defined(__clang__)  // FIXME: just define separate run mode
@@ -11,6 +10,7 @@
     "Test header can not be included in non-test mode due to memory contraints."
 #endif  // MOCK_HAL
 
+#include "../io_helpers.h"
 #define TEST_PASSED true
 
 struct TestStatistics {
@@ -57,12 +57,8 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
 #define RUN_TEST(fn, test_statistics) \
   run_test_function(fn, PSTR(#fn), test_statistics);
 
-#define debug_printf(fmt, ...)          \
-  {                                     \
-    uint8_t sreg_at_entry = SREG;       \
-    printf_P(PSTR(fmt), ##__VA_ARGS__); \
-    SREG = sreg_at_entry;               \
-  }
+#define debug_printf(fmt, ...) debug_printf_flash(PSTR(fmt), ##__VA_ARGS__)
+#define dprint_flash_str(str) printf_P(str);
 
 void debug_printf_flash(const char *fmt, ...);
 #endif  // defined(TESTS_H_)

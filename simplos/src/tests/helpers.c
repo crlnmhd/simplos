@@ -17,3 +17,12 @@ void combine_statistics(struct TestStatistics *statistics,
   statistics->failed = (uint8_t)(statistics->failed + to_add->failed);
   statistics->skipped = (uint8_t)(statistics->skipped + to_add->skipped);
 }
+
+void debug_printf_flash(const char *fmt, ...) {
+  uint8_t sreg_at_entry = SREG;
+  va_list args;
+  va_start(args, fmt);
+  vfprintf_P(stdout, fmt, args);
+  va_end(args);
+  SREG = sreg_at_entry;
+}
