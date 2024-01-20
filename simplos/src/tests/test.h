@@ -23,6 +23,15 @@ void combine_statistics(struct TestStatistics *statistics,
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
                        struct TestStatistics *statistics);
 
+#define CHECK_EQ(recieved, expected, fmt)    \
+  if ((expected) != (recieved)) {            \
+    dprintf(                                 \
+        "\nEquality check failed! "          \
+        "Expected: " fmt ", Got: " fmt "\n", \
+        expected, recieved);                 \
+    return false;                            \
+  }
+
 #define CHECK_EQ_MSG(recieved, expected, fmt, msg) \
   if ((expected) != (recieved)) {                  \
     uint8_t sreg = SREG;                           \
@@ -35,15 +44,6 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
     print_from_prg_mem("%s\n", msg);               \
     SREG = sreg;                                   \
     return false;                                  \
-  }
-
-#define CHECK_EQ(recieved, expected, fmt)    \
-  if ((expected) != (recieved)) {            \
-    dprintf(                                 \
-        "\nEquality check failed! "          \
-        "Expected: " fmt ", Got: " fmt "\n", \
-        expected, recieved);                 \
-    return false;                            \
   }
 
 #define CHECK_TRUE(recieved)                                   \
