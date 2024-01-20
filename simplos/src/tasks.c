@@ -11,7 +11,7 @@ volatile uint8_t shared_x = 5;
 void worker_1_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
     print("worker 1: %u%%\n", i);
-    for (uint16_t j = 0; j < UINT16_MAX / 8; ++j) {
+    for (uint16_t j = 0; j < UINT16_MAX / 32; ++j) {
       ;
     }
   }
@@ -21,7 +21,7 @@ void worker_1_fn(void) {
 void worker_2_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
     print("worker 2: %u%%\n", i);
-    for (uint16_t j = 0; j < UINT16_MAX / 8; ++j) {
+    for (uint16_t j = 0; j < UINT16_MAX / 32; ++j) {
       ;
     }
   }
@@ -42,7 +42,7 @@ void sum_to_ten(void) {
 void wait_for_me(void) {
   for (uint16_t i = 0; i < 100; ++i) {
     print(".\n");
-    for (uint16_t j = 0; j < UINT16_MAX; ++j) {
+    for (uint16_t j = 0; j < UINT16_MAX / 32; ++j) {
       ;
     }
   }
