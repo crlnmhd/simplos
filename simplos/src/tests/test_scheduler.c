@@ -85,16 +85,16 @@ bool test_get_active_tasks_places_indices_of_tasks_with_status_ready_in_task_ind
   schedule_with_three_active_tasks->queue.tasks[2].status = EMPTY;
   schedule_with_three_active_tasks->queue.tasks[3].status = READY;
   schedule_with_three_active_tasks->queue.tasks[4].status = READY;
-  uint8_t prioritized_task_indices[5] = {0};
+  uint8_t active_task_indices[5] = {0};
 
-  get_active_tasks(prioritized_task_indices, 5, &given_kernel);
+  get_active_tasks(active_task_indices, 5, &given_kernel);
 
   // NOTE: The implemnetation returns these in their task order. This is not
   // given, but still use it for testing to avoid havin to do something clever.
 
-  CHECK_EQ(prioritized_task_indices[0], 1U, "%u");
-  CHECK_EQ(prioritized_task_indices[1], 3U, "%u");
-  CHECK_EQ(prioritized_task_indices[2], 4U, "%u");
+  CHECK_EQ(active_task_indices[0], 1U, "%u");
+  CHECK_EQ(active_task_indices[1], 3U, "%u");
+  CHECK_EQ(active_task_indices[2], 4U, "%u");
 
   return TEST_PASSED;
 }
@@ -118,5 +118,6 @@ struct TestStatistics unit_test_scheduler(void) {
   RUN_TEST(
       test_get_active_tasks_places_indices_of_tasks_with_status_ready_in_task_index_list,
       &results);
+
   return results;
 }
