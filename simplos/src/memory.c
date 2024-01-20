@@ -8,6 +8,8 @@
 #include "memory.h"
 #include "simplos_types.h"
 
+void verify_canaries(void);
+
 void configure_heap_location(const uint8_t margin_to_main) {
   kernel->heap_start = SP - margin_to_main;
   cprint("Heap starting at  0x%X\n", kernel->heap_start);
@@ -54,12 +56,7 @@ void assert_task_pointer_integrity(taskptr_type task) {
          "TASK MEMORY ERROR! Saved stack pointer 0x%X is outside allowed range "
          "for task\n.");
 
-  // Check canaries.
-  for (uint8_t *canary_byte = (uint8_t *)CANARY_START;
-       canary_byte >= (uint8_t *)CANARY_END; canary_byte--) {
-    ASSERT_EQ(read_mm(canary_byte), CANARY_VALUE, "0x%X",
-              "Canary has been changed! The OS stack has likely overflown\n");
-  }
+  verify_canaries();
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
   uint16_t const lower_bound =
       task->task_memory_block == 0
@@ -74,6 +71,14 @@ void assert_task_pointer_integrity(taskptr_type task) {
            lower_bound);
     FATAL_ERROR("STACK OVERFLOW DETECTED!\nTask %d SP = 0x%X is of bounds.",
                 task->task_memory_block, task->task_sp_adr);
+  }
+}
+void verify_canaries(void) {
+  /* Verifies the canary bytes between the OS stack and the first task. */
+  for (uint8_t *canary_byte = (uint8_t *)CANARY_START;
+       canary_byte >= (uint8_t *)CANARY_END; canary_byte--) {
+    ASSERT_EQ(read_mm(canary_byte), CANARY_VALUE, "0x%X",
+              "Canary has been changed! The OS stack has likely overflown\n");
   }
 }
 
