@@ -9,6 +9,8 @@ main(){
     build_dev_container
   elif asked_to_run_dev_container "$@"; then
     enter_dev_container
+  elif asked_to_run_unit_tests "$@"; then
+    run_unit_tests_in_container
   else
     show_usage_help
   fi
@@ -30,6 +32,14 @@ asked_to_run_dev_container(){
   fi
 }
 
+asked_to_run_unit_tests(){
+  if [[ $# -eq 0  || ($# -eq 1 && $1 == "run-unit-tests") ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 asked_to_rebuild_dev_container(){
   if [[ $# -eq 1 && $1 == "build-container" ]]; then
     return 0
@@ -39,7 +49,7 @@ asked_to_rebuild_dev_container(){
 }
 
 show_usage_help(){
-  echo "Usage: ./simplos [dev] [build-container]"
+  echo "Usage: ./simplos [dev] [build-container] [run-unit-tests]"
 }
 
 os_supported() {
@@ -67,6 +77,34 @@ build_dev_container() {
   echo "building dev container"
 
   podman build --rm -t avr_docker .
+}
+
+run_unit_tests_in_container() {
+  echo "Running unit tests"
+
+  local source_directory
+  source_directory="$(pwd)/simplos"
+
+  local mount_destination
+  mount_destination="/simplos"
+
+  # Mount a copy of the soruces in order to avoid tampering with any other mounts / editing.
+  local code_copy_dir
+  code_copy_dir=$(mktemp -d)
+  cp -r "$source_directory"/* "$code_copy_dir"
+
+  local return_val
+  if podman run -it --rm \
+    -v "${code_copy_dir}:${mount_destination}":Z \
+    avr_docker bash \
+    -c "ls && make clean && make run_unit_tests" &> /dev/null; then
+    return_val=0
+  else
+    return_val=1
+  fi
+
+  rm -r "$code_copy_dir"
+  exit "$return_val"
 }
 
 enter_dev_container() {
