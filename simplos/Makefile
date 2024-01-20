@@ -135,9 +135,9 @@ COMPDB_ENTRIES += $(addsuffix .compdb_entry, $(basename $(TEST_SOURCES)))
 compile_commands: $(COMPDB_ENTRIES)
 	@echo "[" > $@.tmp
 	@cat $^ >> $@.tmp
-	@sed '$$d' < $@.tmp > $@
-	@echo "    }" >> $@
-	@echo "]" >> $@
+	@sed '$$d' < $@.tmp > $@.json
+	@echo "    }" >> $@.json
+	@echo "]" >> $@.json
 	@rm $@.tmp
 	@rm $^
 
