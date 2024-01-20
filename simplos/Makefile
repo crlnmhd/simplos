@@ -70,6 +70,7 @@ ALL_OBJECTS := $(OBJECTS)
 ALL_OBJECTS += $(ASM_OBJECTS)
 
 EXECUTABLE := $(OBJ)/simplos.out
+UNIT_TESTS := $(DEBUG_BUILD)/unit_tests.out
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -157,8 +158,8 @@ all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
 	avr-size -A -x $(EXECUTABLE)
 
 all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(DEBUG_BUILD)/unit_tests.out
-	avr-size -A -x $(DEBUG_BUILD)/unit_tests.out
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(UNIT_TESTS)
+	avr-size -A -x $(UNIT_TESTS)
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) -I$(SRC) -c -g $< -o $@
@@ -196,7 +197,7 @@ sim:
 	$(SIMAVR) -v -v -v -g -m $(uP) $(EXECUTABLE)
 
 run_tests:
-	$(SIMAVR) -v -v -v -g -m $(uP) $(DEBUG_BUILD)/unit_tests.out
+	$(SIMAVR) -v -v -v -g -m $(uP) $(UNIT_TESTS)
 
 show-size:
 	avr-size --mcu=$(uP) -A -x $(EXECUTABLE)
@@ -205,7 +206,7 @@ debug:
 	$(AVR_GDB) $(EXECUTABLE) -x debug_config.gdb
 
 debug_tests:
-	$(AVR_GDB) $(DEBUG_BUILD)/unit_tests.out -x debug_config.gdb
+	$(AVR_GDB) $(UNIT_TESTS) -x debug_config.gdb
 
 debug_siulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) $(EXECUTABLE)
