@@ -147,7 +147,6 @@ void handle_previous_task(taskptr_type prev, Kernel *kernel) {
   assert_task_pointer_integrity(prev, kernel);
 
   if (prev->status == RUNNING) {
-    // The previous task has been killed.
     prev->task_sp_adr = task_sp;
     prev->status = READY;
 #if defined(VERBOSE_OUTPUT)
