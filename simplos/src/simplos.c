@@ -19,7 +19,8 @@ void init_task_list(Task_Queue *queue) {
     task->time_counter = 0;
     task->task_sp_adr = task_sp_range_high(task->task_memory_block);
     cprint("Initiating mem block %u at 0x%X-0x%X\n", i,
-           task->task_sp_adr - task_memory_size(), task->task_sp_adr);
+           task->task_sp_adr - TASK_MEMORY_SIZE,
+           task->task_sp_adr);  // TODO: use new fn
     task->status = EMPTY;
   }
 }
@@ -72,7 +73,7 @@ void init_kernel(Kernel *kernel) {
     struct StackRange *task_stack_range = &kernel->task_RAM_ranges[i];
     END_DISCARD_VOLATILE_QUALIFIER_WARNING()
     task_stack_range->high = task_sp_range_high(i);
-    task_stack_range->low = task_sp_range_high(i) - task_memory_size();
+    task_stack_range->low = task_sp_range_high(i) - TASK_MEMORY_SIZE;
   }
 }
 

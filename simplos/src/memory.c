@@ -23,7 +23,7 @@ void warn_if_task_memory_can_not_be_divided_evenly_between_tasks(void) {
   // Warn if not all available task memory has been allocated due to sub-optimal
   // configuration.
   const uint16_t available_task_stack_size = TASK_RAM_START - TASK_RAM_END;
-  const uint16_t used_task_memory = task_memory_size() * TASKS_MAX;
+  const uint16_t used_task_memory = TASK_MEMORY_SIZE * TASKS_MAX;
   if (used_task_memory != available_task_stack_size) {
     WARNING(
         "Could not divide available stack evenly between tasks. Consider "
@@ -42,7 +42,7 @@ uint16_t task_sp_range_high(uint8_t const task_memory_block) {
   }
   // Stack grows toward smaller values.
   const uint16_t sp_adr =
-      TASK_RAM_END + ((task_memory_block + 1U) * task_memory_size());
+      TASK_RAM_END + ((task_memory_block + 1U) * TASK_MEMORY_SIZE);
   return sp_adr;
 }
 
