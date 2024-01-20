@@ -5,11 +5,11 @@
 
 #define ENABLE_MT()    \
   SCILENT_ENABLE_MT(); \
-  cprint("enabling MT\n");
+  debug_print("enabling MT\n");
 
 #define DISABLE_MT()   \
   SCILENT_DISABLE_MT() \
-  cprint("disabling MT\n");
+  debug_print("disabling MT\n");
 
 __attribute__((noinline, naked)) void k_yield(void);
 __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),

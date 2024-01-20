@@ -32,7 +32,7 @@ DEFINES += -DBAUD=$(BAUD)
 # Enable verbose output
 DEFINES += -DVERBOSE_OUTPUT
 
-# Enable debug ouput
+# Enable debug ouput (disabeling this also disables verbose output)
 DEFINES += -DDEBUG_OUTPUT
 
 DEFINES += -DINITIAL_STACK_START=$(INITIAL_STACK_START)

@@ -14,9 +14,9 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
 #define print_from_prg_mem(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
 #if defined(DEBUG_OUTPUT)
-#define cprint(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
+#define debug_print(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
 #else
-#define cprint(unused, ...) \
+#define debug_print(unused, ...) \
   do_nothing_ignoreing_passed_parameters(PSTR(unused), ##__VA_ARGS__)
 #endif  // defined(DEBUG_OUTPUT)
 

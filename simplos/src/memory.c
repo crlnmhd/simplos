@@ -13,10 +13,11 @@ bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_number, Kernel *kernel);
 
 void configure_heap_location(const uint8_t margin_to_main, Kernel *kernel) {
   kernel->heap_start = SP - margin_to_main;
-  cprint("Heap starting at  0x%X\n", kernel->heap_start);
+  debug_print("Heap starting at  0x%X\n", kernel->heap_start);
   ASSERT(kernel->heap_start > TASK_RAM_START,
          "init section has overflowed heap memory");
-  cprint("%u bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
+  debug_print("%u bytes available for heap.\n",
+              kernel->heap_start - TASK_RAM_START);
 }
 
 void warn_if_task_memory_can_not_be_divided_evenly_between_tasks(void) {
@@ -56,7 +57,7 @@ uint16_t task_sp_range_low(uint8_t const task_memory_block) {
 
 void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
 #if defined(VERBOSE_OUTPUT)
-  cprint("\nVerifying task\n");
+  debug_print("\nVerifying task\n");
 #endif  // VERBOSE_OUTPUT
   ASSERT_EQ(memory_region(task, kernel), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
@@ -81,9 +82,9 @@ void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
       task->task_sp_adr < lower_bound || task->task_sp_adr > upper_bound;
 
   if (sp_outside_bounds) {
-    cprint("Current task sp: 0x%X and block: %u\nUpper: 0x%X, lower: 0x%X\n",
-           task->task_sp_adr, task->task_memory_block, upper_bound,
-           lower_bound);
+    debug_print(
+        "Current task sp: 0x%X and block: %u\nUpper: 0x%X, lower: 0x%X\n",
+        task->task_sp_adr, task->task_memory_block, upper_bound, lower_bound);
     FATAL_ERROR("STACK OVERFLOW DETECTED!\nTask %u SP = 0x%X is of bounds.",
                 task->task_memory_block, task->task_sp_adr);
   }

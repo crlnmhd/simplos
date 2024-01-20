@@ -17,66 +17,66 @@ void print_task(taskptr_type task, Kernel *kernel) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char const *task_name = kernel->task_names[task_index];
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  cprint("Task: \"%s\". Block: %u", task_name, task_index);
-  cprint(" PID: %u", task->pid);
-  cprint(" Priority: %u", task->priority);
-  cprint(" SP: 0x%X", task->task_sp_adr);
+  debug_print("Task: \"%s\". Block: %u", task_name, task_index);
+  debug_print(" PID: %u", task->pid);
+  debug_print(" Priority: %u", task->priority);
+  debug_print(" SP: 0x%X", task->task_sp_adr);
   struct MemorySpan task_ram_range =
       *(struct MemorySpan *)&kernel->task_RAM_ranges[task_index];
-  cprint(" [0x%X - 0x%X]\n", task_ram_range.low, task_ram_range.high);
+  debug_print(" [0x%X - 0x%X]\n", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {
     case READY:
-      cprint("  READY");
+      debug_print("  READY");
       break;
     case EMPTY:
-      cprint("  EMPTY");
+      debug_print("  EMPTY");
       break;
     case RUNNING:
-      cprint("  RUNNING");
+      debug_print("  RUNNING");
       break;
     case SLEEPING:
-      cprint("  SLEEPING");
+      debug_print("  SLEEPING");
       break;
     case SCHEDULER:
-      cprint("  SCHEDULER");
+      debug_print("  SCHEDULER");
       break;
     default:
-      cprint("  STATUS UNKNOWN");
+      debug_print("  STATUS UNKNOWN");
   }
-  cprint("\n");
+  debug_print("\n");
 
-  // dprint("Debug -- task memory block: %d\n", task->task_memory_block);
+  // debug_print("Debug -- task memory block: %d\n", task->task_memory_block);
 }
 
 void print_schedule(Kernel *kernel) {
-  cprint(" -- Schedule --\n");
+  debug_print(" -- Schedule --\n");
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     Simplos_Task *task = &kernel->schedule.queue.tasks[i];
-    // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
+    // debug_print("DEBUG:: has mem block: %d\n", task->task_memory_block);
     print_task(task, kernel);
   }
-  cprint(" --  end of schedule --\n");
+  debug_print(" --  end of schedule --\n");
 }
 
 void print_timing_data(__attribute__((unused)) Kernel *kernel) {
 #if defined(SW_TIME_MEASSREMENTS)
-  cprint("Timing data:\nOS: %u\n", kernel->cs_time_counter);
+  debug_print("Timing data:\nOS: %u\n", kernel->cs_time_counter);
   // FIXME risk of overflow!
   uint32_t running_total = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     Simplos_Task *task = &global_kernel->schedule->queue.tasks[i];
     if (task->status != EMPTY) {
-      cprint("Task %u: %u\n", i, task->time_counter);
+      debug_print("Task %u: %u\n", i, task->time_counter);
       running_total += task->time_counter;
     }
   }
   float cs_time_fraction =
       (float)kernel->cs_time_counter /
       (float)(running_total + kernel->ended_task_time_counter);
-  cprint("Total fraction: %f\n", cs_time_fraction);
+  debug_print("Total fraction: %f\n", cs_time_fraction);
 #else
-  cprint("Printing timing data: DISABLED\n");
+  debug_print("Printing timing data: DISABLED\n");
 #endif
 }
 
@@ -89,10 +89,10 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
 // void print_task_stack(Simplos_Task * task){
 //   size_t const stack_start = task_default_sp(task->task_memory_block);
 //   DISABLE_MT();
-//   cprint("Stack of task %d (in hexadecimal):",task->task_memory_block)
+//   debug_print("Stack of task %d (in hexadecimal):",task->task_memory_block)
 
 //   for(size_t s = stack_start; s >= stack_start - TASK_MEMORY_BYTES; -s){
-//     cprint("0x%X ")
+//     debug_print("0x%X ")
 //   }
 
 // }

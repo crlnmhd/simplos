@@ -43,13 +43,13 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
   uint16_t const name_length = strlen(name);
   ASSERT(name_length <= FUNCTION_NAME_MAX_LENGTH,
          "Function name length exceeded.");
-  cprint("Calling function located at: %p\n", fn);
+  debug_print("Calling function located at: %p\n", fn);
 
   uint16_t const spawned_task_pid =
       spawn_task(fn, priority, name, get_os_kernel());
 
-  cprint("done spawning task \"%s\"---- new pid is %u\n", name,
-         spawned_task_pid);
+  debug_print("done spawning task \"%s\"---- new pid is %u\n", name,
+              spawned_task_pid);
 
   return spawned_task_pid;
 }
@@ -70,7 +70,7 @@ void wait_for_task_finnish(pid_t pid) {
 
 NORETURN void terminate(void) {
   disable_interrupts();
-  cprint("Simplos terminating...\n");
+  debug_print("Simplos terminating...\n");
   print_timing_data(get_os_kernel());
   halt();
   __builtin_unreachable();
@@ -84,7 +84,7 @@ void *malloc(size_t bytes) {
   if (bytes == 0) {
     return NULL;
   }
-  // dprint("Heap map located at: %p\n", kernel->heap_mapping);
+  // debug_print("Heap map located at: %p\n", kernel->heap_mapping);
   /*
   uint8_t rem = bytes % HEAP_PAGE_SIZE;
   uint8_t div = bytes / HEAP_PAGE_SIZE;

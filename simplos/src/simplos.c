@@ -18,8 +18,8 @@ void init_task_list(Task_Queue *queue) {
     task->task_memory_block = i;
     task->time_counter = 0;
     task->task_sp_adr = task_sp_range_high(task->task_memory_block);
-    cprint("Initiating mem block %u at 0x%X-0x%X\n", i,
-           task_sp_range_low(task->task_memory_block), task->task_sp_adr);
+    debug_print("Initiating mem block %u at 0x%X-0x%X\n", i,
+                task_sp_range_low(task->task_memory_block), task->task_sp_adr);
     task->status = EMPTY;
   }
 }
@@ -30,7 +30,7 @@ uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
     // Take if available
     if (task->status == EMPTY) {
 #if defined(VERBOSE_OUTPUT)
-      cprint("Initiating space for new function at block %u\n", i);
+      debug_print("Initiating space for new function at block %u\n", i);
 #endif  // VERBOSE_OUTPUT
       task->priority = priority;
       task->status = READY;
@@ -113,23 +113,23 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
       kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].task_sp_adr;
   SET_SP();
 
-  cprint("Calling function\n");
+  debug_print("Calling function\n");
 
   ENABLE_MT();
   enable_interrupts();
   fn();
   disable_interrupts();
   SCILENT_DISABLE_MT();
-  cprint("Function finnished\n");
+  debug_print("Function finnished\n");
 
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status = EMPTY;
-  cprint("HI \n");
+  debug_print("HI \n");
   kernel->task_names[INDEX_OF_CURRENT_TASK(kernel)][0] = '\0';
-  cprint("HI 2 \n");
+  debug_print("HI 2 \n");
 
   // k_yield();  // re-enable interrupts.
 
-  cprint("Task killed\n");
+  debug_print("Task killed\n");
   ENABLE_MT();
   enable_interrupts();
 
@@ -153,9 +153,7 @@ inline Index create_simplos_task(const char *name, const uint8_t priority,
   new_task->pid = kernel->pid_cnt++;
   set_task_name(index, name, kernel);
 
-#if defined(DEBUG_OUTPUT)
-  cprint("Created simplos task %s with pid %u\n", name, new_task->pid);
-#endif  // DEBUG_OUTPUT
+  debug_print("Created simplos task %s with pid %u\n", name, new_task->pid);
   return index;
 }
 

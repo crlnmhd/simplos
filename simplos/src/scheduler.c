@@ -80,20 +80,20 @@ void prioritize_tasks(taskptr_type volatile tasks,
 }
 
 void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
-  cprint("Start of queue:\n-------------\n");
+  debug_print("Start of queue:\n-------------\n");
   for (uint8_t i = 0; i < num_active_tasks; i++) {
-    cprint("%u: ", i);
+    debug_print("%u: ", i);
     uint8_t task_index = kernel->schedule.queue.task_index_queue[i];
     taskptr_type task_ptr = &kernel->schedule.queue.tasks[task_index];
     print_task(task_ptr, kernel);
   }
-  cprint("End of queue:\n-------------\n");
+  debug_print("End of queue:\n-------------\n");
 }
 
 void select_next_task(Kernel *kernel_ptr) {
   if (kernel_ptr->schedule.queue.queue_position == 0) {
 #if defined(VERBOSE_OUTPUT)
-    cprint("Rescheduling...\n");
+    debug_print("Rescheduling...\n");
 #endif  // defined(VERBOSE_OUTPUT)
     reschedule(kernel_ptr);
   } else {
@@ -128,8 +128,8 @@ void start_scheduler(Kernel *kernel) {
     asm volatile("nop");
     SCILENT_DISABLE_MT();
 #if defined(VERBOSE_OUTPUT)
-    cprint("################## BEGIN SCHEDULING\n\n");
-    cprint("Selecting next task...\n");
+    debug_print("################## BEGIN SCHEDULING\n\n");
+    debug_print("Selecting next task...\n");
 #endif  // defined (VERBOSE_OUTPUT)
     taskptr_type prev =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
@@ -144,13 +144,13 @@ void start_scheduler(Kernel *kernel) {
     taskptr_type next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
 #if defined(VERBOSE_OUTPUT)
-    cprint("Selected next task: \n");
+    debug_print("Selected next task: \n");
     print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
     prepare_next_task(next, kernel);
 #if defined(VERBOSE_OUTPUT)
-    cprint("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
-    cprint("################## END SCHEDULING\n\n");
+    debug_print("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
+    debug_print("################## END SCHEDULING\n\n");
 #endif          // defined VERBOSE_OUTPUT
     k_yield();  // enables MT
   }
@@ -171,8 +171,8 @@ void handle_previous_task(taskptr_type prev, Kernel *kernel) {
   assert_stack_pointer_points_to_valid_return_address(prev->task_sp_adr);
 
 #if defined(VERBOSE_OUTPUT)
-  cprint("saving previous task %u's SP 0x%X\n", prev->task_memory_block,
-         prev->task_sp_adr);
+  debug_print("saving previous task %u's SP 0x%X\n", prev->task_memory_block,
+              prev->task_sp_adr);
 #endif
 }
 void assert_stack_pointer_points_to_valid_return_address(
@@ -201,7 +201,7 @@ void assert_stack_pointer_points_to_valid_return_address(
 void prepare_next_task(taskptr_type next,
                        __attribute__((unused)) Kernel *kernel) {
 #if defined(VERBOSE_OUTPUT)
-  cprint("printing next:\n");
+  debug_print("printing next:\n");
   print_task(next, kernel);
   assert_task_pointer_integrity(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
