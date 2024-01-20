@@ -121,13 +121,13 @@
   asm volatile(                   \
       "ldi  r26, lo8(%0)    \n\t" \
       "ldi  r27, hi8(%0)    \n\t" \
-      "ld   r28, x+         \n\t" \
-      "ld   r29, x+         \n\t" \
-      "out  __SP_L__, r28   \n\t" \
-      "out  __SP_H__, r29   \n\t" \
+      "ld   r30, x+         \n\t" \
+      "ld   r31, x+         \n\t" \
+      "out  __SP_L__, r30   \n\t" \
+      "out  __SP_H__, r31   \n\t" \
       : /*No outputs*/            \
       : "i"(&task_sp)             \
-      : "r16", "r17", "r26", "r27", "memory");
+      : "r26", "r27", "r30", "r31", "memory");
 
 #define RESTORE_CONTEXT()                \
   asm volatile(                          \
