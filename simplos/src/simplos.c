@@ -9,6 +9,7 @@
 #include "io_helpers.h"
 #include "memory.h"
 #include "memory_layout.h"
+#include "os.h"
 #include "timers.h"
 
 void init_task_list(Task_Queue *queue) {
@@ -116,11 +117,11 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   ENABLE_MT();
   enable_interrupts();
   fn();
+  asm volatile("" ::: "memory");
   disable_interrupts();
   SCILENT_DISABLE_MT();
   debug_print("Function finnished\n");
-
-  kill_current_task(kernel);
+  kill_curr_task();
 
 return_point:
   return new_task_pid;
