@@ -74,6 +74,7 @@ ALL_OBJECTS += $(ASM_OBJECTS)
 SIMPLOS_EXECUTABLE := $(OBJ)/simplos.out
 UNIT_TESTS := $(DEBUG_BUILD)/unit_tests.out
 LATEST_EXECUTABLE_SOFTLINK := latest_executable
+UNIT_TEST_OUTPUT_FILE := unit_test_output.log
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -202,7 +203,7 @@ clean:
 		rm -r tests;					\
 	fi
 	@rm -f src/*.compbd_entry
-	@rm -f unit_test_output.log
+	@rm -f $(UNIT_TEST_OUTPUT_FILE)
 
 log:
 	rm -f gdb.log
@@ -219,9 +220,9 @@ debug:
 	$(AVR_GDB) $(LATEST_EXECUTABLE_SOFTLINK) -x debug_config.gdb
 
 run_unit_tests:
-	$(SIMAVR) -v -v -v -m $(uP) $(LATEST_EXECUTABLE_SOFTLINK) 2> >(tee unit_test_output.log >&2)
-	sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g" -i unit_test_output.log
-	grep "All tests passed" unit_test_output.log
+	$(SIMAVR) -v -v -v -m $(uP) $(LATEST_EXECUTABLE_SOFTLINK) 2> >(tee $(UNIT_TEST_OUTPUT_FILE) >&2)
+	sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[mGK]//g" -i $(UNIT_TEST_OUTPUT_FILE)
+	grep "All tests passed" $(UNIT_TEST_OUTPUT_FILE)
 
 
 debug_simulator:
