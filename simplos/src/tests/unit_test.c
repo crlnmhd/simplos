@@ -36,6 +36,19 @@ void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name,
   }
   combine_statistics(total_results, &test_results);
 }
+
+void print_total_test_results(struct TestStatistics *results) {
+  if (results->failed == 0) {
+    debug_printf("All tests passed\n");
+  } else {
+    debug_printf("Test failiure(s) encountered. %u test(s) failed\n",
+                 results->failed);
+  }
+  if (results->skipped > 0) {
+    debug_printf("Note: %u test(s) were skipped\n", results->skipped);
+  }
+}
+
 int main(void) {
   uart_init();  // some tests can only be run on an AVR / simulator.
   FILE uart_file =
@@ -54,8 +67,8 @@ int main(void) {
 
   RUN_TEST_SUITE(unit_test_memory, "Memory", &test_results);
 
-
-  debug_printf("Test suite completed\n.");
+  debug_printf("Test suite completed.\n", &test_results);
+  print_total_test_results(&test_results);
 
   // sleeping with interupts disabled triggers simavr to exit.
   asm volatile("cli" ::: "memory");
