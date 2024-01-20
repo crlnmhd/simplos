@@ -44,6 +44,8 @@ int main(void) {
 
   RUN_TEST_SUITE(unit_test_spawning, "Task spawning");
 
+  RUN_TEST_SUITE(unit_test_memory, "Memory");
+
   debug_printf("Test suite completed.\n");
   return 0;
 }

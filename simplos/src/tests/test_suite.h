@@ -13,4 +13,6 @@ struct TestStatistics unit_test_hal_log(void);
 
 struct TestStatistics unit_test_yields(void);
 
+struct TestStatistics unit_test_memory(void);
+
 #endif  // TEST_SUITE_H_
