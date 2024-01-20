@@ -3,18 +3,31 @@
 #include "../os.h"
 #include "../timers.h"
 #include "test.h"
+#include "test_suite.h"
 
 static bool test_single_yeild(void);
+static bool test_double_yeild(void);
 static bool test_multiple_yield(void);
 static bool test_long_running_function(void);
 
-void run_tests(void) {
-  print("Running tests\n");
-  struct TestStatistics test_stats = run_all_tests();
-  print("\n");
-  print("%d tests PASSED\n", test_stats.passed);
-  print("%d tests FAILED\n", test_stats.failed);
-  print("%d tests SKIPPED \n", test_stats.skipped);
+struct TestStatistics unit_test_yields(void) {
+  struct TestStatistics test_statistics = {
+      .passed = 0, .failed = 0, .skipped = 0};
+
+  // pid_t pid = spawn(test_fn1, 1, "yield t");
+  // wait_for_task_finnish(pid);
+
+  RUN_TEST(test_long_running_function,
+           "test that a long running function can work for a while.",
+           test_statistics);
+  RUN_TEST(test_single_yeild, "test single yield does not crash the OS",
+           test_statistics);
+  RUN_TEST(test_double_yeild, "test double yield does not crash the OS",
+           test_statistics);
+  RUN_TEST(test_multiple_yield, "test multiple yield does not crash",
+           test_statistics);
+
+  return test_statistics;
 }
 
 bool test_single_yeild(void) {
@@ -89,23 +102,3 @@ bool test_long_running_function(void) {
 }
 
 void test_fn1(void) { test_single_yeild(); }
-
-struct TestStatistics run_all_tests(void) {
-  struct TestStatistics test_statistics = {
-      .passed = 0, .failed = 0, .skipped = 0};
-
-  // pid_t pid = spawn(test_fn1, 1, "yield t");
-  // wait_for_task_finnish(pid);
-
-  RUN_TEST(test_long_running_function,
-           "test that a long running function can work for a while.",
-           test_statistics);
-  RUN_TEST(test_single_yeild, "test single yield does not crash the OS",
-           test_statistics);
-  RUN_TEST(test_double_yeild, "test double yield does not crash the OS",
-           test_statistics);
-  RUN_TEST(test_multiple_yield, "test multiple yield does not crash",
-           test_statistics);
-
-  return test_statistics;
-}

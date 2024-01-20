@@ -1,8 +1,12 @@
-#include <math.h>
-#include <stdint.h>
 #if !defined(TESTS_H_)
 #define TESTS_H_
+#include <avr/pgmspace.h>
+#include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
+
+#include "../io_helpers.h"
+#include "../os.h"
 
 struct TestStatistics {
   uint8_t failed;
@@ -10,15 +14,17 @@ struct TestStatistics {
   uint8_t skipped;
 };
 
-struct TestStatistics run_all_tests(void);
+void combine_statistics(struct TestStatistics *statistics,
+                        struct TestStatistics *to_add);
 
-void run_tests(void);
+// todo: linked list that can hold commands?
+struct HardwareState {
+  bool interrupt_enabled;
+  bool halted;
+};
 
-#include <avr/pgmspace.h>
+extern struct HardwareState state;
 
-#include "../io_helpers.h"
-#include "../os.h"
-#include "test.h"
 #define SKIP_TEST(test_fn, function_name, test_statistics)       \
   test_statistics.skipped += 1;                                  \
   /* This is the least of the security concerns, so let it be.*/ \
