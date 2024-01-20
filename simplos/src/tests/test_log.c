@@ -9,9 +9,7 @@ bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   struct Log log = init_log(buf, buf_size);
   const char *too_long_message = "Hej";  // 4 bytes including null terminator.
 
-  const bool successfully_added = add_log_entry(&log, too_long_message);
-
-  CHECK_EQ(successfully_added, false, "%d");
+  CHECK_FALSE(add_log_entry(&log, too_long_message));
   return true;
 }
 
@@ -23,9 +21,7 @@ bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
   const size_t expected_buffer_size_after_addition = 6;
   const char *message = "Hej";  // 4 bytes including null terminator.
 
-  const bool successfully_added = add_log_entry(&log, message);
-
-  CHECK_EQ(successfully_added, true, "%d");
+  CHECK_TRUE(add_log_entry(&log, message));
   CHECK_EQ(log.num_buffer_bytes_remaining, expected_buffer_size_after_addition,
            "%d");
 
@@ -39,12 +35,10 @@ bool test_adds_message_to_the_end_of_the_given_buffer(void) {
   const size_t expected_message_lenght = 4;
   const char *message = "Hej";  // 4 bytes including null terminator.
 
-  const bool successfully_added = add_log_entry(&log, message);
+  CHECK_TRUE(add_log_entry(&log, message));
 
-  CHECK_EQ(successfully_added, true, "%d");
   const int16_t memcmp_buffer_and_expected_string =
       memcmp(log.buffer, message, expected_message_lenght);
-
   const bool buffer_starts_with_expected_message =
       (memcmp_buffer_and_expected_string == 0);
 
@@ -58,8 +52,7 @@ bool test_log_contains_entry_finds_entry_in_buffer(void) {
 
   const char *entry = "Hejsan";
 
-  bool successfully_added = add_log_entry(&log, entry);
-  CHECK_EQ(successfully_added, true, "%d");
+  CHECK_TRUE(add_log_entry(&log, entry));
   const bool b = log_contains_entry(&log, entry);
   CHECK_EQ(b, true, "%d");
 
@@ -75,17 +68,13 @@ bool test_can_add_multiple_messages(void) {
   const char *entry_2 = "Svejsan";
   const char *entry_3 = "Voff voff";
 
-  bool successfully_added = add_log_entry(&log, entry_1);
-  CHECK_EQ(successfully_added, true, "%d");
-  successfully_added = add_log_entry(&log, entry_2);
-  CHECK_EQ(successfully_added, true, "%d");
-  successfully_added = add_log_entry(&log, entry_3);
-  CHECK_EQ(successfully_added, true, "%d");
+  CHECK_TRUE(add_log_entry(&log, entry_1));
+  CHECK_TRUE(add_log_entry(&log, entry_2));
+  CHECK_TRUE(add_log_entry(&log, entry_3));
 
-  CHECK_EQ(log_contains_entry(&log, entry_1), true, "%d");
-  CHECK_EQ(log_contains_entry(&log, entry_3), true,
-           "%d");  // try out of order access
-  CHECK_EQ(log_contains_entry(&log, entry_2), true, "%d");
+  CHECK_TRUE(log_contains_entry(&log, entry_1));
+  CHECK_TRUE(log_contains_entry(&log, entry_3));  // try out of order access
+  CHECK_TRUE(log_contains_entry(&log, entry_2));
 
   return true;
 }
@@ -97,10 +86,8 @@ bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
   const char *real_log_entry = "Start";
   const char *not_in_log = "StartingWith";
 
-  bool successfully_added = add_log_entry(&log, real_log_entry);
-  CHECK_EQ(successfully_added, true, "%d");
-
-  CHECK_EQ(log_contains_entry(&log, not_in_log), false, "%d");
+  CHECK_TRUE(add_log_entry(&log, real_log_entry));
+  CHECK_FALSE(log_contains_entry(&log, not_in_log));
 
   return true;
 }

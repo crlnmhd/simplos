@@ -58,6 +58,15 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
     return false;                            \
   }
 
+#define CHECK_TRUE(recieved)                                   \
+  if ((recieved) == false) {                                   \
+    dprintf("\nCheck failed!. Expected 'true' got 'false'! "); \
+  }
+#define CHECK_FALSE(recieved)                                  \
+  if ((recieved) == true) {                                    \
+    dprintf("\nCheck failed!. Expected 'false' got 'true'! "); \
+  }
+
 // Wrapper to put 'function_name' string in program memory.
 #define RUN_TEST(fn, test_statistics) \
   run_test_function(fn, PSTR(#fn), test_statistics);
