@@ -17,6 +17,10 @@ volatile uint16_t scheduler_task_sp
     __attribute((section(".scheduler_task_sp_location"))) = 0;
 
 int main(void) {
+#ifdef MOCK_HAL
+#error "Can not run simplos on mock hal"
+#else
+
   disable_interrupts();
   SP = INITIAL_STACK_START;
 
@@ -53,4 +57,5 @@ int main(void) {
   ENABLE_MT();
   run_idle_fn();
   FATAL_ERROR("UNREACHABLE END OF MAIN\n");
+#endif  // MOCK_HAL
 }

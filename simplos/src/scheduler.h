@@ -14,7 +14,10 @@ void start_scheduler(Kernel *);
  * TODO: impplement parameters to spawn() that would allow for the kernel to be
  * passed as an argument, removing the need for this wrapper.
  * */
+#ifndef MOCK_HAL
 void start_scheduler_with_os_kernel(void);
+#endif  // MOCK_HAL
+
 // void print_tasks(void);
 
 #endif  // SCHEDULER_H_

@@ -64,6 +64,9 @@ void wait_for_other(void) {
 }
 
 void run_idle_fn(void) {
+#ifdef MOCK_HAL
+  FATAL_ERROR("Can not run idle function on mock hal")
+#else
   print("Starting scheduler\n");
   spawn(start_scheduler_with_os_kernel, 0, "OS sched");  // yields emidiatly.
   print("Starting idle function\n");
@@ -94,4 +97,5 @@ void run_idle_fn(void) {
   wait_for_other();
 
   terminate();
+#endif  // MOCK_HAL
 }
