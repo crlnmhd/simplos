@@ -105,9 +105,11 @@ void select_next_task(Kernel *kernel_ptr) {
 void schedule_tasks(void) { reschedule(); }
 
 void start_scheduler(void) {
+  SCILENT_DISABLE_MT();
   cprint("Scheduler started. Yielding...\n");
   scheduler_task_sp = SP - num_context_switch_overhead_bytes();
   while (true) {
+    SCILENT_DISABLE_MT();
 #if defined(VERBOSE_OUTPUT)
     cprint("Selecting next task...\n");
 #endif  // defined (VERBOSE_OUTPUT)
@@ -116,7 +118,7 @@ void start_scheduler(void) {
     select_next_task(kernel);
     taskptr_type next = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
     prepare_next_task(next);
-    k_yield();
+    k_yield();  // enables MT
   }
 }
 
