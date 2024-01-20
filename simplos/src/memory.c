@@ -9,6 +9,7 @@
 #include "simplos_types.h"
 
 void verify_canaries(void);
+bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_number);
 
 void configure_heap_location(const uint8_t margin_to_main) {
   kernel->heap_start = SP - margin_to_main;
@@ -49,10 +50,8 @@ void assert_task_pointer_integrity(taskptr_type task) {
   cprint("Task SP: 0x%X\n", task->task_sp_adr);
   ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
-  struct StackRange task_stack_range =
-      kernel->task_RAM_ranges[task->task_memory_block];
-  ASSERT(task_stack_range.low <= task->task_sp_adr &&
-             task->task_sp_adr <= task_stack_range.high,
+
+  ASSERT(mem_adr_belongs_to_task(task->task_sp_adr, task->task_memory_block),
          "TASK MEMORY ERROR! Saved stack pointer 0x%X is outside allowed range "
          "for task\n.");
 
@@ -72,6 +71,12 @@ void assert_task_pointer_integrity(taskptr_type task) {
     FATAL_ERROR("STACK OVERFLOW DETECTED!\nTask %d SP = 0x%X is of bounds.",
                 task->task_memory_block, task->task_sp_adr);
   }
+}
+bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_memory_block) {
+  struct StackRange task_stack_range =
+      kernel->task_RAM_ranges[task_memory_block];
+
+  return task_stack_range.low <= adr && adr <= task_stack_range.high;
 }
 void verify_canaries(void) {
   /* Verifies the canary bytes between the OS stack and the first task. */
