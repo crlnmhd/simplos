@@ -14,3 +14,5 @@ src/*.compdb_entry
 TODO.txt
 simplos/tmux.conf
 gdb.log
+commit_unit_test_output.txt
+unit_test_log.txt
