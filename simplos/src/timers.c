@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "hal.h"
+#include "hal/hal.h"
 #include "io_helpers.h"
 
 void init_scheduler_interupts(void) {

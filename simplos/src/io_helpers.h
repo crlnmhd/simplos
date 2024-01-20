@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "hal.h"
+#include "hal/hal.h"
 #include "simplos_types.h"
 
 // Disable clang warning

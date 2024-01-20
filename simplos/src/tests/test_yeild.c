@@ -1,4 +1,4 @@
-#include "../hal.h"
+#include "../hal/hal.h"
 #include "../io_helpers.h"
 #include "../os.h"
 #include "../timers.h"

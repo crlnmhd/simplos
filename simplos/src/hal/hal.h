@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "hal/context_switch_macros.h"
+#include "context_switch_macros.h"
 
 extern volatile uint16_t task_sp;
 extern volatile uint16_t next_task_sp;

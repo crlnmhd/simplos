@@ -1,4 +1,4 @@
-#include "../hal.h"
+#include "hal.h"
 #ifdef MOCK_HAL
 
 /*

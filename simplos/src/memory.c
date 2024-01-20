@@ -3,7 +3,7 @@
 #define _GNU_SOURCE
 #include <stdint.h>
 
-#include "hal.h"
+#include "hal/hal.h"
 #include "io_helpers.h"
 #include "memory.h"
 #include "simplos_types.h"

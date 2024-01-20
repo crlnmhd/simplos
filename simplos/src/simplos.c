@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "hal.h"
+#include "hal/hal.h"
 #include "io_helpers.h"
 #include "memory.h"
 #include "memory_layout.h"

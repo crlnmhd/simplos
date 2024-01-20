@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "hal.h"
+#include "hal/hal.h"
 #include "memory_layout.h"
 #include "scheduler.h"
 #include "simplos.h"

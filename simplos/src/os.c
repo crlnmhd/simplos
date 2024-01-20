@@ -2,7 +2,6 @@
 
 #include <string.h>
 
-#include "hal.h"
 #include "io_helpers.h"
 #include "memory_layout.h"
 #include "simplos.h"
