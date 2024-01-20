@@ -16,7 +16,6 @@ NEXT_TASK_SP_LOCATION := 0x8020FC
 KERNEL_DATA_LOCATION := 0x802102
 DATA_SECTION_START := 0x802000
 
-# Configure behavior though defines
 DEFINES :=
 # Static scheduling
 # DEFINES += -DUSE_STATIC
@@ -50,19 +49,25 @@ DEFINES += -DPRIORITY_SCHEDULING
 
 SRC := src
 OBJ := build
+TESTS := tests
+
+TEST_SRC := src/tests
+TEST_SOURCES := $(wildcard $(TEST_SRC)/*.c)
+UNIT_TEST_OBJECTS := $(patsubst $(TEST_SRC)/%.c, $(TESTS)/%.unit_test.o, $(TEST_SOURCES))
+
+ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c)
+MAIN_FILE := $(SRC)/main.c
+SOURCES := $(filter-out $(MAIN_FILE), $(ALL_SOURCES))
+
+OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
+TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(TESTS)/%.o, $(SOURCES))
 
 ASM_SRC:= src/asm
-
-SOURCES := $(wildcard $(SRC)/*.c $(SRC)/*/*.c)
-OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
-
 ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
 ASM_OBJECTS := $(patsubst $(ASM_SRC)/%.s, $(OBJ)/asm/%.o, $(ASM_SOURCES))
 
 ALL_OBJECTS := $(OBJECTS)
-ALL_OBJECTS += $($ASM_OBJECTS)
-
-$(info ${ALL_OBJECTS})
+ALL_OBJECTS += $(ASM_OBJECTS)
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -70,6 +75,13 @@ AVRINC := /usr/avr/include
 SIMAVR := simavr
 AVR_GDB := avr-gdb
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
+
+BUILD_OPT_LEVEL := -Os
+DEBUG_OPT_LEVEL := -Os
+
+UNIT_TEST_FLAGS :=	-g $\
+										-DMOCK_HAL
+
 CFLAGS := -Wall $\
 					-pedantic $\
 					-Wextra $\
@@ -91,27 +103,29 @@ CFLAGS := -Wall $\
 					-mmcu=$(uP) $\
 					-I$(AVRINC) $\
 					-I/include/ $\
-					-g $\
-					-Wl,--section-start=.data=$(DATA_SECTION_START) $\
- 					-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
-					-Wl,--section-start=.next_task_sp_location=$(NEXT_TASK_SP_LOCATION) $\
-					-Wl,--section-start=.scheduler_task_sp_location=$(SCHEDULER_TASK_SP_LOCATION) $\
- 					-Wl,--section-start=.kernel_data_location=$(KERNEL_DATA_LOCATION) $\
-					-Os
+					-g
+
+DATA_SECTIONS :=	-Wl,--section-start=.data=$(DATA_SECTION_START) $\
+									-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
+									-Wl,--section-start=.next_task_sp_location=$(NEXT_TASK_SP_LOCATION) $\
+									-Wl,--section-start=.scheduler_task_sp_location=$(SCHEDULER_TASK_SP_LOCATION) $\
+									-Wl,--section-start=.kernel_data_location=$(KERNEL_DATA_LOCATION)
+
 
 FRAMEWORK := wiring
 
-.PHONY: %.compdb_entry compile_commands dir all
+.PHONY: %.compdb_entry compile_commands dir all all_test
 
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
 %.compdb_entry: %.c
-	@echo "    {"                                             > $@
-	@echo "        \"command\": \"$(CC)  $(CFLAGS) -c $<\"," >> $@
-	@echo "        \"directory\": \"$(CURDIR)\","            >> $@
-	@echo "        \"file\": \"$<\""                         >> $@
-	@echo "    },"                                           >> $@
+	@echo "    {"                                                           		>  $@
+	@echo "        \"command\": \"$(CC)  $(CFLAGS) $(DATA_SECTIONS) -c $<\"," 	>> $@
+	@echo "        \"directory\": \"$(CURDIR)\","            										>> $@
+	@echo "        \"file\": \"$<\""                         										>> $@
+	@echo "    },"                                           										>> $@
 
 COMPDB_ENTRIES = $(addsuffix .compdb_entry, $(basename $(SOURCES)))
+COMPDB_ENTRIES += $(addsuffix .compdb_entry, $(basename $(TEST_SOURCES)))
 
 compile_commands: $(COMPDB_ENTRIES)
 	@echo "[" > $@.tmp
@@ -123,22 +137,35 @@ compile_commands: $(COMPDB_ENTRIES)
 	@rm $^
 
 
-# Create build directory only if it doesn't exits.
 dir:
 	mkdir -p $(OBJ)
 	mkdir -p $(OBJ)/asm
 	mkdir -p $(OBJ)/tests
 	mkdir -p $(OBJ)/hal
+	mkdir -p $(TESTS)
+	mkdir -p $(TESTS)/hal
 
 # Target to compile and generate database for clangd.
 build: compile_commands dir all
 
-all: $(OBJECTS) $(ASM_OBJECTS)
-	$(CC) $(CFLAGS) $^ -o build/simplos.out
+build_tests: compile_commands dir all_test
+
+all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
+	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $^ -o build/simplos.out
 	avr-size -A -x build/simplos.out
 
+all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(TESTS)/unit_tests.out
+	avr-size -A -x $(TESTS)/unit_tests.out
+
 $(OBJ)/%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) -I$(SRC) -c -g $< -o $@
+	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) -I$(SRC) -c -g $< -o $@
+
+$(TESTS)/%.o: $(SRC)/%.c
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(TEST_SRC) -c -g $< -o $@
+
+$(TESTS)/%.unit_test.o: $(TEST_SRC)/%.c
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(TEST_SRC) -c -g $< -o $@
 
 $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
@@ -157,17 +184,26 @@ clean:
 	@if [ -d build ]; then 	\
 		rm -r build;					\
 	fi
+	@if [ -d tests ]; then 	\
+		rm -r tests;					\
+	fi
 	@rm -f src/*.compbd_entry
 	@echo "cleaning..."
 
 sim:
 	$(SIMAVR) -v -v -v -g -m $(uP) build/simplos.out
 
+run_tests:
+	$(SIMAVR) -v -v -v -g -m $(uP) $(TESTS)/unit_tests.out
+
 show-size:
 	avr-size --mcu=$(uP) -A -x build/simplos.out
 
 debug:
 	$(AVR_GDB) build/simplos.out -x debug_config.gdb
+
+debug_tests:
+	$(AVR_GDB) $(TESTS)/unit_tests.out -x debug_config.gdb
 
 debug_siulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
