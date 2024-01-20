@@ -59,7 +59,7 @@ NORETURN void halt_exec(void) {
 
 void setup_interupt_timer(__attribute__((unused)) const uint16_t frequenzy_hz) {
   const uint16_t timer_compare_match =
-      781;  // FIXME: calcualte based on arument
+      7810;  // FIXME: calcualte based on arument
 
   TCCR1A = 0;  // set entire TCCR1A register to 0
   TCCR1B = 0;  // same for TCCR1B
