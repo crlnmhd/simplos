@@ -72,6 +72,7 @@ ALL_OBJECTS += $(ASM_OBJECTS)
 
 SIMPLOS_EXECUTABLE := $(OBJ)/simplos.out
 UNIT_TESTS := $(DEBUG_BUILD)/unit_tests.out
+LATEST_EXECUTABLE_SOFTLINK := latest_executable
 
 .DEFAULT_GOAL := build
 CC := avr-gcc
@@ -152,8 +153,10 @@ dir:
 
 # Target to compile and generate database for clangd.
 build: compile_commands dir all
+	ln -s -f $(SIMPLOS_EXECUTABLE) $(LATEST_EXECUTABLE_SOFTLINK)
 
 build_tests: compile_commands dir all_test
+	ln -s -f $(UNIT_TESTS) $(LATEST_EXECUTABLE_SOFTLINK)
 
 all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $^ -o $(SIMPLOS_EXECUTABLE)
@@ -201,20 +204,15 @@ log:
 	mv gdb.log $(LOG_DIR)/simplos_$$(date +%Y%m%d_%H%M%S).log
 
 sim:
-	$(SIMAVR) -v -v -v -g -m $(uP) $(SIMPLOS_EXECUTABLE)
-
-run_tests:
-	$(SIMAVR) -v -v -v -g -m $(uP) $(UNIT_TESTS)
+	$(SIMAVR) -v -v -v -g -m $(uP) $(LATEST_EXECUTABLE_SOFTLINK)
 
 show-size:
 	avr-size --mcu=$(uP) -A -x $(SIMPLOS_EXECUTABLE)
 
 debug:
-	$(AVR_GDB) $(SIMPLOS_EXECUTABLE) -x debug_config.gdb
+	$(AVR_GDB) $(LATEST_EXECUTABLE_SOFTLINK) -x debug_config.gdb
 
-debug_tests:
-	$(AVR_GDB) $(UNIT_TESTS) -x debug_config.gdb
 
-debug_siulator:
+debug_simulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) $(SIMPLOS_EXECUTABLE)
 
