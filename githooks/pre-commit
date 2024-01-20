@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+set -eo pipefail
+
+pushd simplos
+make run_unit_tests
+popd
