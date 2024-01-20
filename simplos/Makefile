@@ -215,6 +215,8 @@ show-size:
 debug:
 	$(AVR_GDB) $(LATEST_EXECUTABLE_SOFTLINK) -x debug_config.gdb
 
+run_unit_tests:
+	$(SIMAVR) -v -v -v -m $(uP) $(LATEST_EXECUTABLE_SOFTLINK)
 
 debug_simulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) $(SIMPLOS_EXECUTABLE)
