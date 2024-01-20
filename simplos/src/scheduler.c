@@ -13,8 +13,6 @@
 
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
-uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
-                         Kernel *kernel);
 void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
                       volatile uint8_t *out_priority_list);
 void handle_previous_task(taskptr_type prev, Kernel *kernel);
@@ -38,12 +36,6 @@ void reschedule(Kernel *kernel) {
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
-/*
- * fills list tasks_block_list of length num_tasks unique active tasks.
- * Return value: the number of unique tasks.
- *
- * Note: any values of tasks_block_list[<return_value -1>] have no meening.
- * */
 uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
                          Kernel *kernel) {
   uint8_t active_task_counter = 0;
