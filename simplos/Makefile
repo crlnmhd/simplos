@@ -84,7 +84,8 @@ BUILD_OPT_LEVEL := -Os
 DEBUG_OPT_LEVEL := -Os
 
 UNIT_TEST_FLAGS :=	-g $\
-										-DMOCK_HAL
+										-DMOCK_HAL $\
+										-Wno-unused-parameter
 
 CFLAGS := -Wall $\
 					-pedantic $\
