@@ -9,7 +9,6 @@
 #include "io_helpers.h"
 #include "memory.h"
 #include "memory_layout.h"
-#include "os.h"
 #include "timers.h"
 
 NO_MT void init_task_list(Task_Queue *queue) {
