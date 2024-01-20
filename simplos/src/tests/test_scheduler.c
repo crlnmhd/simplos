@@ -124,6 +124,31 @@ bool test_prioritze_tasks_prioritizes_the_tasks_in_ascending_order(void) {
   return TEST_PASSED;
 }
 
+bool test_prioritze_tasks_only_consideres_the_number_of_tasks_specified(void) {
+  Kernel_type given_kernel = {0};
+  Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
+
+  schedule_with_three_active_tasks->queue.tasks[0].priority = 4;
+  schedule_with_three_active_tasks->queue.tasks[1].priority = 0;
+  schedule_with_three_active_tasks->queue.tasks[2].priority = 1;
+  schedule_with_three_active_tasks->queue.tasks[3].priority = 10;
+  schedule_with_three_active_tasks->queue.tasks[4].priority = 7;
+
+  uint8_t prioritized_task_indices[5] = {0, 0, 0, 0xFF, 0xFF};
+
+  prioritize_tasks(schedule_with_three_active_tasks->queue.tasks, 3U,
+                   prioritized_task_indices);
+
+  // expected_index_order: {1,2, 0, 4, 3};
+  CHECK_EQ(prioritized_task_indices[0], 1U, "%u");
+  CHECK_EQ(prioritized_task_indices[1], 2U, "%u");
+  CHECK_EQ(prioritized_task_indices[2], 0U, "%u");
+  CHECK_EQ(prioritized_task_indices[3], 0xFF, "%u");
+  CHECK_EQ(prioritized_task_indices[4], 0xFF, "%u");
+
+  return TEST_PASSED;
+}
+
 struct TestStatistics unit_test_scheduler(void) {
   struct TestStatistics results = {0};
   RUN_TEST(
@@ -145,6 +170,9 @@ struct TestStatistics unit_test_scheduler(void) {
       &results);
 
   RUN_TEST(test_prioritze_tasks_prioritizes_the_tasks_in_ascending_order,
+           &results);
+
+  RUN_TEST(test_prioritze_tasks_only_consideres_the_number_of_tasks_specified,
            &results);
 
   return results;
