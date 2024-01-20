@@ -24,10 +24,9 @@ _Pragma("clang diagnostic ignored \"-Wunknown-attributes\"")
   { ; };
 #endif
 
+// clang-format off
 #if defined(__clang__)
-    // clang-format off
 _Pragma("clang diagnostic pop")
-// clang-format on
 #endif
 
 #define ASSERT(cond, msg)                    \
@@ -60,8 +59,9 @@ _Pragma("clang diagnostic pop")
 #define WARNING(fmt, ...)          \
   print_from_prg_mem("WARNING: "); \
   print_from_prg_mem(fmt, ##__VA_ARGS__);
+// clang-format off
 
-        void print_task(taskptr_type, Kernel *kernel);
+void print_task(taskptr_type, Kernel *kernel);
 void print_schedule(Kernel *kernel);
 
 // void print_task_stack(uint8_t const pid);
