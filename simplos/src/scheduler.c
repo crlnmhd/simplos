@@ -13,8 +13,6 @@
 
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
-void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
-                      volatile uint8_t *out_priority_list);
 void handle_previous_task(taskptr_type prev, Kernel *kernel);
 void prepare_next_task(taskptr_type next, Kernel *kernel);
 void print_queue(uint8_t num_active_tasks, Kernel *kernel);
@@ -48,10 +46,6 @@ uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
   return active_task_counter;
 }
 
-/*
- * Sets the priority order of the tasks queue in out_priority_list.
- * In decreasing order of priority.
- * */
 void prioritize_tasks(taskptr_type volatile tasks,
                       const uint8_t num_tasks_in_queue,
                       volatile uint8_t *out_priority_list) {

@@ -10,6 +10,13 @@ void select_next_task(Kernel *);
 void start_scheduler(Kernel *);
 
 /*
+ * Sets the priority order of the tasks queue in out_priority_list.
+ * In decreasing order of priority.
+ * */
+void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
+                      volatile uint8_t *out_priority_list);
+
+/*
  * fills list tasks_block_list of length num_tasks unique active tasks.
  * Return value: the number of unique tasks.
  *
