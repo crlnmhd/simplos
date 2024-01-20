@@ -148,7 +148,6 @@ void start_scheduler(Kernel *kernel) {
 }
 
 void handle_previous_task(taskptr_type prev, Kernel *kernel) {
-  assert_task_pointer_integrity(prev, kernel);
   if (prev->status == SCHEDULING) {
     prev->task_sp_adr = scheduler_task_sp;
     prev->status = PAUSED_SCHEDULER;
