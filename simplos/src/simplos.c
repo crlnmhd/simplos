@@ -173,7 +173,7 @@ void kill_current_task(Kernel *kernel) {
 }
 
 Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
-  DISABLE_MT();
+  SCILENT_DISABLE_MT();
   for (uint8_t t = 0; t < TASKS_MAX; ++t) {
     if (kernel->schedule.queue.tasks[t].pid == pid) {
       return &kernel->schedule.queue.tasks[t];
