@@ -33,8 +33,6 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
   return true;
 }
 
-bool test_start_scheduler_disables_mt(void) { return true; }
-
 struct TestStatistics unit_test_scheduler(void) {
   struct TestStatistics results = {0};
   RUN_TEST(
