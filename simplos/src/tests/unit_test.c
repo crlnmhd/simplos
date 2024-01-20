@@ -1,3 +1,5 @@
+#include <avr/sleep.h>
+
 #include "../hal/hal.h"
 #include "../simplos_types.h"
 #include "test.h"
@@ -47,6 +49,9 @@ int main(void) {
 
   RUN_TEST_SUITE(unit_test_memory, "Memory");
 
-  debug_printf("Test suite completed.\n");
-  return 0;
+  debug_printf("Test suite completed\n.");
+
+  // sleeping with interupts disabled triggers simavr to exit.
+  asm volatile("cli" ::: "memory");
+  sleep_cpu();
 }
