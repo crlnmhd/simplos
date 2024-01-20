@@ -1,5 +1,3 @@
-#include <avr/sleep.h>
-
 #include "../hal/hal.h"
 #include "../simplos_types.h"
 #include "test.h"
@@ -7,6 +5,15 @@
 
 #define RUN_TEST_SUITE(test_fn, name, statistics) \
   (run_test_suite(test_fn, PSTR(name), statistics))
+
+// sleeping with interupts disabled triggers simavr to exit.
+#define EXIT_SIMULATOR()          \
+  asm volatile(                   \
+      "cli                  \n\t" \
+      "sleep                \n\t" \
+      : /* No outputs*/           \
+      : /* No inputs */           \
+      : "memory");
 
 volatile Kernel internal_kernel_location = {0};
 volatile Kernel *volatile kernel = &internal_kernel_location;
@@ -71,7 +78,5 @@ int main(void) {
   debug_printf("Test suite completed.\n", &test_results);
   print_total_test_results(&test_results);
 
-  // sleeping with interupts disabled triggers simavr to exit.
-  asm volatile("cli" ::: "memory");
-  sleep_cpu();
+  EXIT_SIMULATOR();
 }
