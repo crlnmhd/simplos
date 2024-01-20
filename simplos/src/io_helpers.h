@@ -45,7 +45,7 @@ _Pragma("clang diagnostic pop")
     print_from_prg_mem(                         \
         "ASSERT_EQUAL ERROR! "                  \
         "Expected: " fmt ", Got: " fmt "\n",    \
-        expected, recieved);                    \
+        (expected), (recieved));                \
     print_from_prg_mem(msg "\n");               \
     halt_exec();                                \
   }
