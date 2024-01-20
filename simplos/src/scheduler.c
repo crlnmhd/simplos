@@ -31,16 +31,6 @@ void reschedule(Kernel *kernel) {
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
-uint8_t get_active_tasks_mask(Kernel *kernel) {
-  uint8_t active_task_mask = 0;
-  for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    if (kernel->schedule.queue.tasks[i].status == READY) {
-      active_task_mask |= (uint8_t)(1U << i);
-    }
-  }
-  return active_task_mask;
-}
-
 uint8_t prioritize_tasks(taskptr_type volatile tasks,
                          volatile uint8_t *out_priority_list) {
   uint8_t num_sored = 0;

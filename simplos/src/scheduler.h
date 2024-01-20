@@ -23,10 +23,6 @@ uint8_t prioritize_tasks(taskptr_type tasks,
                          volatile uint8_t *out_priority_list);
 
 /*
- * Creates a mask where the bit N is set iff the task with index N is active.
- * */
-uint8_t get_active_tasks_mask(Kernel *kernel);
-/*
  * Wrapper around start_scheduler that injects the (global) kernel.
  *
  * TODO: impplement parameters to spawn() that would allow for the kernel to be
