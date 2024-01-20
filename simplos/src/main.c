@@ -38,7 +38,7 @@ int main(void) {
   init_memory();
 
   init_kernel(global_kernel);
-  init_schedule();
+  init_schedule(global_kernel);
 #if defined(SW_TIME_MEASSREMENTS)
   init_ticks();
 #endif  // defined SW_TIME_MEASSREMENTS

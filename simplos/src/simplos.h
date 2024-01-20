@@ -65,7 +65,7 @@ void init_kernel(Kernel *kernel);
 /*
  * Set up the scheduler.
  * */
-void init_schedule(void);
+void init_schedule(Kernel *kernel);
 
 /*
  * Initialise heap mapping and canaries.

@@ -45,10 +45,10 @@ NO_MT uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
   return 0;  // Never reached
 }
 
-NO_MT void init_schedule(void) {
-  global_kernel->schedule.os_task_sp = OS_STACK_START;
-  init_task_list(&(global_kernel->schedule.queue));
-  global_kernel->cs_time_counter = 0;
+NO_MT void init_schedule(Kernel *kernel) {
+  kernel->schedule.os_task_sp = OS_STACK_START;
+  init_task_list(&(kernel->schedule.queue));
+  kernel->cs_time_counter = 0;
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
