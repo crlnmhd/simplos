@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "hal/hal.h"
 #include "io_helpers.h"
 #include "memory_layout.h"
 #include "simplos.h"
@@ -45,14 +46,14 @@ void wait_for_task_finnish(pid_t pid) {
   }
 }
 
-__attribute__((noreturn)) void terminate(void) {
+NORETURN void terminate(void) {
   disable_interrupts();
   cprint("Simplos terminating...\n");
   print_timing_data();
   halt();
 }
 
-__attribute__((noreturn)) void halt(void) {
+NORETURN void halt(void) {
   print("HALTING\n");
   halt_exec();
 }

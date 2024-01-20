@@ -50,7 +50,7 @@ void printf_flash(const char *fmt, ...) {
   SREG = sreg_at_entry;  // also restores interupt flag
 }
 
-__attribute__((noreturn)) void halt_exec(void) {
+NORETURN void halt_exec(void) {
   disable_interrupts();
   for (;;) {
   }

@@ -23,7 +23,7 @@ void kill_curr_task(void);
 
 void wait_for_task_finnish(pid_t);
 
-__attribute__((noreturn)) void terminate(void);
+void terminate(void);
 /*
  * Attempts to allocate 'bytes' of continuous memory. Returns NULL on failure.
  * */
@@ -35,6 +35,6 @@ void *malloc(size_t bytes);
 
 #define print(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
-__attribute__((noreturn)) void halt(void);
+void halt(void);
 
 #endif  // OS_H_

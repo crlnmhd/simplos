@@ -8,6 +8,14 @@ extern volatile uint16_t task_sp;
 extern volatile uint16_t next_task_sp;
 extern volatile uint16_t scheduler_task_sp;
 
+/* noreturn hint must not be used with the tests, where the functions will still
+ * return. */
+#ifdef MOCK_HAL
+#define NORETURN
+#else
+#define NORETURN __attribute__((noreturn))
+#endif
+
 #ifdef MOCK_HAL  // FIXME: avoid if possible
 
 // TODO: save list of called commands?
@@ -22,7 +30,7 @@ void halt_exec(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
 #else
-__attribute__((noreturn)) void halt_exec(void);
+NORETURN void halt_exec(void);
 
 static inline __attribute__((always_inline)) void disable_interrupts(void) {
   asm volatile("cli" ::: "memory");
