@@ -15,8 +15,6 @@ void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
 uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
                          Kernel *kernel);
-void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
-                      const uint8_t end_index);
 void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
                       volatile uint8_t *out_priority_list);
 void handle_previous_task(taskptr_type prev, Kernel *kernel);
