@@ -4,6 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#if !defined(MOCK_HAL) && \
+    !defined(__clang__)  // FIXME: just define separate run mode
+#error \
+    "Test header can not be included in non-test mode due to memory contraints."
+#endif  // MOCK_HAL
+
 #include "../io_helpers.h"
 
 struct TestStatistics {
