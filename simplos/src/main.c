@@ -7,8 +7,6 @@
 #include "simplos.h"
 #include "timers.h"
 
-// Extern global variable to modify the stack pointer using macros from
-// simplos.h
 volatile Kernel internal_kernel_location
     __attribute((section(".kernel_data_location"))) = {0};
 volatile Kernel *volatile kernel = &internal_kernel_location;
@@ -23,7 +21,6 @@ int main(void) {
   disable_interrupts();
   SP = INITIAL_STACK_START;
 
-  /* Set up serial communication */
   uart_init();
 
   FILE uart_file =
@@ -32,13 +29,10 @@ int main(void) {
 
   pre_scheduler_self_checks();
 
-  /* Set up  timer interrupt for tick counting. */
   init_scheduler_interupts();
 
-  // disable timer compare interrupt for now
   DISABLE_MT();
 
-  /* Set up task memory regions, including canaries */
   init_memory();
 
   init_kernel();
@@ -57,7 +51,6 @@ int main(void) {
   task_sp = kernel->schedule.queue.tasks[index].task_sp_adr;
   SET_SP();
 
-  /* Run idle function. Should never leave this. */
   enable_interrupts();
   ENABLE_MT();
   run_idle_fn();
