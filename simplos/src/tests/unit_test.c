@@ -16,9 +16,10 @@ volatile uint16_t next_task_sp = 0;
 volatile uint16_t prev_task_sp = 0;
 volatile uint16_t scheduler_task_sp = 0;
 
-void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name,
+void run_test_suite(struct TestStatistics (*test_fn)(void), PGM_P name,
                     struct TestStatistics *total_results) {
-  struct TestStatistics test_suite_results = test_entry();
+  struct TestStatistics test_suite_results = test_fn();
+
   if (test_suite_results.failed == 0 && test_suite_results.skipped == 0) {
     debug_printf("PASSED: all.\n");
   } else {
