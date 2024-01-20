@@ -161,10 +161,8 @@ void handle_previous_task(taskptr_type prev, Kernel *kernel) {
   assert_task_pointer_integrity(prev, kernel);
   assert_stack_pointer_points_to_valid_return_address(prev->task_sp_adr);
 
-#if defined(VERBOSE_OUTPUT)
-  debug_print("saving previous task %u's SP 0x%X\n", prev->task_memory_block,
-              prev->task_sp_adr);
-#endif
+  verbose_print("saving previous task %u's SP 0x%X\n", prev->task_memory_block,
+                prev->task_sp_adr);
 }
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task) {
