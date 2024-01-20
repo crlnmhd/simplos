@@ -68,7 +68,7 @@ void set_priority(uint8_t const priority) {
 }
 
 void wait_for_task_finnish(pid_t pid) {
-  while (task_status(pid) != EMPTY) {
+  while (task_status(pid, get_os_kernel()) != EMPTY) {
     yield();
   }
 }

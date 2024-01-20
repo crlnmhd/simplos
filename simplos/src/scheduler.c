@@ -144,7 +144,7 @@ void start_scheduler(Kernel *kernel) {
 void handle_previous_task(taskptr_type prev, Kernel *kernel) {
   cprint("printing task:\n");
   print_task(prev, kernel);
-  assert_task_pointer_integrity(prev);
+  assert_task_pointer_integrity(prev, kernel);
 
   if (prev->status == RUNNING) {
     // The previous task has been killed.
@@ -153,7 +153,7 @@ void handle_previous_task(taskptr_type prev, Kernel *kernel) {
 #if defined(VERBOSE_OUTPUT)
     print_schedule(kernel);
 #endif  // defined (VERBOSE_OUTPUT)
-    assert_task_pointer_integrity(prev);
+    assert_task_pointer_integrity(prev, kernel);
     assert_stack_pointer_points_to_valid_return_address(prev->task_sp_adr);
 
 #if defined(VERBOSE_OUTPUT)
@@ -179,7 +179,7 @@ void prepare_next_task(taskptr_type next, Kernel *kernel) {
 #if defined(VERBOSE_OUTPUT)
   cprint("printing next:\n");
   print_task(next, kernel);
-  assert_task_pointer_integrity(next);
+  assert_task_pointer_integrity(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
   next->status = RUNNING;
 }

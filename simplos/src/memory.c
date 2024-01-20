@@ -9,15 +9,14 @@
 #include "simplos_types.h"
 
 void verify_canaries(void);
-bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_number);
+bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_number, Kernel *kernel);
 
-void configure_heap_location(const uint8_t margin_to_main) {
-  global_kernel->heap_start = SP - margin_to_main;
-  cprint("Heap starting at  0x%X\n", global_kernel->heap_start);
-  ASSERT(global_kernel->heap_start > TASK_RAM_START,
+void configure_heap_location(const uint8_t margin_to_main, Kernel *kernel) {
+  kernel->heap_start = SP - margin_to_main;
+  cprint("Heap starting at  0x%X\n", kernel->heap_start);
+  ASSERT(kernel->heap_start > TASK_RAM_START,
          "init section has overflowed heap memory");
-  cprint("%u bytes available for heap.\n",
-         global_kernel->heap_start - TASK_RAM_START);
+  cprint("%u bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
 }
 
 void check_task_configuration_uses_all_available_memory(void) {
@@ -47,19 +46,20 @@ uint16_t task_default_sp(uint8_t const task_memory_block) {
   return sp_adr;
 }
 
-void assert_task_pointer_integrity(taskptr_type task) {
+void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
   cprint("Task SP: 0x%X\n", task->task_sp_adr);
-  ASSERT_EQ(memory_region(task), TASK_RAM, "0x%X",
+  ASSERT_EQ(memory_region(task, kernel), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
 
-  ASSERT(mem_adr_belongs_to_task(task->task_sp_adr, task->task_memory_block),
+  ASSERT(mem_adr_belongs_to_task(task->task_sp_adr, task->task_memory_block,
+                                 kernel),
          "TASK MEMORY ERROR! Saved stack pointer 0x%X is outside allowed range "
          "for task\n.");
 
   const uint16_t future_task_sp_adr_with_saved_registers =
       task->task_sp_adr - num_context_switch_overhead_bytes();
   ASSERT(mem_adr_belongs_to_task(future_task_sp_adr_with_saved_registers,
-                                 task->task_memory_block),
+                                 task->task_memory_block, kernel),
          "(Future) TASK MEMORY ERROR! Future stack pointer, with saved "
          "registers, 0x%X "
          "is outside allowed range "
@@ -82,9 +82,10 @@ void assert_task_pointer_integrity(taskptr_type task) {
                 task->task_memory_block, task->task_sp_adr);
   }
 }
-bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_memory_block) {
+bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_memory_block,
+                             Kernel *kernel) {
   struct StackRange task_stack_range =
-      global_kernel->task_RAM_ranges[task_memory_block];
+      kernel->task_RAM_ranges[task_memory_block];
 
   return task_stack_range.low <= adr && adr <= task_stack_range.high;
 }
@@ -101,7 +102,7 @@ uint16_t task_memory_size(void) {
   return (TASK_RAM_START - TASK_RAM_END) / TASKS_MAX;
 }
 
-enum MEM_REGION memory_region(taskptr_type adr) {
+enum MEM_REGION memory_region(taskptr_type adr, Kernel *kernel) {
   const size_t sp = adr->task_sp_adr;
   if (in_region(sp, REGISTERS_START, 0)) {
     return REGISTERS;
@@ -111,9 +112,9 @@ enum MEM_REGION memory_region(taskptr_type adr) {
     return OS_STACK;
   } else if (in_region(sp, TASK_RAM_START, TASK_RAM_END)) {
     return TASK_RAM;
-  } else if (in_region(sp, global_kernel->heap_start, HEAP_END)) {
+  } else if (in_region(sp, kernel->heap_start, HEAP_END)) {
     return HEAP;
-  } else if (in_region(sp, RAMEND, global_kernel->heap_start + 1)) {
+  } else if (in_region(sp, RAMEND, kernel->heap_start + 1)) {
     return INIT;
   } else {
     return UNKNOWN;

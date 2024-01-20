@@ -16,15 +16,15 @@ enum MEM_REGION {
   UNKNOWN,
 };
 
-enum MEM_REGION memory_region(taskptr_type);
+enum MEM_REGION memory_region(taskptr_type, Kernel *kernel);
 
 uint16_t task_default_sp(uint8_t task_index);
 
-void assert_task_pointer_integrity(taskptr_type task_block);
+void assert_task_pointer_integrity(taskptr_type task_block, Kernel *kernel);
 
 uint16_t task_memory_size(void);
 
 void check_task_configuration_uses_all_available_memory(void);
 
-void configure_heap_location(const uint8_t margin_to_main);
+void configure_heap_location(const uint8_t margin_to_main, Kernel *kernel);
 #endif  // MEMORY_H_

@@ -43,13 +43,13 @@ int main(void) {
   init_ticks();
 #endif  // defined SW_TIME_MEASSREMENTS
 
-  uint8_t index = create_simplos_task("idle_fn", 0);
+  uint8_t index = create_simplos_task("idle_fn", 0, global_kernel);
   global_kernel->schedule.queue.task_index_queue[0] = index;
   global_kernel->schedule.queue.queue_position = 0;
 
   const uint8_t margin_to_main = 10;
 
-  configure_heap_location(margin_to_main);
+  configure_heap_location(margin_to_main, global_kernel);
   task_sp = global_kernel->schedule.queue.tasks[index].task_sp_adr;
   SET_SP();
 

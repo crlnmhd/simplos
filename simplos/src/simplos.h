@@ -80,13 +80,14 @@ void verify_that_kernel_is_uninitilized(Kernel *kernel);
 
 uint16_t num_context_switch_overhead_bytes(void);
 
-Simplos_Task *get_task(pid_type pid);
-enum Task_Status task_status(pid_type pid);
+Simplos_Task *get_task(pid_type pid, Kernel *kernel);
+enum Task_Status task_status(pid_type pid, Kernel *kernel);
 
 void kill_current_task(Kernel *kernel);
 
 typedef uint8_t Index;
-void set_task_name(Index task_index, const char *name);
-Index create_simplos_task(const char *name, const uint8_t priority);
+void set_task_name(Index task_index, const char *name, Kernel *kernel);
+Index create_simplos_task(const char *name, const uint8_t priority,
+                          Kernel *kernel);
 
 #endif  // SIMPLOS_H_

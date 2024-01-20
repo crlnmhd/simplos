@@ -66,7 +66,7 @@ NO_MT void init_kernel(Kernel *kernel) {
   kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
-    set_task_name(i, "");
+    set_task_name(i, "", kernel);
 
     // Set task RAM range.
     BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
@@ -86,15 +86,15 @@ void verify_that_kernel_is_uninitilized(Kernel *kernel) {
 pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
                     Kernel *kernel) {
   DISABLE_MT();
-  uint8_t const new_task_index = create_simplos_task(name, priority);
+  uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
 
-  Simplos_Task *new_task = &global_kernel->schedule.queue.tasks[new_task_index];
+  Simplos_Task *new_task = &kernel->schedule.queue.tasks[new_task_index];
   new_task->status = RUNNING;
 
   uint16_t const new_task_pid = new_task->pid;
 
   taskptr_type old_task =
-      &global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+      &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
 
   old_task->status = READY;
 
@@ -132,8 +132,8 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   SAVE_CONTEXT();
   old_task->task_sp_adr = task_sp;
 
-  task_sp = global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)]
-                .task_sp_adr;
+  task_sp =
+      kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].task_sp_adr;
   SET_SP();
   cprint("Calling function\n");
   enable_interrupts();
@@ -141,9 +141,8 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   fn();
   DISABLE_MT();
   cprint("Function finnished\n");
-  global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
-      EMPTY;
-  global_kernel->task_names[INDEX_OF_CURRENT_TASK(kernel)][0] = '\0';
+  kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status = EMPTY;
+  kernel->task_names[INDEX_OF_CURRENT_TASK(kernel)][0] = '\0';
 
   k_yield();  // re-enable interrupts.
 
@@ -153,18 +152,19 @@ return_point:
   return new_task_pid;
 }
 
-inline void set_task_name(const Index task_index, const char *name) {
-  strlcpy((char *)global_kernel->task_names[task_index], name,
+inline void set_task_name(const Index task_index, const char *name,
+                          Kernel *kernel) {
+  strlcpy((char *)kernel->task_names[task_index], name,
           FUNCTION_NAME_MAX_LENGTH + 1);
 }
 
-inline Index create_simplos_task(const char *name, const uint8_t priority) {
-  uint8_t const index =
-      add_to_task_list(priority, &global_kernel->schedule.queue);
-  Simplos_Task *new_task = &global_kernel->schedule.queue.tasks[index];
+inline Index create_simplos_task(const char *name, const uint8_t priority,
+                                 Kernel *kernel) {
+  uint8_t const index = add_to_task_list(priority, &kernel->schedule.queue);
+  Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
   new_task->status = RUNNING;
-  new_task->pid = global_kernel->pid_cnt++;
-  set_task_name(index, name);
+  new_task->pid = kernel->pid_cnt++;
+  set_task_name(index, name, kernel);
 
 #if defined(DEBUG_OUTPUT)
   cprint("Created simplos task %s with pid %u\n", name, new_task->pid);
@@ -185,26 +185,26 @@ void kill_current_task(Kernel *kernel) {
 
   uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(kernel);
 
-  Simplos_Task *task = &global_kernel->schedule.queue.tasks[curr_task_index];
+  Simplos_Task *task = &kernel->schedule.queue.tasks[curr_task_index];
   task->status = EMPTY;
-  global_kernel->task_names[curr_task_index][0] = '\0';
-  global_kernel->ended_task_time_counter += task->time_counter;
+  kernel->task_names[curr_task_index][0] = '\0';
+  kernel->ended_task_time_counter += task->time_counter;
   k_yield();  // re-enables interrupts.
 }
 
-Simplos_Task *get_task(pid_type pid) {
+Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
   DISABLE_MT();
   for (uint8_t t = 0; t < TASKS_MAX; ++t) {
-    if (global_kernel->schedule.queue.tasks[t].pid == pid) {
-      return &global_kernel->schedule.queue.tasks[t];
+    if (kernel->schedule.queue.tasks[t].pid == pid) {
+      return &kernel->schedule.queue.tasks[t];
     }
   }
   ENABLE_MT();
   return NULL;
 }
 
-enum Task_Status task_status(pid_type pid) {
-  taskptr_type task = get_task(pid);
+enum Task_Status task_status(pid_type pid, Kernel *kernel) {
+  taskptr_type task = get_task(pid, kernel);
   if (task == NULL) {
     return EMPTY;
   }
