@@ -17,9 +17,13 @@ void __attribute__((noinline)) yield(void) {
             "unexpected lower end of return address");
 }
 
-uint8_t rank(void) { return INDEX_OF_CURRENT_TASK; }
+Kernel *get_os_kernel(void) { return global_kernel; }
+
+uint8_t rank(void) { return INDEX_OF_CURRENT_TASK(get_os_kernel()); }
 uint16_t pid(void) {
-  return global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].pid;
+  return global_kernel->schedule.queue
+      .tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
+      .pid;
 }
 
 uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
@@ -28,7 +32,8 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
   ASSERT(name_length <= FUNCTION_NAME_MAX_LENGTH,
          "Function name length exceeded.");
 
-  uint16_t const spawned_task_pid = spawn_task(fn, priority, name);
+  uint16_t const spawned_task_pid =
+      spawn_task(fn, priority, name, get_os_kernel());
 
   cprint("done spawning task \"%s\"---- new pid is %u\n", name,
          spawned_task_pid);
@@ -36,11 +41,11 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
   return spawned_task_pid;
 }
 
-void kill_curr_task(void) { kill_current_task(); }
+void kill_curr_task(void) { kill_current_task(get_os_kernel()); }
 
 void set_priority(uint8_t const priority) {
-  global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].priority =
-      priority;
+  global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
+      .priority = priority;
 }
 
 void wait_for_task_finnish(pid_t pid) {
@@ -52,7 +57,7 @@ void wait_for_task_finnish(pid_t pid) {
 NORETURN void terminate(void) {
   disable_interrupts();
   cprint("Simplos terminating...\n");
-  print_timing_data();
+  print_timing_data(get_os_kernel());
   halt();
 }
 

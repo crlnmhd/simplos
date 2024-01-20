@@ -56,7 +56,7 @@ void print_schedule(Kernel *kernel) {
   cprint(" --  end of schedule --\n")
 }
 
-NO_MT void print_timing_data(Kernel *kernel) {
+NO_MT void print_timing_data(__attribute__((unused)) Kernel *kernel) {
 #if defined(SW_TIME_MEASSREMENTS)
   cprint("Timing data:\nOS: %u\n", kernel->cs_time_counter);
   // FIXME risk of overflow!

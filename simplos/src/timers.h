@@ -14,7 +14,7 @@
 __attribute__((noinline, naked)) void k_yield(void);
 __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),
                                               uint8_t const priority,
-                                              char const *name);
+                                              char const *name, Kernel *kernel);
 #if defined(SW_TIME_MEASSREMENTS)
 uint16_t get_tick_counter(void){return get_tick_counter()};
 void reset_tick_counter(void) { clear_tick_counter(); }

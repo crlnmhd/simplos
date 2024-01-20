@@ -12,31 +12,31 @@
 
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
-uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks);
+uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
+                         Kernel *kernel);
 void assign_scheduler(uint8_t *task_block_list, const uint8_t starting_index,
                       const uint8_t end_index);
 void prioritize_tasks(taskptr_type tasks, const uint8_t num_tasks,
                       volatile uint8_t *out_priority_list);
-void handle_previous_task(taskptr_type prev);
-void prepare_next_task(taskptr_type next);
+void handle_previous_task(taskptr_type prev, Kernel *kernel);
+void prepare_next_task(taskptr_type next, Kernel *kernel);
 
-void print_queue(uint8_t num_active_tasks);
+void print_queue(uint8_t num_active_tasks, Kernel *kernel);
 
-void reschedule(void) {
+void reschedule(Kernel *kernel) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING();
   const uint8_t num_active_tasks = get_active_tasks(
-      global_kernel->schedule.queue.task_index_queue, TASKS_MAX);
+      kernel->schedule.queue.task_index_queue, TASKS_MAX, kernel);
   END_DISCARD_VOLATILE_QUALIFIER_WARNING();
   if (num_active_tasks == 0) {
     FATAL_ERROR("Error, no tasks avalable to schedule!");
   }
 
-  prioritize_tasks(global_kernel->schedule.queue.tasks, num_active_tasks,
-                   global_kernel->schedule.queue.task_index_queue);
-  global_kernel->schedule.queue.queue_position =
-      (uint8_t)(num_active_tasks - 1);
+  prioritize_tasks(kernel->schedule.queue.tasks, num_active_tasks,
+                   kernel->schedule.queue.task_index_queue);
+  kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
 #if defined(VERBOSE_OUTPUT)
-  print_queue(num_active_tasks);
+  print_queue(num_active_tasks, kernel);
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
@@ -46,10 +46,11 @@ void reschedule(void) {
  *
  * Note: any values of tasks_block_list[<return_value -1>] have no meening.
  * */
-uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks) {
+uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks,
+                         Kernel *kernel) {
   uint8_t active_task_counter = 0;
   for (uint8_t i = 0; i < num_tasks; ++i) {
-    if (global_kernel->schedule.queue.tasks[i].status == READY) {
+    if (kernel->schedule.queue.tasks[i].status == READY) {
       tasks_block_list[active_task_counter] = i;
       active_task_counter++;
     }
@@ -77,16 +78,16 @@ void prioritize_tasks(taskptr_type volatile tasks,
   }
 }
 
-void print_queue(uint8_t num_active_tasks) {
+void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
   ASSERT(num_active_tasks < TASKS_MAX,
          "Invalid number of active tasks provided!");
 
   cprint("Start of queue:\n-------------\n");
   for (uint8_t i = 0; i < num_active_tasks; i++) {
     cprint("%u: ", i);
-    uint8_t task_index = global_kernel->schedule.queue.task_index_queue[i];
-    taskptr_type task_ptr = &global_kernel->schedule.queue.tasks[task_index];
-    print_task(task_ptr);
+    uint8_t task_index = kernel->schedule.queue.task_index_queue[i];
+    taskptr_type task_ptr = &kernel->schedule.queue.tasks[task_index];
+    print_task(task_ptr, kernel);
   }
   cprint("End of queue:\n-------------\n");
 }
@@ -96,7 +97,7 @@ void select_next_task(Kernel *kernel_ptr) {
 #if defined(VERBOSE_OUTPUT)
     cprint("Rescheduling...\n");
 #endif  // defined(VERBOSE_OUTPUT)
-    reschedule();
+    reschedule(kernel_ptr);
   } else {
     kernel_ptr->schedule.queue.queue_position--;
   }
@@ -106,24 +107,26 @@ void select_next_task(Kernel *kernel_ptr) {
 
   next_task_sp = kernel_ptr->schedule.queue.tasks[new_task_index].task_sp_adr;
 }
-void schedule_tasks(void) { reschedule(); }
+void schedule_tasks(Kernel *kernel) { reschedule(kernel); }
 
-void start_scheduler(void) {
+void start_scheduler(Kernel *kernel) {
   SCILENT_DISABLE_MT();
   cprint("Scheduler started. Yielding...\n");
-  scheduler_task_sp = SP - num_context_switch_overhead_bytes();
+  scheduler_task_sp =
+      SP - num_context_switch_overhead_bytes();  // FIXME: incrrect??
+
   while (true) {
     SCILENT_DISABLE_MT();
 #if defined(VERBOSE_OUTPUT)
     cprint("Selecting next task...\n");
 #endif  // defined (VERBOSE_OUTPUT)
     taskptr_type prev =
-        &global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
-    handle_previous_task(prev);
-    select_next_task(global_kernel);
+        &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+    handle_previous_task(prev, kernel);
+    select_next_task(kernel);
     taskptr_type next =
-        &global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
-    prepare_next_task(next);
+        &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+    prepare_next_task(next, kernel);
 #if defined(VERBOSE_OUTPUT)
     cprint("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
 #endif  // defined VERBOSE_OUTPUT
@@ -132,9 +135,9 @@ void start_scheduler(void) {
   }
 }
 
-void handle_previous_task(taskptr_type prev) {
+void handle_previous_task(taskptr_type prev, Kernel *kernel) {
   cprint("printing task:\n");
-  print_task(prev);
+  print_task(prev, kernel);
   assert_task_pointer_integrity(prev);
 
   if (prev->status == RUNNING) {
@@ -142,7 +145,7 @@ void handle_previous_task(taskptr_type prev) {
     prev->task_sp_adr = task_sp;
     prev->status = READY;
 #if defined(VERBOSE_OUTPUT)
-    print_schedule();
+    print_schedule(kernel);
 #endif  // defined (VERBOSE_OUTPUT)
     assert_task_pointer_integrity(prev);
     assert_stack_pointer_points_to_valid_return_address(prev->task_sp_adr);
@@ -166,10 +169,10 @@ void assert_stack_pointer_points_to_valid_return_address(
             "Unexpected PC value found on task stack");
 }
 
-void prepare_next_task(taskptr_type next) {
+void prepare_next_task(taskptr_type next, Kernel *kernel) {
 #if defined(VERBOSE_OUTPUT)
   cprint("printing next:\n");
-  print_task(next);
+  print_task(next, kernel);
   assert_task_pointer_integrity(next);
 #endif  // defined VERBOSE_OUTPUT
   next->status = RUNNING;

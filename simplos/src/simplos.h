@@ -49,9 +49,10 @@ extern Kernel volatile *volatile global_kernel;
 #endif  // __GNUC__
 // clang-format on
 
-#define INDEX_OF_CURRENT_TASK   \
-  global_kernel->schedule.queue \
-      .task_index_queue[global_kernel->schedule.queue.queue_position]
+#define INDEX_OF_CURRENT_TASK(kernel) \
+  (kernel)                            \
+      ->schedule.queue                \
+      .task_index_queue[(kernel)->schedule.queue.queue_position]
 
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
@@ -84,7 +85,7 @@ uint16_t num_context_switch_overhead_bytes(void);
 Simplos_Task *get_task(pid_type pid);
 enum Task_Status task_status(pid_type pid);
 
-void kill_current_task(void);
+void kill_current_task(Kernel *kernel);
 
 typedef uint8_t Index;
 void set_task_name(Index task_index, const char *name);

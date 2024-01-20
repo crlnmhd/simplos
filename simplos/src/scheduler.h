@@ -7,7 +7,7 @@
 */
 void select_next_task(Kernel *);
 
-void start_scheduler(void);
+void start_scheduler(Kernel *);
 
 // void print_tasks(void);
 

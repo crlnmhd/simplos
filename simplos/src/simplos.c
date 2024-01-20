@@ -83,8 +83,8 @@ void verify_that_kernel_is_uninitilized(void) {
   }
 }
 
-pid_type spawn_task(void (*fn)(void), uint8_t const priority,
-                    char const *name) {
+pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
+                    Kernel *kernel) {
   DISABLE_MT();
   uint8_t const new_task_index = create_simplos_task(name, priority);
 
@@ -94,7 +94,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
   uint16_t const new_task_pid = new_task->pid;
 
   taskptr_type old_task =
-      &global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
+      &global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
 
   old_task->status = READY;
 
@@ -102,7 +102,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
   old_task->time_counter += GET_TICK_COUNTER();
   reset_tick_counter();
 #endif  // SW_TIME_MEASSREMNTS
-  INDEX_OF_CURRENT_TASK = new_task_index;
+  INDEX_OF_CURRENT_TASK(kernel) = new_task_index;
 
   disable_interrupts();
   asm goto(
@@ -132,8 +132,8 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
   SAVE_CONTEXT();
   old_task->task_sp_adr = task_sp;
 
-  task_sp =
-      global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].task_sp_adr;
+  task_sp = global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)]
+                .task_sp_adr;
   SET_SP();
   cprint("Calling function\n");
   enable_interrupts();
@@ -141,8 +141,9 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
   fn();
   DISABLE_MT();
   cprint("Function finnished\n");
-  global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].status = EMPTY;
-  global_kernel->task_names[INDEX_OF_CURRENT_TASK][0] = '\0';
+  global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
+      EMPTY;
+  global_kernel->task_names[INDEX_OF_CURRENT_TASK(kernel)][0] = '\0';
 
   k_yield();  // re-enable interrupts.
 
@@ -178,11 +179,11 @@ uint16_t num_context_switch_overhead_bytes(void) {
   return num_pc_bytes + num_registers + num_sreg_bytes;
 }
 
-void kill_current_task(void) {
+void kill_current_task(Kernel *kernel) {
   disable_interrupts();
   ENABLE_MT();
 
-  uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK;
+  uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(kernel);
 
   Simplos_Task *task = &global_kernel->schedule.queue.tasks[curr_task_index];
   task->status = EMPTY;
