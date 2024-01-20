@@ -57,7 +57,9 @@ _Pragma("clang diagnostic pop")
   print_from_prg_mem("\n");               \
   halt_exec();
 
-#define WARNING(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);
+#define WARNING(fmt, ...)          \
+  print_from_prg_mem("WARNING: "); \
+  print_from_prg_mem(fmt, ##__VA_ARGS__);
 
         void print_task(taskptr_type);
 void print_schedule(void);
