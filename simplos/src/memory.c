@@ -61,9 +61,7 @@ void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
   ASSERT(mem_adr_belongs_to_task(future_task_sp_adr_with_saved_registers,
                                  task->task_memory_block, kernel),
          "(Future) TASK MEMORY ERROR! Future stack pointer, with saved "
-         "registers, 0x%X "
-         "is outside allowed range "
-         "for task\n.");
+         "registers is outside allowed range for task\n.");
 
   verify_canaries();
   uint16_t const upper_bound = task_default_sp(task->task_memory_block);
