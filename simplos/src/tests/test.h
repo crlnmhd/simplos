@@ -39,15 +39,6 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
     return false;                                 \
   }
 
-#define CHECK_EQ_MSG(recieved, expected, fmt, msg) \
-  if ((expected) == (recieved)) {                  \
-    dprintf(                                       \
-        "ASSERT_EQUAL ERROR! "                     \
-        "Expected: " fmt ", Got: " fmt "\n",       \
-        expected, recieved);                       \
-    return false;                                  \
-  }
-
 #define CHECK_TRUE(recieved)                                               \
   if ((recieved) == false) {                                               \
     dprintf("\n%s line %d:\nCheck failed! Expected 'true' got 'false'!\n", \
