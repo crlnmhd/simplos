@@ -1,11 +1,8 @@
 #ifndef HAL_H_
 #define HAL_H_
 
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
-
-#include "context_switch_macros.h"
 
 extern volatile uint16_t task_sp;
 extern volatile uint16_t next_task_sp;

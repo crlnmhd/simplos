@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <string.h>
 
+#include "hal/context_switch_macros.h"
 #include "hal/hal.h"
-#include "memory_layout.h"
-#include "scheduler.h"
 #include "simplos.h"
+#include "tasks.h"
 #include "timers.h"
 
 volatile Kernel internal_kernel_location

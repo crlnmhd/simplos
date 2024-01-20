@@ -1,9 +1,8 @@
 #include "scheduler.h"
 
 #include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
 
+#include "hal/context_switch_macros.h"
 #include "io_helpers.h"
 #include "simplos.h"
 #include "simplos_types.h"

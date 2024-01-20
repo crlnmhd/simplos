@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+#include "hal/context_switch_macros.h"
 #include "io_helpers.h"
 #include "simplos.h"
 #include "timers.h"

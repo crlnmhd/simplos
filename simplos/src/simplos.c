@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "hal/context_switch_macros.h"
 #include "hal/hal.h"
 #include "io_helpers.h"
 #include "memory.h"

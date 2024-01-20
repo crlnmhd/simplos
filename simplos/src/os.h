@@ -8,9 +8,6 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 
 #include <avr/pgmspace.h>
 #include <stdint.h>
-#include <stdio.h>
-
-#include "hal/hal.h"
 
 typedef uint16_t pid_t;
 

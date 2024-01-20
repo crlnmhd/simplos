@@ -30,6 +30,8 @@ void clear_tick_counter(void) {}
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "context_switch_macros.h"
+
 void write_mm(uint8_t *const mem_ptr, const uint8_t value) { *mem_ptr = value; }
 
 uint8_t read_mm(uint8_t *const mem_ptr) { return *mem_ptr; }

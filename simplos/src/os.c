@@ -6,6 +6,7 @@
 #include "memory_layout.h"
 #include "simplos.h"
 #include "simplos_types.h"
+#include "timers.h"
 
 void __attribute__((noinline)) yield(void) {
   k_yield();

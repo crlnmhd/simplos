@@ -1,8 +1,6 @@
 #ifndef TASKS_H
 #define TASKS_H
 
-#include <stdint.h>
-
 void test_fn1(void);
 void test_fn2(void);
 void test_fn3(void);

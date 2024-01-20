@@ -1,15 +1,12 @@
 
 #include "io_helpers.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "memory.h"
 #include "os.h"
-#include "scheduler.h"
 #include "simplos.h"
-#include "timers.h"
 
 NO_MT void print_task(taskptr_type task) {
   if (task == NULL) {

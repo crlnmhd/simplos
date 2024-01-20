@@ -1,12 +1,8 @@
 #if !defined(SIMPLOS_H_)
 #define SIMPLOS_H_
 
-#include "io_helpers.h"
 #include "memory.h"
-#include "scheduler.h"
 #include "simplos_types.h"
-#include "tasks.h"
-#include "timers.h"
 
 #define INLINED static inline __attribute__((always_inline))
 

@@ -1,13 +1,10 @@
 #if !defined(TESTS_H_)
 #define TESTS_H_
 #include <avr/pgmspace.h>
-#include <math.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "../io_helpers.h"
-#include "../os.h"
 
 struct TestStatistics {
   uint8_t failed;
