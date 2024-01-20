@@ -9,6 +9,8 @@ void select_next_task(Kernel *);
 
 void start_scheduler(Kernel *);
 
+void invalidate_scheduled_queue(Kernel *);
+
 /*
  * reschedules. Public to make it testable.
  * */

@@ -10,6 +10,7 @@
 #include "memory.h"
 #include "memory_layout.h"
 #include "os.h"
+#include "scheduler.h"
 #include "timers.h"
 
 void init_task_list(Task_Queue *queue) {
@@ -163,8 +164,7 @@ void kill_current_task(Kernel *kernel) {
   task->task_sp_adr = task_sp_range_high(curr_task_index);
   kernel->task_names[curr_task_index][0] = '\0';
   kernel->ended_task_time_counter += task->time_counter;
-  kernel->schedule.queue.queue_position =
-      0;      // Invalidate queue since a task has been killed.
+  invalidate_scheduled_queue(kernel);
   k_yield();  // re-enables interrupts.
 }
 

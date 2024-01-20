@@ -170,3 +170,8 @@ void prepare_next_task(taskptr_type next,
     next->status = RUNNING;
   }
 }
+
+void invalidate_scheduled_queue(Kernel *kernel) {
+  debug_print("Invalidating queue\n");
+  kernel->schedule.queue.queue_position = 0;
+}

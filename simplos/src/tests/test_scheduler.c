@@ -164,6 +164,16 @@ bool test_reschedule_prioritizes_the_active_tasks_in_ascending_order_of_priority
   return TEST_PASSED;
 }
 
+bool invalidate_scheduled_queue_sets_queue_position_to_zero(void) {
+  Kernel_type given_kernel = {0};
+  given_kernel.schedule.queue.queue_position = 4;
+
+  invalidate_scheduled_queue(&given_kernel);
+
+  CHECK_EQ(given_kernel.schedule.queue.queue_position, 0, "%u");
+  return TEST_PASSED;
+}
+
 struct TestStatistics unit_test_scheduler(void) {
   struct TestStatistics results = {0};
   RUN_TEST(
@@ -188,5 +198,7 @@ struct TestStatistics unit_test_scheduler(void) {
   RUN_TEST(
       test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready,
       &results);
+
+  RUN_TEST(invalidate_scheduled_queue_sets_queue_position_to_zero, &results);
   return results;
 }
