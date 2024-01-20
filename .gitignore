@@ -12,3 +12,4 @@ package-lock.json
 src/*.compdb_entry
 TODO.txt
 simplos/tmux.conf
+gdb.log
