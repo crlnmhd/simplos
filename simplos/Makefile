@@ -208,15 +208,3 @@ debug_tests:
 debug_siulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
 
-
-#flash)
-#  sudo docker run -it --rm --mount type=bind,source=$PWD/src,target=/build avr_docker scons baud=$BAUD
-#  BAUD=115200
-#  avr-size --mcu=$uP -C src/simplos.out
-#  avr-objcopy -O ihex -R .eeprom src/simplos.out out.hex
-#  avrdude -C /usr/share/arduino/hardware/tools/avrdude.conf -c wiring \
-	#    -p $uP \
-	#    -D -P /dev/ttyUSB0 \
-	#    -b $BAUD \
-	#    -U flash:w:out.hex \
-	#    /
