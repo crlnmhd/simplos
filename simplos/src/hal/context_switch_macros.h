@@ -32,51 +32,44 @@
       [enable_bit] "I"(OCIE1A)                                          \
       : "memory");  // Unset enable bit for TMSK1
 
-#define SAVE_CONTEXT()                    \
-  asm volatile(                           \
-      "push  r0                     \n\t" \
-      "in    r0, __SREG__           \n\t" \
-      "push  r0                     \n\t" \
-      "push  r1                     \n\t" \
-      "clr   r1                     \n\t" \
-      "push  r2                     \n\t" \
-      "push  r3                     \n\t" \
-      "push  r4                     \n\t" \
-      "push  r5                     \n\t" \
-      "push  r6                     \n\t" \
-      "push  r7                     \n\t" \
-      "push  r8                     \n\t" \
-      "push  r9                     \n\t" \
-      "push  r10                    \n\t" \
-      "push  r11                    \n\t" \
-      "push  r12                    \n\t" \
-      "push  r13                    \n\t" \
-      "push  r14                    \n\t" \
-      "push  r15                    \n\t" \
-      "push  r16                    \n\t" \
-      "push  r17                    \n\t" \
-      "push  r18                    \n\t" \
-      "push  r19                    \n\t" \
-      "push  r20                    \n\t" \
-      "push  r21                    \n\t" \
-      "push  r22                    \n\t" \
-      "push  r23                    \n\t" \
-      "push  r24                    \n\t" \
-      "push  r25                    \n\t" \
-      "push  r26                    \n\t" \
-      "push  r27                    \n\t" \
-      "push  r28                    \n\t" \
-      "push  r29                    \n\t" \
-      "push  r30                    \n\t" \
-      "push  r31                    \n\t" \
-      "ldi   r26, lo8(%0)           \n\t" \
-      "ldi   r27, hi8(%0)           \n\t" \
-      "in    r0, __SP_L__           \n\t" \
-      "st    x+, r0                 \n\t" \
-      "in    r0, __SP_H__           \n\t" \
-      "st    x+, r0                 \n\t" \
-      : /* No outputs*/                   \
-      : "i"(&task_sp));
+#define SAVE_CONTEXT()                      \
+  asm volatile(                             \
+      "push  r0                     \n\t"   \
+      "in    r0, __SREG__           \n\t"   \
+      "push  r0                     \n\t"   \
+      "push  r1                     \n\t"   \
+      "clr   r1                     \n\t"   \
+      "push  r2                     \n\t"   \
+      "push  r3                     \n\t"   \
+      "push  r4                     \n\t"   \
+      "push  r5                     \n\t"   \
+      "push  r6                     \n\t"   \
+      "push  r7                     \n\t"   \
+      "push  r8                     \n\t"   \
+      "push  r9                     \n\t"   \
+      "push  r10                    \n\t"   \
+      "push  r11                    \n\t"   \
+      "push  r12                    \n\t"   \
+      "push  r13                    \n\t"   \
+      "push  r14                    \n\t"   \
+      "push  r15                    \n\t"   \
+      "push  r16                    \n\t"   \
+      "push  r17                    \n\t"   \
+      "push  r18                    \n\t"   \
+      "push  r19                    \n\t"   \
+      "push  r20                    \n\t"   \
+      "push  r21                    \n\t"   \
+      "push  r22                    \n\t"   \
+      "push  r23                    \n\t"   \
+      "push  r24                    \n\t"   \
+      "push  r25                    \n\t"   \
+      "push  r26                    \n\t"   \
+      "push  r27                    \n\t"   \
+      "push  r28                    \n\t"   \
+      "push  r29                    \n\t"   \
+      "push  r30                    \n\t"   \
+      "push  r31                    \n\t"); \
+  SAVE_SP()
 
 #define SAVE_SP() SAVE_SP_TO_ADR(&task_sp)
 
