@@ -54,6 +54,27 @@ bool test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_
 
   return TEST_PASSED;
 }
+bool test_get_num_active_tasks_counts_all_tasks_marked_as_ready_as_active(
+    void) {
+  Kernel_type given_kernel = {0};
+  Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
+
+  // Cover all non-ready task types
+  schedule_with_three_active_tasks->queue.tasks[0].status = SLEEPING;
+  schedule_with_three_active_tasks->queue.tasks[1].status = READY;
+  schedule_with_three_active_tasks->queue.tasks[2].status = EMPTY;
+  schedule_with_three_active_tasks->queue.tasks[3].status = READY;
+  schedule_with_three_active_tasks->queue.tasks[4].status = READY;
+
+  uint8_t prioritized_task_indices[5] = {0};
+
+  const uint8_t recived =
+      get_active_tasks(prioritized_task_indices, 5, &given_kernel);
+
+  CHECK_EQ(recived, 3U, "%u");
+
+  return TEST_PASSED;
+}
 
 struct TestStatistics unit_test_scheduler(void) {
   struct TestStatistics results = {0};
@@ -67,6 +88,9 @@ struct TestStatistics unit_test_scheduler(void) {
   RUN_TEST(
       test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_status_is_not_ready,
       &results);
+
+  RUN_TEST(test_get_num_active_tasks_counts_all_tasks_marked_as_ready_as_active,
+           &results);
 
   return results;
 }
