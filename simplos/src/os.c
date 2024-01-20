@@ -18,13 +18,7 @@ void set_os_kernel(Kernel *kernel) { os_kernel_ptr = kernel; }
 #endif  // MOCK_HAL
 
 void set_os_kernel(Kernel *kernel);
-void __attribute__((noinline)) yield(void) {
-  k_yield();
-  ASSERT_EQ(read_from_mm_adr(0x505), 0x0011, "0x%X",
-            "unexpected upper end of return address");
-  ASSERT_EQ(read_from_mm_adr(0x507), 0x00b6, "0x%X",
-            "unexpected lower end of return address");
-}
+void __attribute__((noinline)) yield(void) { k_yield(); }
 
 Kernel *get_os_kernel(void) {
 #ifdef MOCK_HAL
