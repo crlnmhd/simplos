@@ -38,13 +38,9 @@ struct TestStatistics unit_test_scheduler(void) {
   struct TestStatistics results = {0};
   RUN_TEST(
       test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_available,
-      "selects next task sets queue poisiton to next available task when tasks "
-      "queued",
       &results);
 
   RUN_TEST(test_select_next_task_sets_next_task_sp_to_next_available_task,
-           "selects next task sets \'next_task_sp\' to next queied tasks SP's "
-           "address",
            &results);
 
   return results;
