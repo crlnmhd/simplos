@@ -205,6 +205,7 @@
 
 #define CONTEXT_SWTICH()                \
   SAVE_CONTEXT();                       \
+  SAVE_SP_TO_ADR(&prev_task_sp)         \
   SCILENT_DISABLE_MT();                 \
   SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
   RESET_TIMER();                        \
