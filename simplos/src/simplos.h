@@ -80,7 +80,7 @@ void init_memory(void);
  * Memory corruption might cause the uC to wrap aroud and re-intiate the
  * starup process.
  * */
-void verify_init_has_not_already_been_run(void);
+void verify_that_kernel_is_uninitilized(void);
 
 uint16_t num_context_switch_overhead_bytes(void);
 

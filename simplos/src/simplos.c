@@ -78,7 +78,7 @@ NO_MT void init_kernel(void) {
   }
 }
 
-void verify_init_has_not_already_been_run(void) {
+void verify_that_kernel_is_uninitilized(void) {
   if (kernel->pid_cnt != 0) {
     FATAL_ERROR("Attempted to re-run startup process. Memory wrap-arround?");
   }

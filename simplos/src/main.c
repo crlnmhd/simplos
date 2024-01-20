@@ -25,6 +25,7 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
+  verify_that_kernel_is_uninitilized();
   pre_scheduler_self_checks();
 
   init_scheduler_interupts();

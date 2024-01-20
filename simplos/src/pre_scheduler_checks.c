@@ -81,7 +81,6 @@ void verify_enable_disable_mt_macros(void) {
 
 void pre_scheduler_self_checks(void) {
   cprint("Running pre sheduler tests...\n");
-  verify_init_has_not_already_been_run();
 
   run_with_stack_integrity_check(verify_enable_disable_mt_macros);
 
