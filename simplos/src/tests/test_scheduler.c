@@ -33,7 +33,7 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
   return true;
 }
 
-bool test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_status_is_not_ready(
+bool test_get_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_status_is_not_ready(
     void) {
   Kernel_type given_kernel = {0};
   Scheduler *schedule_with_no_active_tasks = &given_kernel.schedule;
@@ -55,8 +55,7 @@ bool test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_
   return TEST_PASSED;
 }
 
-bool test_get_num_active_tasks_counts_all_tasks_marked_as_ready_as_active(
-    void) {
+bool test_get_active_tasks_counts_all_tasks_marked_as_ready_as_active(void) {
   Kernel_type given_kernel = {0};
   Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
 
@@ -112,10 +111,10 @@ struct TestStatistics unit_test_scheduler(void) {
            &results);
 
   RUN_TEST(
-      test_get_num_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_status_is_not_ready,
+      test_get_active_tasks_does_not_find_any_active_tasks_amongs_those_whos_status_is_not_ready,
       &results);
 
-  RUN_TEST(test_get_num_active_tasks_counts_all_tasks_marked_as_ready_as_active,
+  RUN_TEST(test_get_active_tasks_counts_all_tasks_marked_as_ready_as_active,
            &results);
 
   RUN_TEST(
