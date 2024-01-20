@@ -29,36 +29,36 @@ void combine_statistics(struct TestStatistics *statistics,
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
                        struct TestStatistics *statistics);
 
-#define CHECK_EQ(recieved, expected, fmt)    \
-  if ((expected) != (recieved)) {            \
-    dprintf(                                 \
-        "\nEquality check failed! "          \
-        "Expected: " fmt ", Got: " fmt "\n", \
-        expected, recieved);                 \
-    return false;                            \
+#define CHECK_EQ(recieved, expected, fmt)         \
+  if ((expected) != (recieved)) {                 \
+    dprintf(                                      \
+        "\n%s line: %d:\nEquality check failed! " \
+        "Expected: " fmt ", Got: " fmt "\n",      \
+        __FILE__, __LINE__, expected, recieved);  \
+    return false;                                 \
   }
 
 #define CHECK_EQ_MSG(recieved, expected, fmt, msg) \
-  if ((expected) != (recieved)) {                  \
-    uint8_t sreg = SREG;                           \
-    disable_interrupts();                          \
-    print_from_prg_mem(" FAILED\n");               \
-    print_from_prg_mem(                            \
+  if ((expected) == (recieved)) {                  \
+    dprintf("\nIn %s:\n", __func__);               \
+    dprintf(                                       \
         "ASSERT_EQUAL ERROR! "                     \
         "Expected: " fmt ", Got: " fmt "\n",       \
         expected, recieved);                       \
-    print_from_prg_mem("%s\n", msg);               \
-    SREG = sreg;                                   \
     return false;                                  \
   }
 
-#define CHECK_TRUE(recieved)                                   \
-  if ((recieved) == false) {                                   \
-    dprintf("\nCheck failed!. Expected 'true' got 'false'! "); \
+#define CHECK_TRUE(recieved)                                               \
+  if ((recieved) == false) {                                               \
+    dprintf("\n%s line %d:\nCheck failed! Expected 'true' got 'false'!\n", \
+            __FILE__, __LINE__);                                           \
+    return false;                                                          \
   }
-#define CHECK_FALSE(recieved)                                  \
-  if ((recieved) == true) {                                    \
-    dprintf("\nCheck failed!. Expected 'false' got 'true'! "); \
+#define CHECK_FALSE(recieved)                                              \
+  if ((recieved) == true) {                                                \
+    dprintf("\n%s line %d:\nCheck failed! Expected 'false' got 'true'!\n", \
+            __FILE__, __LINE__);                                           \
+    return false;                                                          \
   }
 
 // Wrapper to put 'function_name' string in program memory.
