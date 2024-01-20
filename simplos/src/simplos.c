@@ -173,6 +173,7 @@ Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
   SCILENT_DISABLE_MT();
   for (uint8_t t = 0; t < TASKS_MAX; ++t) {
     if (kernel->schedule.queue.tasks[t].pid == pid) {
+      SCILENT_ENABLE_MT();
       return &kernel->schedule.queue.tasks[t];
     }
   }
