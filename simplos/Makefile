@@ -200,7 +200,7 @@ clean:
 
 log:
 	rm -f gdb.log
-	$(AVR_GDB) $(SIMPLOS_EXECUTABLE) -x  log_execution.gdb
+	$(AVR_GDB) $(LATEST_EXECUTABLE_SOFTLINK) -x  log_execution.gdb
 	mv gdb.log $(LOG_DIR)/simplos_$$(date +%Y%m%d_%H%M%S).log
 
 sim:
