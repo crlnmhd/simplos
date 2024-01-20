@@ -38,10 +38,12 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
         PSTR(__FILE__), __LINE__, expected, recieved); \
     return false;                                      \
   }
-#define CHECK_TRUE(recieved) \
-  if ((recieved) == false) { \
-    debug_printf("\nHej\n"); \
-    return false;            \
+#define CHECK_TRUE(recieved)                                           \
+  if ((recieved) == false) {                                           \
+    debug_printf(                                                      \
+        "\n%S line %d:\nCheck failed! Expected 'true' got 'false'!\n", \
+        PSTR(__FILE__), __LINE__);                                     \
+    return false;                                                      \
   }
 
 #define CHECK_FALSE(recieved)                                          \
