@@ -49,18 +49,18 @@ DEFINES += -DPRIORITY_SCHEDULING
 
 SRC := src
 OBJ := build
-TESTS := tests
+DEBUG_BUILD := tests
 
 TEST_SRC := src/tests
 TEST_SOURCES := $(wildcard $(TEST_SRC)/*.c)
-UNIT_TEST_OBJECTS := $(patsubst $(TEST_SRC)/%.c, $(TESTS)/%.unit_test.o, $(TEST_SOURCES))
+UNIT_TEST_OBJECTS := $(patsubst $(TEST_SRC)/%.c, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
 ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c)
 MAIN_FILE := $(SRC)/main.c
 SOURCES := $(filter-out $(MAIN_FILE), $(ALL_SOURCES))
 
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
-TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(TESTS)/%.o, $(SOURCES))
+TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(DEBUG_BUILD)/%.o, $(SOURCES))
 
 ASM_SRC:= src/asm
 ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
@@ -142,8 +142,8 @@ dir:
 	mkdir -p $(OBJ)/asm
 	mkdir -p $(OBJ)/tests
 	mkdir -p $(OBJ)/hal
-	mkdir -p $(TESTS)
-	mkdir -p $(TESTS)/hal
+	mkdir -p $(DEBUG_BUILD)
+	mkdir -p $(DEBUG_BUILD)/hal
 
 # Target to compile and generate database for clangd.
 build: compile_commands dir all
@@ -155,16 +155,16 @@ all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
 	avr-size -A -x build/simplos.out
 
 all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(TESTS)/unit_tests.out
-	avr-size -A -x $(TESTS)/unit_tests.out
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(DEBUG_BUILD)/unit_tests.out
+	avr-size -A -x $(DEBUG_BUILD)/unit_tests.out
 
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) -I$(SRC) -c -g $< -o $@
 
-$(TESTS)/%.o: $(SRC)/%.c
+$(DEBUG_BUILD)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(TEST_SRC) -c -g $< -o $@
 
-$(TESTS)/%.unit_test.o: $(TEST_SRC)/%.c
+$(DEBUG_BUILD)/%.unit_test.o: $(TEST_SRC)/%.c
 	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(TEST_SRC) -c -g $< -o $@
 
 $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
@@ -194,7 +194,7 @@ sim:
 	$(SIMAVR) -v -v -v -g -m $(uP) build/simplos.out
 
 run_tests:
-	$(SIMAVR) -v -v -v -g -m $(uP) $(TESTS)/unit_tests.out
+	$(SIMAVR) -v -v -v -g -m $(uP) $(DEBUG_BUILD)/unit_tests.out
 
 show-size:
 	avr-size --mcu=$(uP) -A -x build/simplos.out
@@ -203,7 +203,7 @@ debug:
 	$(AVR_GDB) build/simplos.out -x debug_config.gdb
 
 debug_tests:
-	$(AVR_GDB) $(TESTS)/unit_tests.out -x debug_config.gdb
+	$(AVR_GDB) $(DEBUG_BUILD)/unit_tests.out -x debug_config.gdb
 
 debug_siulator:
 	gdb -ex "directory $(SIMAVR_SRC)"  --args $(SIMAVR_DEBUG) -v -v -v -g -m $(uP) build/simplos.out
