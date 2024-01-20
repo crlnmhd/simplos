@@ -1,3 +1,4 @@
+#include "../hal/context_switch_macros.h"
 #include "test.h"
 #include "test_suite.h"
 
