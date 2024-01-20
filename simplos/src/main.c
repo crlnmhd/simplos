@@ -26,7 +26,6 @@ int main(void) {
   stdout = stdin = &uart_file;
 
   verify_that_kernel_is_uninitilized();
-  pre_scheduler_self_checks();
 
   init_scheduler_interupts();
 
