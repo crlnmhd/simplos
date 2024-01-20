@@ -113,6 +113,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
       kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].task_sp_adr;
   SET_SP();
 
+  invalidate_scheduled_queue(kernel);
   debug_print("Calling function\n");
 
   ENABLE_MT();
