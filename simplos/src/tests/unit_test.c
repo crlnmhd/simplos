@@ -14,19 +14,19 @@ volatile uint16_t scheduler_task_sp = 0;
 void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name) {
   struct TestStatistics test_results = test_entry();
   if (test_results.failed == 0 && test_results.skipped == 0) {
-    dprintf("PASSED: all.\n");
+    debug_printf("PASSED: all.\n");
   } else {
-    dprintf("\n--- %S ---\n", name);
+    debug_printf("\n--- %S ---\n", name);
     if (test_results.passed > 0) {
-      dprintf("PASSED: %d.\n", test_results.passed);
+      debug_printf("PASSED: %d.\n", test_results.passed);
     }
     if (test_results.skipped > 0) {
-      dprintf("SKIPPED: %d.\n", test_results.skipped);
+      debug_printf("SKIPPED: %d.\n", test_results.skipped);
     }
     if (test_results.failed > 0) {
-      dprintf("FAILED: %d.\n", test_results.failed);
+      debug_printf("FAILED: %d.\n", test_results.failed);
     }
-    dprintf("\n%S\n\n", PSTR("--- end ---"));
+    debug_printf("\n%S\n\n", PSTR("--- end ---"));
   }
 }
 int main(void) {
@@ -43,6 +43,6 @@ int main(void) {
 
   RUN_TEST_SUITE(unit_test_spawning, "Task spawning");
 
-  dprintf("Test suite completed.\n");
+  debug_printf("Test suite completed.\n");
   return 0;
 }

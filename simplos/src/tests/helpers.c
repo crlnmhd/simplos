@@ -6,7 +6,7 @@ void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
     statistics->passed = (uint8_t)(statistics->passed + 1U);
   } else {
     dprint_flash_str(function_name);
-    dprintf(" --- FAILED!!\n");
+    debug_printf(" --- FAILED!!\n");
     statistics->failed = (uint8_t)(statistics->failed + 1U);
   }
 }
