@@ -55,7 +55,7 @@ void prioritize_tasks(taskptr_type volatile tasks,
   uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
     for (uint8_t i = 0; i < TASKS_MAX; i++) {
-      const bool task_is_active = active_tasks_mask & (1 << i);
+      const bool task_is_active = tasks[i].status == READY;
       if (task_is_active && tasks[i].priority == priority) {
         out_priority_list[num_sored] = i;
         num_sored++;
