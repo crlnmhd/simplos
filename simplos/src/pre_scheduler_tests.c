@@ -1,9 +1,8 @@
 #include <stdint.h>
 
-#include "../io_helpers.h"
-#include "../simplos.h"
-#include "../timers.h"
-#include "test.h"
+#include "io_helpers.h"
+#include "simplos.h"
+#include "timers.h"
 
 /*
  * Push set some registers with values and check that they have not changed.

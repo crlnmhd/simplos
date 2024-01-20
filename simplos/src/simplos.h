@@ -55,6 +55,12 @@ extern Kernel volatile *volatile kernel;
   kernel->schedule.queue.task_index_queue[kernel->schedule.queue.queue_position]
 
 /*
+ * Tests that run prior to initilizing the scheduler.
+ * Intened to test key functionality needed by the setup process.
+ * */
+void pre_scheduler_self_checks(void);
+
+/*
  * Add a task to the task queue. This is needed to let the the task execute.
  * */
 uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue);

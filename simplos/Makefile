@@ -37,9 +37,6 @@ DEFINES += -DVERBOSE_OUTPUT
 # Enable debug ouput
 DEFINES += -DDEBUG_OUTPUT
 
-#enable tests
-DEFINES += -DRUN_TESTS
-
 DEFINES += -DINITIAL_STACK_START=$(INITIAL_STACK_START)
 
 # Count the time spent in interups as oposed to outside. Incurres some
@@ -94,7 +91,6 @@ CFLAGS := -Wall $\
 					-mmcu=$(uP) $\
 					-I$(AVRINC) $\
 					-I/include/ $\
-					-I$(TESTS_DIR) $\
 					-g $\
 					-Wl,--section-start=.data=$(DATA_SECTION_START) $\
  					-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
