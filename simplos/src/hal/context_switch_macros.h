@@ -95,9 +95,9 @@
       "ldi r29, hi8(%[task_sp])         \n\t"                  \
       "ld  r16, x+                      \n\t"                  \
       "ld  r17, x                       \n\t"                  \
-      "mov r19, r16                     \n\t"                  \
-      "or  r19, r17                     \n\t"                  \
-      "cpse r19, __zero_reg__           \n\t"                  \
+      "mov r18, r16                     \n\t"                  \
+      "or  r18, r17                     \n\t"                  \
+      "cpse r18, __zero_reg__           \n\t"                  \
       "rjmp .+8                         \n\t"                  \
       "ldi r30, lo8(%[scheduler_sp])    \n\t"                  \
       "ldi r31, hi8(%[scheduler_sp])    \n\t"                  \
