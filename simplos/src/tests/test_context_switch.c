@@ -17,7 +17,10 @@
       "subi r26, -0xAA  \n\t"  \
       "push r16         \n\t"  \
       "push r17         \n\t"  \
-      "push r26         \n\t");
+      "push r26         \n\t"  \
+      : /* No outputs*/        \
+      : /* No inputs*/         \
+      : "memory");
 /*
  * Complements SETUP_STACK_CANARIES. Reads three canary bytes from the
  * stack. Places a non-zero value in num_failuress if the read bytes do not
