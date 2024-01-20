@@ -184,6 +184,7 @@ bool test_stack_variable_is_kept_after_saving_and_restoring_context(void) {
 
   return true;
 }
+
 struct TestStatistics unit_test_context_switch(void) {
   struct TestStatistics results = {0};
 

@@ -14,12 +14,35 @@ bool add_log_entry(struct Log *log, const char *message) {
 #endif  // MOCK_HAL
     return false;
   }
+  memcpy(log->end, message, message_lenght_with_terminator);
+
+  log->end += message_lenght_with_terminator;
+  log->num_buffer_bytes_remaining -= message_lenght_with_terminator;
+
   return true;
 }
 
 struct Log init_log(char *buffer, const size_t buf_size) {
-  struct Log log = {.buffer = buffer,
-                    .num_buffer_bytes_remaining = buf_size,
-                    .next_available = buffer};
+  struct Log log = {
+      .buffer = buffer, .num_buffer_bytes_remaining = buf_size, .end = buffer};
   return log;
+}
+
+bool contains(struct Log *log, const char *expected_entry) {
+  const uint16_t expected_entry_length = strlen(expected_entry);
+
+  char *next_entry = log->buffer;
+  uint16_t next_entry_length = strlen(next_entry);
+  while (next_entry + next_entry_length <= log->end) {
+    if (expected_entry_length == next_entry_length) {
+      const int comparison_found_and_expected =
+          strcmp(next_entry, expected_entry);
+      if (comparison_found_and_expected == 0) {
+        return true;
+      }
+    }
+    next_entry += next_entry_length + 1;
+    next_entry_length = strlen(next_entry);
+  }
+  return false;
 }
