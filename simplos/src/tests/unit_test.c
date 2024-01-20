@@ -5,8 +5,8 @@
 #include "test.h"
 #include "test_suite.h"
 
-#define RUN_TEST_SUITE(entry_fn, name, statistics) \
-  (run_test_suite(entry_fn, PSTR(name), statistics))
+#define RUN_TEST_SUITE(test_fn, name, statistics) \
+  (run_test_suite(test_fn, PSTR(name), statistics))
 
 volatile Kernel internal_kernel_location = {0};
 volatile Kernel *volatile kernel = &internal_kernel_location;
