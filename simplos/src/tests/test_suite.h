@@ -5,4 +5,6 @@
 
 struct TestStatistics unit_test_yields(void);
 
+struct TestStatistics unit_test_scheduler(void);
+
 #endif  // TEST_SUITE_H_
