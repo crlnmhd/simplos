@@ -130,9 +130,6 @@ void start_scheduler(Kernel *kernel) {
     print_task(prev, kernel);
 #endif  // defined (VERBOSE_OUTPUT)
     handle_previous_task(prev, kernel);
-#if defined(VERBOSE_OUTPUT)
-    print_task(prev, kernel);
-#endif  // defined (VERBOSE_OUTPUT)
     select_next_task(kernel);
     taskptr_type next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
