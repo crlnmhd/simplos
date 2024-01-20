@@ -61,12 +61,12 @@ _Pragma("clang diagnostic pop")
   print_from_prg_mem("WARNING: "); \
   print_from_prg_mem(fmt, ##__VA_ARGS__);
 
-        void print_task(taskptr_type);
-void print_schedule(void);
+        void print_task(taskptr_type, Kernel *kernel);
+void print_schedule(Kernel *kernel);
 
 // void print_task_stack(uint8_t const pid);
 
 // Print timing data (preferably after execution has finished).
-void print_timing_data(void);
+void print_timing_data(Kernel *kernel);
 
 #endif  // IOHELPERS
