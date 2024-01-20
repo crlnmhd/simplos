@@ -184,6 +184,10 @@ $(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.c
 $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
 
+install-git-hooks:
+	@mkdir -p ../githooks
+	@git config core.hooksPath githooks # from project root
+	@echo "Success"
 
 flash:
 	avr-size --mcu=$(uP) -C -x $(LATEST_EXECUTABLE_SOFTLINK)
