@@ -59,7 +59,6 @@ bool test_get_active_tasks_counts_all_tasks_marked_as_ready_as_active(void) {
   Kernel_type given_kernel = {0};
   Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
 
-  // Cover all non-ready task types
   schedule_with_three_active_tasks->queue.tasks[0].status = SLEEPING;
   schedule_with_three_active_tasks->queue.tasks[1].status = READY;
   schedule_with_three_active_tasks->queue.tasks[2].status = EMPTY;
@@ -81,7 +80,6 @@ bool test_get_active_tasks_places_indices_of_tasks_with_status_ready_in_task_ind
   Kernel_type given_kernel = {0};
   Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
 
-  // Cover all non-ready task types
   schedule_with_three_active_tasks->queue.tasks[0].status = PAUSED_SCHEDULER;
   schedule_with_three_active_tasks->queue.tasks[1].status = READY;
   schedule_with_three_active_tasks->queue.tasks[2].status = EMPTY;
