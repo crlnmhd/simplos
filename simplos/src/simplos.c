@@ -120,18 +120,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   SCILENT_DISABLE_MT();
   debug_print("Function finnished\n");
 
-  kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status = EMPTY;
-  debug_print("HI \n");
-  kernel->task_names[INDEX_OF_CURRENT_TASK(kernel)][0] = '\0';
-  debug_print("HI 2 \n");
-
-  // k_yield();  // re-enable interrupts.
-
-  debug_print("Task killed\n");
-  ENABLE_MT();
-  enable_interrupts();
-
-  asm volatile("ret" ::: "memory");  // fn is a void function.
+  kill_current_task(kernel);
 
 return_point:
   return new_task_pid;
@@ -164,12 +153,13 @@ uint16_t num_context_switch_overhead_bytes(void) {
 
 void kill_current_task(Kernel *kernel) {
   disable_interrupts();
-  ENABLE_MT();
+  SCILENT_DISABLE_MT();
 
   uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(kernel);
 
   Simplos_Task *task = &kernel->schedule.queue.tasks[curr_task_index];
   task->status = EMPTY;
+  task->task_sp_adr = task_sp_range_high(curr_task_index);
   kernel->task_names[curr_task_index][0] = '\0';
   kernel->ended_task_time_counter += task->time_counter;
   k_yield();  // re-enables interrupts.
