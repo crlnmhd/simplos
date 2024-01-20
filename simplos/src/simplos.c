@@ -104,30 +104,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
 #endif  // SW_TIME_MEASSREMNTS
   INDEX_OF_CURRENT_TASK(kernel) = new_task_index;
 
-  disable_interrupts();
-  asm goto(
-      "rcall .+0            \n\t"  // pushes PC (3 bytes) onto the
-      // stack
-      "pop r16              \n\t"
-      "pop r17              \n\t"
-      "pop r18              \n\t"  // MSB
-      "ldi r19, 12          \n\t"
-      "add r18, r19         \n\t"  // Offset to jmp RETPOINT
-      "ldi r19, 0           \n\t"  // Clearing the registe might not be
-                                   // nessesary.
-      "adc r17, r19         \n\t"  // Carry from LSB.
-      "adc r16, r19         \n\t"  // Carry from Middle byte
-      "push r18             \n\t"  // PUSH LS byte of PC back onto the
-      // stack.
-      "push r17             \n\t"
-      "push r16             \n\t"
-      "cpse r1, r1          \n\t"  // Skip next instruction
-      "jmp %l[return_point] \n\t"  // Target
-      "nop                  \n\t"
-      : /* No outputs */
-      : /* No inputs */
-      : "r16", "r17", "r18", "r19"
-      : return_point);
+  MODIFY_RETURN_POINT_TO(return_point);
 
   SAVE_CONTEXT();
   old_task->task_sp_adr = task_sp;

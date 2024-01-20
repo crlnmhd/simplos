@@ -1,6 +1,36 @@
 #ifndef HAL_CONTEXT_SWITCH_MACROS_H_
 #define HAL_CONTEXT_SWITCH_MACROS_H_
 
+/*
+ * Make ret/reti call 'entrypoint_label' instead of the next instruction.
+ * Push a modified PC, where the next instruction is a jump to the
+ * 'entrypoint_label' onto the stack.
+ *
+ * Note: the normal order of execution is preserved, except when ret/reti is
+ * called.
+ * */
+#define MODIFY_RETURN_POINT_TO(entrypoint_label)                              \
+  asm goto(                                                                   \
+      "rcall .+0            \n\t" /* pushes PC (3 bytes) onto the stack */    \
+      "pop r16              \n\t"                                             \
+      "pop r17              \n\t"                                             \
+      "pop r18              \n\t" /* MSB */                                   \
+      "ldi r19, 12          \n\t"                                             \
+      "add r18, r19         \n\t" /* Offset to jmp RETPOINT */                \
+      "ldi r19, 0           \n\t" /* Propagate carry bit */                   \
+      "adc r17, r19         \n\t" /* Carry from LSB */                        \
+      "adc r16, r19         \n\t" /* Carry from Middle byte */                \
+      "push r18             \n\t" /* PUSH LS byte of PC back onto the stack*/ \
+      "push r17             \n\t"                                             \
+      "push r16             \n\t"                                             \
+      "cpse r1, r1          \n\t" /* Skip next instruction*/                  \
+      "jmp %l[return_point] \n\t" /* Target*/                                 \
+      "nop                  \n\t"                                             \
+      : /* No outputs */                                                      \
+      : /* No inputs */                                                       \
+      : "r16", "r17", "r18", "r19"                                            \
+      : return_point);
+
 // offset caused by registers.
 // NOTE: avoids exposing avr architecture macros
 // Macro for context switch compatability.
