@@ -139,7 +139,7 @@ bool test_enable_mt_sets_enable_bit_for_tmsk1(void) {
   return TEST_PASSED;
 }
 
-bool test_enable_disable_mt_macros(void) {
+bool test_disable_mt_clears_enable_bit_for_tmsk1(void) {
   uint8_t num_failiures = 0;
   SETUP_STACK_CANARIES();
 
@@ -221,7 +221,8 @@ bool test_stack_variable_is_kept_after_saving_and_restoring_context(void) {
 
 struct TestStatistics unit_test_context_switch(void) {
   struct TestStatistics results = {0};
-  RUN_TEST(test_enable_disable_mt_macros, &results);
+
+  RUN_TEST(test_disable_mt_clears_enable_bit_for_tmsk1, &results);
 
   RUN_TEST(
       test_select_scheduled_task_or_reschedule_selecte_schedled_task_when_available,
