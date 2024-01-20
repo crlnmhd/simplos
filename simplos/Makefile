@@ -116,13 +116,14 @@ CFLAGS := -Werror $\
 
 CLANGD_FLAGS := -ferror-limit=0 -Wno-language-extension-token $\
 
-DATA_SECTIONS :=	-Wl,--section-start=.data=$(DATA_SECTION_START) $\
-									-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
+DATA_SECTIONS := 	-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
 									-Wl,--section-start=.next_task_sp_location=$(NEXT_TASK_SP_LOCATION) $\
 									-Wl,--section-start=.prev_task_sp_location=$(PREV_TASK_SP_LOCATION) $\
 									-Wl,--section-start=.scheduler_task_sp_location=$(SCHEDULER_TASK_SP_LOCATION) $\
 									-Wl,--section-start=.kernel_data_location=$(KERNEL_DATA_LOCATION)
 
+# Data sections that are not suitable for unit testing.
+NON_UNIT_TEST_DATA_SECIONS := -Wl,--section-start=.data=$(DATA_SECTION_START)
 
 FRAMEWORK := wiring
 
@@ -166,7 +167,7 @@ build_tests: compile_commands dir all_test
 	ln -s -f $(UNIT_TESTS) $(LATEST_EXECUTABLE_SOFTLINK)
 
 all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
-	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $^ -o $(SIMPLOS_EXECUTABLE)
+	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) $^ -o $(SIMPLOS_EXECUTABLE)
 	avr-size -A -x $(SIMPLOS_EXECUTABLE)
 
 all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
@@ -174,7 +175,7 @@ all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
 	avr-size -A -x $(UNIT_TESTS)
 
 $(OBJ)/%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) -I$(SRC) -c -g $< -o $@
+	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
 $(DEBUG_BUILD)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
