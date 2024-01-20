@@ -27,9 +27,14 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
+  RUN_TEST_SUITE(unit_test_hal_log, "Test the testing hal log");
+
   RUN_TEST_SUITE(unit_test_scheduler, "Scheduler");
 
   RUN_TEST_SUITE(unit_test_context_switch, "Context switching");
+
+  RUN_TEST_SUITE(unit_test_spawning, "Task spawning");
+
   dprintf("Test suite completed.\n");
   return 0;
 }
