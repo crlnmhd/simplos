@@ -10,7 +10,7 @@ bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   const char *too_long_message = "Hej";  // 4 bytes including null terminator.
 
   CHECK_FALSE(add_log_entry(&log, too_long_message));
-  return true;
+  return TEST_PASSED;
 }
 
 bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
@@ -25,7 +25,7 @@ bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
   CHECK_EQ(log.num_buffer_bytes_remaining, expected_buffer_size_after_addition,
            "%d");
 
-  return true;
+  return TEST_PASSED;
 }
 
 bool test_adds_message_to_the_end_of_the_given_buffer(void) {
@@ -42,7 +42,8 @@ bool test_adds_message_to_the_end_of_the_given_buffer(void) {
   const bool buffer_starts_with_expected_message =
       (memcmp_buffer_and_expected_string == 0);
 
-  return buffer_starts_with_expected_message;
+  CHECK_TRUE(buffer_starts_with_expected_message);
+  return TEST_PASSED;
 }
 
 bool test_log_contains_entry_finds_entry_in_buffer(void) {
@@ -53,10 +54,9 @@ bool test_log_contains_entry_finds_entry_in_buffer(void) {
   const char *entry = "Hejsan";
 
   CHECK_TRUE(add_log_entry(&log, entry));
-  const bool b = log_contains_entry(&log, entry);
-  CHECK_EQ(b, true, "%d");
+  CHECK_TRUE(log_contains_entry(&log, entry));
 
-  return true;
+  return TEST_PASSED;
 }
 
 bool test_can_add_multiple_messages(void) {
@@ -76,7 +76,7 @@ bool test_can_add_multiple_messages(void) {
   CHECK_TRUE(log_contains_entry(&log, entry_3));  // try out of order access
   CHECK_TRUE(log_contains_entry(&log, entry_2));
 
-  return true;
+  return TEST_PASSED;
 }
 bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
   const uint16_t sufficient_buffer_size = 15;
@@ -89,7 +89,7 @@ bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
   CHECK_TRUE(add_log_entry(&log, real_log_entry));
   CHECK_FALSE(log_contains_entry(&log, not_in_log));
 
-  return true;
+  return TEST_PASSED;
 }
 
 struct TestStatistics unit_test_hal_log(void) {

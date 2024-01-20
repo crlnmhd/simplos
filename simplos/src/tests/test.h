@@ -11,6 +11,7 @@
 #endif  // MOCK_HAL
 
 #include "../io_helpers.h"
+#define TEST_PASSED true;
 
 struct TestStatistics {
   uint8_t failed;
