@@ -102,7 +102,6 @@ CFLAGS := -Werror $\
 					-Wconversion $\
 					-Wstrict-overflow $\
 					-Wno-aggressive-loop-optimizations $\
-					-Wno-unknown-attributes $\
 					-std=gnu17 $\
 					-fno-omit-frame-pointer $\
 					-fno-common $\
@@ -114,6 +113,8 @@ CFLAGS := -Werror $\
 					-I$(AVRINC) $\
 					-I/include/ $\
 					-g
+
+CLANGD_FLAGS := -ferror-limit=0 -Wno-language-extension-token $\
 
 DATA_SECTIONS :=	-Wl,--section-start=.data=$(DATA_SECTION_START) $\
 									-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
@@ -130,7 +131,7 @@ FRAMEWORK := wiring
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
 %.compdb_entry: %.c
 	@echo "    {"                                                           		>  $@
-	@echo "        \"command\": \"$(CC)  $(CFLAGS) $(DATA_SECTIONS) -c $<\"," 	>> $@
+	@echo "        \"command\": \"$(CC) $(CFLAGS) $(CLANGD_FLAGS) $(DATA_SECTIONS) -c $<\"," 	>> $@
 	@echo "        \"directory\": \"$(CURDIR)\","            										>> $@
 	@echo "        \"file\": \"$<\""                         										>> $@
 	@echo "    },"                                           										>> $@
