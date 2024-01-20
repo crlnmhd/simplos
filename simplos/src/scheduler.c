@@ -80,9 +80,6 @@ void prioritize_tasks(taskptr_type volatile tasks,
 }
 
 void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
-  ASSERT(num_active_tasks < TASKS_MAX,
-         "Invalid number of active tasks provided!");
-
   cprint("Start of queue:\n-------------\n");
   for (uint8_t i = 0; i < num_active_tasks; i++) {
     cprint("%u: ", i);
