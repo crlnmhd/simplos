@@ -8,7 +8,7 @@
 
 volatile Kernel internal_kernel_location
     __attribute((section(".kernel_data_location"))) = {0};
-volatile Kernel *volatile kernel = &internal_kernel_location;
+volatile Kernel *volatile global_kernel = &internal_kernel_location;
 
 volatile uint16_t task_sp __attribute__((section(".task_sp_location"))) = 0;
 volatile uint16_t next_task_sp
@@ -40,13 +40,13 @@ int main(void) {
 #endif  // defined SW_TIME_MEASSREMENTS
 
   uint8_t index = create_simplos_task("idle_fn", 0);
-  kernel->schedule.queue.task_index_queue[0] = index;
-  kernel->schedule.queue.queue_position = 0;
+  global_kernel->schedule.queue.task_index_queue[0] = index;
+  global_kernel->schedule.queue.queue_position = 0;
 
   const uint8_t margin_to_main = 10;
 
   configure_heap_location(margin_to_main);
-  task_sp = kernel->schedule.queue.tasks[index].task_sp_adr;
+  task_sp = global_kernel->schedule.queue.tasks[index].task_sp_adr;
   SET_SP();
 
   enable_interrupts();

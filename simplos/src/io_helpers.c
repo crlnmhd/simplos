@@ -15,14 +15,14 @@ NO_MT void print_task(taskptr_type task) {
 
   uint8_t const task_index = task->task_memory_block;
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  char const *task_name = kernel->task_names[task_index];
+  char const *task_name = global_kernel->task_names[task_index];
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
   cprint("Task: \"%s\". Block: %u", task_name, task_index);
   cprint(" PID: %u", task->pid);
   cprint(" Priority: %u", task->priority);
   cprint(" SP: 0x%X", task->task_sp_adr);
   struct StackRange task_ram_range =
-      *(struct StackRange *)&kernel->task_RAM_ranges[task_index];
+      *(struct StackRange *)&global_kernel->task_RAM_ranges[task_index];
   cprint(" [0x%X - 0x%X]\n", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {
@@ -49,7 +49,7 @@ NO_MT void print_task(taskptr_type task) {
 void print_schedule(void) {
   print(" -- Schedule --\n");
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    Simplos_Task *task = &kernel->schedule.queue.tasks[i];
+    Simplos_Task *task = &global_kernel->schedule.queue.tasks[i];
     // dprint("DEBUG:: has mem block: %d\n", task->task_memory_block);
     print_task(task);
   }
@@ -58,19 +58,19 @@ void print_schedule(void) {
 
 NO_MT void print_timing_data(void) {
 #if defined(SW_TIME_MEASSREMENTS)
-  cprint("Timing data:\nOS: %u\n", kernel->cs_time_counter);
+  cprint("Timing data:\nOS: %u\n", global_kernel->cs_time_counter);
   // FIXME risk of overflow!
   uint32_t running_total = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
-    Simplos_Task *task = &kernel->schedule->queue.tasks[i];
+    Simplos_Task *task = &global_kernel->schedule->queue.tasks[i];
     if (task->status != EMPTY) {
       cprint("Task %u: %u\n", i, task->time_counter);
       running_total += task->time_counter;
     }
   }
   float cs_time_fraction =
-      (float)kernel->cs_time_counter /
-      (float)(running_total + kernel->ended_task_time_counter);
+      (float)global_kernel->cs_time_counter /
+      (float)(running_total + global_kernel->ended_task_time_counter);
   cprint("Total fraction: %f\n", cs_time_fraction);
 #else
   cprint("Printing timing data: DISABLED\n");

@@ -12,11 +12,12 @@ void verify_canaries(void);
 bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_number);
 
 void configure_heap_location(const uint8_t margin_to_main) {
-  kernel->heap_start = SP - margin_to_main;
-  cprint("Heap starting at  0x%X\n", kernel->heap_start);
-  ASSERT(kernel->heap_start > TASK_RAM_START,
+  global_kernel->heap_start = SP - margin_to_main;
+  cprint("Heap starting at  0x%X\n", global_kernel->heap_start);
+  ASSERT(global_kernel->heap_start > TASK_RAM_START,
          "init section has overflowed heap memory");
-  cprint("%u bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
+  cprint("%u bytes available for heap.\n",
+         global_kernel->heap_start - TASK_RAM_START);
 }
 
 void check_task_configuration_uses_all_available_memory(void) {
@@ -83,7 +84,7 @@ void assert_task_pointer_integrity(taskptr_type task) {
 }
 bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_memory_block) {
   struct StackRange task_stack_range =
-      kernel->task_RAM_ranges[task_memory_block];
+      global_kernel->task_RAM_ranges[task_memory_block];
 
   return task_stack_range.low <= adr && adr <= task_stack_range.high;
 }
@@ -110,9 +111,9 @@ enum MEM_REGION memory_region(taskptr_type adr) {
     return OS_STACK;
   } else if (in_region(sp, TASK_RAM_START, TASK_RAM_END)) {
     return TASK_RAM;
-  } else if (in_region(sp, kernel->heap_start, HEAP_END)) {
+  } else if (in_region(sp, global_kernel->heap_start, HEAP_END)) {
     return HEAP;
-  } else if (in_region(sp, RAMEND, kernel->heap_start + 1)) {
+  } else if (in_region(sp, RAMEND, global_kernel->heap_start + 1)) {
     return INIT;
   } else {
     return UNKNOWN;

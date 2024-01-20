@@ -24,16 +24,17 @@ void print_queue(uint8_t num_active_tasks);
 
 void reschedule(void) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING();
-  const uint8_t num_active_tasks =
-      get_active_tasks(kernel->schedule.queue.task_index_queue, TASKS_MAX);
+  const uint8_t num_active_tasks = get_active_tasks(
+      global_kernel->schedule.queue.task_index_queue, TASKS_MAX);
   END_DISCARD_VOLATILE_QUALIFIER_WARNING();
   if (num_active_tasks == 0) {
     FATAL_ERROR("Error, no tasks avalable to schedule!");
   }
 
-  prioritize_tasks(kernel->schedule.queue.tasks, num_active_tasks,
-                   kernel->schedule.queue.task_index_queue);
-  kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
+  prioritize_tasks(global_kernel->schedule.queue.tasks, num_active_tasks,
+                   global_kernel->schedule.queue.task_index_queue);
+  global_kernel->schedule.queue.queue_position =
+      (uint8_t)(num_active_tasks - 1);
 #if defined(VERBOSE_OUTPUT)
   print_queue(num_active_tasks);
 #endif  // defined(VERBOSE_OUTPUT)
@@ -48,7 +49,7 @@ void reschedule(void) {
 uint8_t get_active_tasks(uint8_t *tasks_block_list, const uint8_t num_tasks) {
   uint8_t active_task_counter = 0;
   for (uint8_t i = 0; i < num_tasks; ++i) {
-    if (kernel->schedule.queue.tasks[i].status == READY) {
+    if (global_kernel->schedule.queue.tasks[i].status == READY) {
       tasks_block_list[active_task_counter] = i;
       active_task_counter++;
     }
@@ -83,8 +84,8 @@ void print_queue(uint8_t num_active_tasks) {
   cprint("Start of queue:\n-------------\n");
   for (uint8_t i = 0; i < num_active_tasks; i++) {
     cprint("%u: ", i);
-    uint8_t task_index = kernel->schedule.queue.task_index_queue[i];
-    taskptr_type task_ptr = &kernel->schedule.queue.tasks[task_index];
+    uint8_t task_index = global_kernel->schedule.queue.task_index_queue[i];
+    taskptr_type task_ptr = &global_kernel->schedule.queue.tasks[task_index];
     print_task(task_ptr);
   }
   cprint("End of queue:\n-------------\n");
@@ -116,10 +117,12 @@ void start_scheduler(void) {
 #if defined(VERBOSE_OUTPUT)
     cprint("Selecting next task...\n");
 #endif  // defined (VERBOSE_OUTPUT)
-    taskptr_type prev = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
+    taskptr_type prev =
+        &global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
     handle_previous_task(prev);
-    select_next_task(kernel);
-    taskptr_type next = &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
+    select_next_task(global_kernel);
+    taskptr_type next =
+        &global_kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK];
     prepare_next_task(next);
 #if defined(VERBOSE_OUTPUT)
     cprint("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
