@@ -78,8 +78,8 @@ bool test_setup_and_check_of_stack_canaries_detect_changes_to_first_canary_byte(
   SETUP_STACK_CANARIES();
   asm volatile(
       "pop r18         \n\t"
-      "subi r18,1         \n\t"
-      "push r18         \n\t"
+      "subi r18,1      \n\t"
+      "push r18        \n\t"
       : /* No outputs*/
       :);
   CHECK_STACK_CANARIES(num_failiures);
@@ -94,9 +94,9 @@ bool test_setup_and_check_of_stack_canaries_detect_changes_to_second_canary_byte
   asm volatile(
       "pop r18         \n\t"
       "pop r18         \n\t"
-      "subi r18,1       \n\t"
-      "push r18         \n\t"
-      "push r18         \n\t"
+      "subi r18,1      \n\t"
+      "push r18        \n\t"
+      "push r18        \n\t"
       : /* No outputs*/
       :);
   CHECK_STACK_CANARIES(num_failiures);
@@ -111,10 +111,10 @@ bool test_setup_and_check_of_stack_canaries_detect_changes_to_third_canary_byte(
       "pop r18         \n\t"
       "pop r18         \n\t"
       "pop r18         \n\t"
-      "subi r18,1       \n\t"
-      "push r18         \n\t"
-      "push r18         \n\t"
-      "push r18         \n\t"
+      "subi r18,1      \n\t"
+      "push r18        \n\t"
+      "push r18        \n\t"
+      "push r18        \n\t"
       : /* No outputs*/
       :);
   CHECK_STACK_CANARIES(num_failiures);
