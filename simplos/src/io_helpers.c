@@ -38,6 +38,9 @@ void print_task(taskptr_type task, Kernel *kernel) {
     case SLEEPING:
       cprint("  SLEEPING");
       break;
+    case SCHEDULER:
+      cprint("  SCHEDULER");
+      break;
     default:
       cprint("  STATUS UNKNOWN");
   }
