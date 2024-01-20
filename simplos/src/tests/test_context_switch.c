@@ -172,6 +172,18 @@ bool test_select_scheduled_task_or_reschedule_selects_scheduler_task_when_no_tas
   return true;
 }
 
+bool test_stack_variable_is_kept_after_saving_and_restoring_context(void) {
+  const uint32_t given_data = 0xAAAAAAAAU;
+  volatile uint32_t on_stack_variable = given_data;
+
+  SAVE_CONTEXT();
+  RESTORE_CONTEXT();
+  // Stack and registers should be the same as before.
+
+  CHECK_EQ(on_stack_variable, given_data, "0x%u");
+
+  return true;
+}
 struct TestStatistics unit_test_context_switch(void) {
   struct TestStatistics results = {0};
 
@@ -210,6 +222,9 @@ struct TestStatistics unit_test_context_switch(void) {
   RUN_TEST(
       test_setup_and_check_of_stack_canaries_detect_changes_to_third_canary_byte,
       &results);
+
+  RUN_TEST(test_stack_variable_is_kept_after_saving_and_restoring_context,
+           &results);
 
   return results;
 }
