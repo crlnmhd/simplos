@@ -198,7 +198,8 @@ void assert_stack_pointer_points_to_valid_return_address(
   ASSERT(task_PC != 0, "MALFORMED program couter for stack");
 }
 
-void prepare_next_task(taskptr_type next, Kernel *kernel) {
+void prepare_next_task(taskptr_type next,
+                       __attribute__((unused)) Kernel *kernel) {
 #if defined(VERBOSE_OUTPUT)
   cprint("printing next:\n");
   print_task(next, kernel);
