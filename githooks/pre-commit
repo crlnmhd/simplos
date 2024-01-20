@@ -50,5 +50,10 @@ restore_stash
 restore_merge_info
 readd_intent_to_add
 rm -r "$backup_dir"
+
+if [[ "$tests_result" -ne 0 ]]; then
+  cat commit_unit_test_output.txt # log from unit tets
+fi
+
 exit "$tests_result"
 

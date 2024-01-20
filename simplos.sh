@@ -102,7 +102,7 @@ run_unit_tests_in_container() {
   else
     return_val=1
   fi
-
+  cp "$code_copy_dir"/unit_test_output.log commit_unit_test_output.txt
   rm -r "$code_copy_dir"
   exit "$return_val"
 }
