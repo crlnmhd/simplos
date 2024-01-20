@@ -122,12 +122,12 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority,
       : return_point);
 
   SAVE_CONTEXT();
-  enable_interrupts();
   old_task->task_sp_adr = task_sp;
 
   task_sp = kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK].task_sp_adr;
   SET_SP();
   cprint("Calling function\n");
+  enable_interrupts();
   ENABLE_MT();
   fn();
   DISABLE_MT();
