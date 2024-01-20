@@ -16,7 +16,7 @@ void configure_heap_location(const uint8_t margin_to_main) {
   cprint("Heap starting at  0x%X\n", kernel->heap_start);
   ASSERT(kernel->heap_start > TASK_RAM_START,
          "init section has overflowed heap memory");
-  cprint("%d bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
+  cprint("%u bytes available for heap.\n", kernel->heap_start - TASK_RAM_START);
 }
 
 void check_task_configuration_uses_all_available_memory(void) {
@@ -37,7 +37,7 @@ INLINED bool in_region(size_t address, size_t region_start, size_t region_end) {
 
 uint16_t task_default_sp(uint8_t const task_memory_block) {
   if (task_memory_block >= TASKS_MAX) {
-    FATAL_ERROR("(task_default_sp()): Memory block '%d' is INVALID!",
+    FATAL_ERROR("(task_default_sp()): Memory block '%u' is INVALID!",
                 task_memory_block);
   }
   // Stack grows toward smaller values.
@@ -74,10 +74,10 @@ void assert_task_pointer_integrity(taskptr_type task) {
       (lower_bound <= task->task_sp_adr && task->task_sp_adr <= upper_bound);
 
   if (!sp_within_bounds) {
-    cprint("Current task sp: 0x%X and block: %d\nUpper: 0x%Xd, lower: 0x%X\n",
+    cprint("Current task sp: 0x%X and block: %u\nUpper: 0x%X, lower: 0x%X\n",
            task->task_sp_adr, task->task_memory_block, upper_bound,
            lower_bound);
-    FATAL_ERROR("STACK OVERFLOW DETECTED!\nTask %d SP = 0x%X is of bounds.",
+    FATAL_ERROR("STACK OVERFLOW DETECTED!\nTask %u SP = 0x%X is of bounds.",
                 task->task_memory_block, task->task_sp_adr);
   }
 }

@@ -82,7 +82,7 @@ void print_queue(uint8_t num_active_tasks) {
 
   cprint("Start of queue:\n-------------\n");
   for (uint8_t i = 0; i < num_active_tasks; i++) {
-    cprint("%d: ", i);
+    cprint("%u: ", i);
     uint8_t task_index = kernel->schedule.queue.task_index_queue[i];
     taskptr_type task_ptr = &kernel->schedule.queue.tasks[task_index];
     print_task(task_ptr);
@@ -145,7 +145,7 @@ void handle_previous_task(taskptr_type prev) {
     assert_stack_pointer_points_to_valid_return_address(prev->task_sp_adr);
 
 #if defined(VERBOSE_OUTPUT)
-    cprint("saving previous task %d's SP 0x%X\n", prev->task_memory_block,
+    cprint("saving previous task %u's SP 0x%X\n", prev->task_memory_block,
            prev->task_sp_adr);
 #endif
   }

@@ -17,9 +17,9 @@ NO_MT void print_task(taskptr_type task) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char const *task_name = kernel->task_names[task_index];
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-  cprint("Task: \"%s\". Block: %d", task_name, task_index);
-  cprint(" PID: %d", task->pid);
-  cprint(" Priority: %d", task->priority);
+  cprint("Task: \"%s\". Block: %u", task_name, task_index);
+  cprint(" PID: %u", task->pid);
+  cprint(" Priority: %u", task->priority);
   cprint(" SP: 0x%X", task->task_sp_adr);
   struct StackRange task_ram_range =
       *(struct StackRange *)&kernel->task_RAM_ranges[task_index];
@@ -58,13 +58,13 @@ void print_schedule(void) {
 
 NO_MT void print_timing_data(void) {
 #if defined(SW_TIME_MEASSREMENTS)
-  cprint("Timing data:\nOS: %d\n", kernel->cs_time_counter);
+  cprint("Timing data:\nOS: %u\n", kernel->cs_time_counter);
   // FIXME risk of overflow!
   uint32_t running_total = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     Simplos_Task *task = &kernel->schedule->queue.tasks[i];
     if (task->status != EMPTY) {
-      cprint("Task %d: %d\n", i, task->time_counter);
+      cprint("Task %u: %u\n", i, task->time_counter);
       running_total += task->time_counter;
     }
   }

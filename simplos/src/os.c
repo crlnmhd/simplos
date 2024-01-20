@@ -30,7 +30,7 @@ uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
 
   uint16_t const pid = spawn_task(fn, priority, name);
 
-  cprint("done spawning task \"%s\"---- new pid is %d\n", name, pid);
+  cprint("done spawning task \"%s\"---- new pid is %u\n", name, pid);
   return pid;
 }
 

@@ -11,7 +11,7 @@
 
 void worker_1_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
-    print("worker 1: %d%%\n", i);
+    print("worker 1: %u%%\n", i);
     for (uint16_t j = 0; j < UINT16_MAX; ++j) {
       ;
     }
@@ -20,7 +20,7 @@ void worker_1_fn(void) {
 
 void worker_2_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
-    print("worker 2: %d%%\n", i);
+    print("worker 2: %u%%\n", i);
     for (uint16_t j = 0; j < UINT16_MAX; ++j) {
       ;
     }
@@ -38,7 +38,7 @@ void sum_to_ten(void) {
     // do nothing
     ;
   }
-  print("res from sum is:%d\n", res);
+  print("res from sum is:%u\n", res);
   // print("shared_x is:%d\n", shared_x);
   // shared_x += res;
 }
@@ -58,7 +58,7 @@ void wait_for_other(void) {
   print("Spawning worker function\n");
   pid_t const p = spawn(wait_for_me, 1, "waiter");
 
-  print("Waiting for task with pid %d to finnish\n", p);
+  print("Waiting for task with pid %u to finnish\n", p);
   wait_for_task_finnish(p);
   print("It's finnished!\n");
 }
@@ -76,7 +76,7 @@ void run_idle_fn(void) {
   pid_t const p1 = spawn(sum_to_ten, 1, "sto10_1");
   pid_t const p2 = spawn(sum_to_ten, 1, "sto10_2");
 
-  print("Sum to ten workers %d and %d started\n", p1, p2);
+  print("Sum to ten workers %u and %u started\n", p1, p2);
 
   print("Hi. Fuck Putin\n");
   // print("Adr of shared_x 0x%X\n", &shared_x);

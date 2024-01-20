@@ -23,7 +23,7 @@ bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
 
   CHECK_TRUE(add_log_entry(&log, message));
   CHECK_EQ(log.num_buffer_bytes_remaining, expected_buffer_size_after_addition,
-           "%d");
+           "%zu");
 
   return TEST_PASSED;
 }

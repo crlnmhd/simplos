@@ -19,7 +19,7 @@ NO_MT void init_task_list(Task_Queue *queue) {
     task->task_memory_block = i;
     task->time_counter = 0;
     task->task_sp_adr = task_default_sp(task->task_memory_block);
-    cprint("Initiating mem block %d at 0x%X-0x%X\n", i,
+    cprint("Initiating mem block %u at 0x%X-0x%X\n", i,
            task->task_sp_adr - task_memory_size(), task->task_sp_adr);
     task->status = EMPTY;
   }
@@ -31,7 +31,7 @@ NO_MT uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
     // Take if available
     if (task->status == EMPTY) {
 #if defined(VERBOSE_OUTPUT)
-      cprint("Initiating space for new function at block %d\n", i);
+      cprint("Initiating space for new function at block %u\n", i);
 #endif  // VERBOSE_OUTPUT
       task->priority = priority;
       task->status = READY;
@@ -163,7 +163,7 @@ inline Index create_simplos_task(const char *name, const uint8_t priority) {
   set_task_name(index, name);
 
 #if defined(DEBUG_OUTPUT)
-  cprint("Created simplos task %s with pid %d\n", name, new_task->pid);
+  cprint("Created simplos task %s with pid %u\n", name, new_task->pid);
 #endif  // DEBUG_OUTPUT
   return index;
 }

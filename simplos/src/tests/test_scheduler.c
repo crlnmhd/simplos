@@ -10,7 +10,7 @@ bool test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_availa
 
   select_next_task(&given_kernel);
   CHECK_EQ(given_kernel.schedule.queue.queue_position, expected_queue_position,
-           "%d");
+           "%u");
   return true;
 }
 

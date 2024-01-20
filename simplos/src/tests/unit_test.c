@@ -18,15 +18,15 @@ void run_test_suite(struct TestStatistics (*test_entry)(void), PGM_P name) {
   } else {
     debug_printf("\n--- %S ---\n", name);
     if (test_results.passed > 0) {
-      debug_printf("PASSED: %d.\n", test_results.passed);
+      debug_printf("PASSED: %u.\n", test_results.passed);
     }
     if (test_results.skipped > 0) {
-      debug_printf("SKIPPED: %d.\n", test_results.skipped);
+      debug_printf("SKIPPED: %u.\n", test_results.skipped);
     }
     if (test_results.failed > 0) {
-      debug_printf("FAILED: %d.\n", test_results.failed);
+      debug_printf("FAILED: %u.\n", test_results.failed);
     }
-    debug_printf("\n%S\n\n", PSTR("--- end ---"));
+    debug_printf("\n%S\n\n", PSTR("--- end ---"));  // FIXME???
   }
 }
 int main(void) {
