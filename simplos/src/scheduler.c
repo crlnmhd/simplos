@@ -18,20 +18,12 @@ void prepare_next_task(taskptr_type next, Kernel *kernel);
 void print_queue(uint8_t num_active_tasks, Kernel *kernel);
 
 void reschedule(Kernel *kernel) {
-  const uint8_t active_task_mask = get_active_tasks_mask(kernel);
-
-  if (active_task_mask == 0) {
+  const uint8_t num_active_tasks = prioritize_tasks(
+      kernel->schedule.queue.tasks, kernel->schedule.queue.task_index_queue);
+  if (num_active_tasks == 0) {
     FATAL_ERROR("Error, no tasks avalable to schedule!");
   }
-  prioritize_tasks(kernel->schedule.queue.tasks,
-                   kernel->schedule.queue.task_index_queue);
 
-  uint8_t num_active_tasks = 0;
-  for (uint8_t i = 0; i < TASKS_MAX; i++) {
-    if (active_task_mask & (uint8_t)(1 << i)) {
-      num_active_tasks++;
-    }
-  }
   kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
 
 #if defined(VERBOSE_OUTPUT)
