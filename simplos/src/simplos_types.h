@@ -24,14 +24,14 @@ typedef struct Simplos_Task_type {
   uint8_t priority;
   enum Task_Status status;
 } Simplos_Task_type;
-typedef Simplos_Task_type volatile Simplos_Task;
+typedef Simplos_Task_type Simplos_Task;
 
 typedef struct Task_Queue_type {
   Simplos_Task_type tasks[TASKS_MAX];
   uint8_t task_index_queue[TASK_QUEUE_LENGTH];
   uint8_t queue_position;
 } Task_Queue_type;
-typedef Task_Queue_type volatile Task_Queue;
+typedef Task_Queue_type Task_Queue;
 
 typedef struct Scheduler_type {
   Task_Queue queue;
