@@ -9,7 +9,6 @@
 #include "io_helpers.h"
 #include "memory.h"
 #include "memory_layout.h"
-#include "os.h"
 #include "scheduler.h"
 #include "timers.h"
 
@@ -124,7 +123,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   disable_interrupts();
   SCILENT_DISABLE_MT();
   debug_print("Function finnished\n");
-  kill_curr_task();
+  kill_current_task(kernel);
 
 return_point:
   return new_task_pid;
