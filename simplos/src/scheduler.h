@@ -21,7 +21,7 @@ void reschedule(Kernel *kernel);
  *
  * Return: number of prioritzed tasks
  * */
-uint8_t prioritize_tasks(taskptr_type tasks,
+uint8_t prioritize_tasks(Simplos_Task *tasks,
                          volatile uint8_t *out_priority_list);
 
 /*

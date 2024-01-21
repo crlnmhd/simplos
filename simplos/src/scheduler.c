@@ -13,8 +13,8 @@
 
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
-void handle_previous_task(taskptr_type prev, Kernel *kernel);
-void prepare_next_task(taskptr_type next, Kernel *kernel);
+void handle_previous_task(Simplos_Task *prev, Kernel *kernel);
+void prepare_next_task(Simplos_Task *next, Kernel *kernel);
 void print_queue(uint8_t num_active_tasks, Kernel *kernel);
 
 void reschedule(Kernel *kernel) {
@@ -31,7 +31,7 @@ void reschedule(Kernel *kernel) {
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
-uint8_t prioritize_tasks(taskptr_type volatile tasks,
+uint8_t prioritize_tasks(Simplos_Task *volatile tasks,
                          volatile uint8_t *out_priority_list) {
   uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
@@ -51,7 +51,7 @@ void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
   for (uint8_t i = 0; i < num_active_tasks; i++) {
     debug_print("%u: ", i);
     uint8_t task_index = kernel->schedule.queue.task_index_queue[i];
-    taskptr_type task_ptr = &kernel->schedule.queue.tasks[task_index];
+    Simplos_Task *task_ptr = &kernel->schedule.queue.tasks[task_index];
     print_task(task_ptr, kernel);
   }
   debug_print("End of queue:\n-------------\n");
@@ -96,14 +96,14 @@ void start_scheduler(Kernel *kernel) {
     SCILENT_DISABLE_MT();
     verbose_print("################## BEGIN SCHEDULING\n\n");
     verbose_print("Selecting next task...\n");
-    taskptr_type prev =
+    Simplos_Task *prev =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
     handle_previous_task(prev, kernel);
     const uint8_t new_task_index = select_next_task(kernel);
 
     kernel->schedule.active_task_block = new_task_index;
 
-    taskptr_type next =
+    Simplos_Task *next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
     verbose_print("Selected next task: \n");
 #if defined(VERBOSE_OUTPUT)
@@ -116,7 +116,7 @@ void start_scheduler(Kernel *kernel) {
   }
 }
 
-void handle_previous_task(taskptr_type prev, Kernel *kernel) {
+void handle_previous_task(Simplos_Task *prev, Kernel *kernel) {
   if (prev->status == EMPTY) {
     return;  // Validation of task sp is not required since the task is empty.
   }
@@ -160,7 +160,7 @@ void assert_stack_pointer_points_to_valid_return_address(
   ASSERT(task_PC != 0, "MALFORMED program couter for stack");
 }
 
-void prepare_next_task(taskptr_type next,
+void prepare_next_task(Simplos_Task *next,
                        __attribute__((unused)) Kernel *kernel) {
   verbose_print("printing next:\n");
 #if defined(VERBOSE_OUTPUT)

@@ -25,7 +25,6 @@ typedef struct Simplos_Task_type {
   enum Task_Status status;
 } Simplos_Task_type;
 typedef Simplos_Task_type volatile Simplos_Task;
-typedef Simplos_Task volatile *volatile taskptr_type;
 
 typedef struct Task_Queue_type {
   Simplos_Task_type tasks[TASKS_MAX];

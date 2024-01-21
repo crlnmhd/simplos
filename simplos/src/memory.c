@@ -55,7 +55,7 @@ uint16_t task_sp_range_low(uint8_t const task_memory_block) {
   return TASK_RAM_END + (TASK_MEMORY_SIZE * task_memory_block);
 }
 
-void assert_task_pointer_integrity(taskptr_type task, Kernel *kernel) {
+void assert_task_pointer_integrity(Simplos_Task *task, Kernel *kernel) {
   ASSERT_EQ(memory_region(task, kernel), TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
 
@@ -102,7 +102,7 @@ void verify_canaries(void) {
   }
 }
 
-enum MEM_REGION memory_region(taskptr_type adr, Kernel *kernel) {
+enum MEM_REGION memory_region(Simplos_Task *adr, Kernel *kernel) {
   const size_t sp = adr->task_sp_adr;
   if (in_region(sp, REGISTERS_START, 0)) {
     return REGISTERS;
