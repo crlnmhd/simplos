@@ -27,7 +27,7 @@ Kernel *get_os_kernel(void) {
   }
   return os_kernel_ptr;
 #else
-  return global_kernel;
+  return (Kernel *)global_kernel;
 #endif
 }
 
