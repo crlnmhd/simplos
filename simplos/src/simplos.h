@@ -47,10 +47,7 @@ extern Kernel volatile *volatile global_kernel;
 #endif  // __GNUC__
 // clang-format on
 
-#define INDEX_OF_CURRENT_TASK(kernel) \
-  (kernel)                            \
-      ->schedule.queue                \
-      .task_index_queue[(kernel)->schedule.queue.queue_position]
+#define INDEX_OF_CURRENT_TASK(kernel) ((kernel)->schedule.active_task_block)
 
 /*
  * Add a task to the task queue. This is needed to let the the task execute.

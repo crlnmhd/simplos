@@ -98,6 +98,10 @@ void start_scheduler(Kernel *kernel) {
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
     handle_previous_task(prev, kernel);
     select_next_task(kernel);
+
+    kernel->schedule.active_task_block =
+        kernel->schedule.queue.queue_position;  // TODO make return val
+
     taskptr_type next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
     verbose_print("Selected next task: \n");

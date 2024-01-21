@@ -48,6 +48,7 @@ void init_schedule(Kernel *kernel) {
   kernel->schedule.os_task_sp = OS_STACK_START;
   init_task_list(&(kernel->schedule.queue));
   kernel->cs_time_counter = 0;
+  kernel->schedule.active_task_block = 0;
 }
 
 __attribute__((noinline, naked)) void k_yield(void) {
