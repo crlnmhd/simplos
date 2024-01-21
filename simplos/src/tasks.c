@@ -11,17 +11,17 @@ volatile uint8_t shared_x = 5;
 void just_a_loop(void) {
   for (uint16_t i = 0; i < 100; ++i) {
     print("looper 1: %u%%\n", i);
-    for (uint16_t j = 0; j < UINT16_MAX / 4; ++j) {
+    for (uint16_t j = 0; j < UINT16_MAX / 32; ++j) {
       ;
     }
   }
-  print("1 DONE\n");
+  print("Loop DONE\n");
 }
 
 void worker_1_fn(void) {
   for (uint16_t i = 0; i < 100; ++i) {
     print("worker 1: %u%%\n", i);
-    for (uint16_t j = 0; j < UINT16_MAX / 32; ++j) {
+    for (uint16_t j = 0; j < UINT16_MAX / 4; ++j) {
       ;
     }
   }
@@ -73,11 +73,10 @@ void run_idle_fn(void) {
   print("Waiting for task to finnish\n");
   wait_for_task_finnish(singel_task_pid);
 
-  // wait_for_task_finnish(wait_for_child_pid);
   spawn(worker_2_fn, 1, "worker2");
-  // const uint16_t wait_for_child_pid = spawn(wait_for_child, 2, "waits");
+  const uint16_t wait_for_child_pid = spawn(wait_for_child, 2, "waits");
   const uint16_t worker1_pid = spawn(worker_1_fn, 1, "worker1");
-  // wait_for_task_finnish(wait_for_child_pid);
+  wait_for_task_finnish(wait_for_child_pid);
 
   wait_for_task_finnish(worker1_pid);
   // wait_for_task_finnish(worker2_pid);
