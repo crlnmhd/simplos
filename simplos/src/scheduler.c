@@ -81,7 +81,7 @@ void start_scheduler_with_os_kernel(void) {
 void start_scheduler(Kernel *kernel) {
   SCILENT_DISABLE_MT();
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
-      SCHEDULING;
+      PAUSED_SCHEDULER;
 
   SET_RETURN_POINT(scheduler_loop_entry_point);
   SAVE_CONTEXT()
@@ -100,7 +100,8 @@ void start_scheduler(Kernel *kernel) {
     select_next_task(kernel);
 
     kernel->schedule.active_task_block =
-        kernel->schedule.queue.queue_position;  // TODO make return val
+        kernel->schedule.queue.task_index_queue
+            [kernel->schedule.queue.queue_position];  // TODO make return val
 
     taskptr_type next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
@@ -120,7 +121,7 @@ void handle_previous_task(taskptr_type prev, Kernel *kernel) {
     return;  // Validation of task sp is not required since the task is empty.
   }
 
-  if (prev->status == SCHEDULING) {
+  if (prev->status == PAUSED_SCHEDULER) {
     prev->task_sp_adr = scheduler_task_sp;
     prev->status = PAUSED_SCHEDULER;
   } else if (prev->status == RUNNING) {
@@ -169,7 +170,8 @@ void prepare_next_task(taskptr_type next,
   if (next->status == EMPTY) {
     FATAL_ERROR("Error, can not select an empty task!\n");
   } else if (next->status == PAUSED_SCHEDULER) {
-    next->status = SCHEDULING;
+    FATAL_ERROR(
+        "ERROR, Can not select scheduler task selected as next task!\n");
   } else {
     next->status = RUNNING;
   }
