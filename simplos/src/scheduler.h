@@ -5,7 +5,7 @@
 /*
   Set curr_task_index for the schedule and return it.
 */
-void select_next_task(Kernel *);
+uint8_t select_next_task(Kernel *);
 
 void start_scheduler(Kernel *);
 

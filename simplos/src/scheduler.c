@@ -57,18 +57,19 @@ void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
   debug_print("End of queue:\n-------------\n");
 }
 
-void select_next_task(Kernel *kernel_ptr) {
+uint8_t select_next_task(Kernel *kernel_ptr) {
   if (kernel_ptr->schedule.queue.queue_position == 0) {
     verbose_print("Rescheduling...\n");
     reschedule(kernel_ptr);
   } else {
     kernel_ptr->schedule.queue.queue_position--;
   }
-  const uint16_t new_task_index =
+  const uint8_t new_task_index =
       kernel_ptr->schedule.queue
           .task_index_queue[kernel_ptr->schedule.queue.queue_position];
 
   next_task_sp = kernel_ptr->schedule.queue.tasks[new_task_index].task_sp_adr;
+  return new_task_index;
 }
 void schedule_tasks(Kernel *kernel) { reschedule(kernel); }
 
@@ -97,11 +98,9 @@ void start_scheduler(Kernel *kernel) {
     taskptr_type prev =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
     handle_previous_task(prev, kernel);
-    select_next_task(kernel);
+    const uint8_t new_task_index = select_next_task(kernel);
 
-    kernel->schedule.active_task_block =
-        kernel->schedule.queue.task_index_queue
-            [kernel->schedule.queue.queue_position];  // TODO make return val
+    kernel->schedule.active_task_block = new_task_index;
 
     taskptr_type next =
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];

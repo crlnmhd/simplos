@@ -33,6 +33,17 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
   return true;
 }
 
+bool test_select_next_task_returns_index_of_selected_task(void) {
+  Kernel_type given_kernel = {0};
+  given_kernel.schedule.queue.queue_position = 1;
+  const uint8_t expected_task_index = 4;
+  given_kernel.schedule.queue.task_index_queue[0] = expected_task_index;
+
+  const uint8_t recieved = select_next_task(&given_kernel);
+  CHECK_EQ(recieved, expected_task_index, "%u");
+  return TEST_PASSED;
+}
+
 bool test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready(
     void) {
   Kernel_type given_kernel = {0};
@@ -182,6 +193,8 @@ struct TestStatistics unit_test_scheduler(void) {
 
   RUN_TEST(test_select_next_task_sets_next_task_sp_to_next_available_task,
            &results);
+
+  RUN_TEST(test_select_next_task_returns_index_of_selected_task, &results);
 
   RUN_TEST(
       test_reschedule_prioritizes_the_active_tasks_in_ascending_order_of_priority,
