@@ -9,6 +9,7 @@
 #include "io_helpers.h"
 #include "memory.h"
 #include "memory_layout.h"
+#include "os.h"
 #include "scheduler.h"
 #include "timers.h"
 
@@ -119,11 +120,11 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   ENABLE_MT();
   enable_interrupts();
   fn();
-  asm volatile("" ::: "memory");
-  disable_interrupts();
+  asm volatile("cli" ::: "memory");
   SCILENT_DISABLE_MT();
-  debug_print("Function finnished\n");
-  kill_current_task(kernel);
+
+  kill_curr_task();  // kills task that run the function pointer
+  FATAL_ERROR("UNREACHABLE!");
 
 return_point:
   return new_task_pid;
