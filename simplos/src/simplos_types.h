@@ -40,7 +40,7 @@ typedef struct Scheduler_type {
   uint8_t active_task_block;
   uint8_t task_scheduled;  // used as a boolean
 } Scheduler_type;
-typedef Scheduler_type volatile Scheduler;
+typedef Scheduler_type Scheduler;
 
 typedef uint16_t pid_type;
 
