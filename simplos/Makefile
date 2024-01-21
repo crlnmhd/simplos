@@ -83,8 +83,8 @@ SIMAVR := simavr
 AVR_GDB := avr-gdb
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
 
-BUILD_OPT_LEVEL := -Os
-DEBUG_OPT_LEVEL := -Os
+BUILD_OPT_LEVEL := -O0
+DEBUG_OPT_LEVEL := -O0
 
 UNIT_TEST_FLAGS :=	-g $\
 										-DMOCK_HAL $\
