@@ -33,19 +33,6 @@ extern Kernel volatile *volatile global_kernel;
 #define GCC_IGNORE_END() _Pragma("GCC diagnostic pop")
 #endif  // __GNUC__
 
-#if defined(__clang__)
-#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() \
-  CLANG_IGNORE_BEGIN("-Wincompatible-pointer-types-discards-qualifiers")
-#define END_DISCARD_VOLATILE_QUALIFIER_WARNING() CLANG_IGNORE_END()
-#elif defined(__GNUC__)
-#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING() \
-  GCC_IGNORE_BEGIN("-Wdiscarded-qualifiers")
-#define END_DISCARD_VOLATILE_QUALIFIER_WARNING() GCC_IGNORE_END()
-#else // other tools like cppcheck
-#define BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
-#define END_DISCARD_VOLATILE_QUALIFIER_WARNING()
-#endif  // __GNUC__
-// clang-format on
 
 #define INDEX_OF_CURRENT_TASK(kernel) ((kernel)->schedule.active_task_block)
 

@@ -70,9 +70,7 @@ void init_kernel(Kernel *kernel) {
     set_task_name(i, "", kernel);
 
     // Set task RAM range.
-    BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
     struct MemorySpan *task_stack_range = &kernel->task_RAM_ranges[i];
-    END_DISCARD_VOLATILE_QUALIFIER_WARNING()
     task_stack_range->high = task_sp_range_high(i);
     task_stack_range->low = task_sp_range_low(i);
   }

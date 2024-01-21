@@ -14,9 +14,7 @@ void print_task(Simplos_Task *task, Kernel *kernel) {
   }
 
   uint8_t const task_index = task->task_memory_block;
-  BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char const *task_name = kernel->task_names[task_index];
-  END_DISCARD_VOLATILE_QUALIFIER_WARNING()
   if (kernel->schedule.active_task_block == task->task_memory_block) {
     debug_print("* ");
   } else {
