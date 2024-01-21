@@ -55,6 +55,6 @@ typedef struct Kernel_type {
                         // section (main function).
   uint16_t pid_cnt;
 } Kernel_type;
-typedef Kernel_type volatile Kernel;
+typedef Kernel_type Kernel;
 
 #endif  // SIMPLOS_TYPES_H_

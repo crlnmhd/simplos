@@ -76,7 +76,7 @@ void schedule_tasks(Kernel *kernel) { reschedule(kernel); }
 
 #ifndef MOCK_HAL
 void start_scheduler_with_os_kernel(void) {
-  start_scheduler(global_kernel);
+  start_scheduler((Kernel *)global_kernel);
 }  // Note: see header
 #endif  // MOCK_HAL
 
