@@ -23,7 +23,7 @@ void print_task(taskptr_type task, Kernel *kernel) {
   debug_print(" SP: 0x%X", task->task_sp_adr);
   struct MemorySpan task_ram_range =
       *(struct MemorySpan *)&kernel->task_RAM_ranges[task_index];
-  debug_print(" [0x%X - 0x%X]\n", task_ram_range.low, task_ram_range.high);
+  debug_print(" [0x%X - 0x%X] ", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {
     case READY:
