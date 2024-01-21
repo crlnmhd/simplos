@@ -12,7 +12,7 @@ bool test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_availa
   select_next_task(&given_kernel);
   CHECK_EQ(given_kernel.schedule.queue.queue_position, expected_queue_position,
            "%u");
-  return true;
+  return TEST_PASSED;
 }
 
 bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
@@ -30,7 +30,7 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
 
   select_next_task(&given_kernel);
   CHECK_EQ(next_task_sp, expected_scheduled_task_sp_adr, "0x%X");
-  return true;
+  return TEST_PASSED;
 }
 
 bool test_select_next_task_returns_index_of_selected_task(void) {
