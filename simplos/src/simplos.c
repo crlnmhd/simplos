@@ -11,12 +11,13 @@
 #include "memory_layout.h"
 #include "os.h"
 #include "scheduler.h"
+#include "simplos_types.h"
 #include "timers.h"
 
 void init_task_list(Task_Queue *queue) {
   warn_if_task_memory_can_not_be_divided_evenly_between_tasks();
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    taskptr_type task = (taskptr_type)&queue->tasks[i];
+    Simplos_Task *task = &queue->tasks[i];
     task->task_memory_block = i;
     task->time_counter = 0;
     task->task_sp_adr = task_sp_range_high(task->task_memory_block);
@@ -28,7 +29,7 @@ void init_task_list(Task_Queue *queue) {
 
 uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
-    taskptr_type task = (Simplos_Task *)&queue->tasks[i];
+    Simplos_Task *task = (Simplos_Task *)&queue->tasks[i];
     // Take if available
     if (task->status == EMPTY) {
       verbose_print("Initiating space for new function at block %u\n", i);
@@ -94,7 +95,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
 
   uint16_t const new_task_pid = new_task->pid;
 
-  taskptr_type old_task =
+  Simplos_Task *old_task =
       &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
 
   old_task->status = READY;
@@ -190,7 +191,7 @@ Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
 }
 
 enum Task_Status task_status(pid_type pid, Kernel *kernel) {
-  taskptr_type task = get_task(pid, kernel);
+  Simplos_Task *task = get_task(pid, kernel);
   if (task == NULL) {
     return EMPTY;
   }

@@ -15,13 +15,13 @@ enum MEM_REGION {
   UNKNOWN,
 };
 
-enum MEM_REGION memory_region(taskptr_type, Kernel *kernel);
+enum MEM_REGION memory_region(Simplos_Task *, Kernel *kernel);
 
 uint16_t task_sp_range_high(uint8_t task_index);
 
 uint16_t task_sp_range_low(uint8_t task_index);
 
-void assert_task_pointer_integrity(taskptr_type task_block, Kernel *kernel);
+void assert_task_pointer_integrity(Simplos_Task *task_block, Kernel *kernel);
 
 void warn_if_task_memory_can_not_be_divided_evenly_between_tasks(void);
 

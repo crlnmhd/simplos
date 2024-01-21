@@ -8,7 +8,7 @@
 #include "os.h"
 #include "simplos.h"
 
-void print_task(taskptr_type task, Kernel *kernel) {
+void print_task(Simplos_Task *task, Kernel *kernel) {
   if (task == NULL) {
     FATAL_ERROR("Error, task is NULL\n");
   }
