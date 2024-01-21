@@ -64,12 +64,13 @@ uint8_t select_next_task(Kernel *kernel_ptr) {
   } else {
     kernel_ptr->schedule.queue.queue_position--;
   }
-  const uint8_t new_task_index =
+  const uint8_t selected_task_index =
       kernel_ptr->schedule.queue
           .task_index_queue[kernel_ptr->schedule.queue.queue_position];
 
-  next_task_sp = kernel_ptr->schedule.queue.tasks[new_task_index].task_sp_adr;
-  return new_task_index;
+  next_task_sp =
+      kernel_ptr->schedule.queue.tasks[selected_task_index].task_sp_adr;
+  return selected_task_index;
 }
 void schedule_tasks(Kernel *kernel) { reschedule(kernel); }
 
