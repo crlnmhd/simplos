@@ -102,8 +102,8 @@ bool test_reschedule_does_not_reschedule_any_task_if_none_is_marke_ready(void) {
 
   schedule_with_three_active_tasks->queue.tasks[0].status = SLEEPING;
   schedule_with_three_active_tasks->queue.tasks[1].status = EMPTY;
-  schedule_with_three_active_tasks->queue.tasks[2].status = SCHEDULING;
-  schedule_with_three_active_tasks->queue.tasks[3].status = PAUSED_SCHEDULER;
+  schedule_with_three_active_tasks->queue.tasks[2].status = SCHEDULER;
+  schedule_with_three_active_tasks->queue.tasks[3].status = SCHEDULER;
   schedule_with_three_active_tasks->queue.tasks[4].status = RUNNING;
 
   schedule_with_three_active_tasks->queue.tasks[0].priority = 1;
@@ -140,7 +140,7 @@ bool test_reschedule_prioritizes_the_active_tasks_in_ascending_order_of_priority
   schedule_with_three_active_tasks->queue.tasks[3].priority = 10;  // C
   schedule_with_three_active_tasks->queue.tasks[4].priority = 7;   // B
 
-  schedule_with_three_active_tasks->queue.tasks[0].status = PAUSED_SCHEDULER;
+  schedule_with_three_active_tasks->queue.tasks[0].status = SCHEDULER;
   schedule_with_three_active_tasks->queue.tasks[1].status = READY;  // A
   schedule_with_three_active_tasks->queue.tasks[2].status = EMPTY;
   schedule_with_three_active_tasks->queue.tasks[3].status = READY;  // C

@@ -43,11 +43,8 @@ void print_task(taskptr_type task, Kernel *kernel) {
     case SLEEPING:
       debug_print("  SLEEPING");
       break;
-    case SCHEDULING:
-      debug_print("  SCHEDULING");
-      break;
-    case PAUSED_SCHEDULER:
-      debug_print("  PAUSED SCHEDULER");
+    case SCHEDULER:
+      debug_print("  SCHEDULER");
       break;
     default:
       debug_print("  STATUS UNKNOWN");

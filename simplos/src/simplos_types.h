@@ -13,8 +13,7 @@ enum Task_Status {
   READY,
   RUNNING,
   EMPTY,
-  SCHEDULING,
-  PAUSED_SCHEDULER
+  SCHEDULER,
 };
 
 typedef struct Simplos_Task_type {
