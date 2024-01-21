@@ -17,6 +17,11 @@ void print_task(taskptr_type task, Kernel *kernel) {
   BEGIN_DISCARD_VOLATILE_QUALIFIER_WARNING()
   char const *task_name = kernel->task_names[task_index];
   END_DISCARD_VOLATILE_QUALIFIER_WARNING()
+  if (kernel->schedule.active_task_block == task->task_memory_block) {
+    debug_print("* ");
+  } else {
+    debug_print("  ");
+  }
   debug_print("Task: \"%s\". Block: %u", task_name, task_index);
   debug_print(" PID: %u", task->pid);
   debug_print(" Priority: %u", task->priority);
