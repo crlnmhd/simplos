@@ -120,11 +120,19 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   ENABLE_MT();
   enable_interrupts();
   fn();
-  asm volatile("cli" ::: "memory");
-  SCILENT_DISABLE_MT();
-
-  kill_curr_task();  // kills task that run the function pointer
-  FATAL_ERROR("UNREACHABLE!");
+  /*
+   * The second thread of execution must not refer to the parameters passed to
+   * the function, since they are probably no longer valid and/or corrupted.
+   * */
+  asm volatile(
+      "cli                 \n\t"
+      "call kill_curr_task \n\t" /* Target*/
+      "unreachable:        \n\t"
+      "jmp unreachable     \n\t"
+      : /* No outputs */
+      : /* No inputs */
+      : /* No clobbers*/
+  );
 
 return_point:
   return new_task_pid;
