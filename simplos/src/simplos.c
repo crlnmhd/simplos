@@ -131,8 +131,7 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
       "jmp unreachable     \n\t"
       : /* No outputs */
       : /* No inputs */
-      : /* No clobbers*/
-  );
+      : "memory");
 
 return_point:
   return new_task_pid;
