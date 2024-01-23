@@ -109,6 +109,7 @@ CFLAGS := -std=gnu++20 $\
 					-Wswitch-enum $\
 					-Wconversion $\
 					-Wstrict-overflow $\
+					-Weffc++ $\
 					-Wno-aggressive-loop-optimizations $\
 					-fno-omit-frame-pointer $\
 					-fno-common $\
