@@ -11,6 +11,15 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
                                             const char *fmt,
                                             ...);
 
+// Workaround due to avr-libc issue #898
+// https://github.com/avrdudes/avr-libc/issues/898
+#undef FDEV_SETUP_STREAM
+#define FDEV_SETUP_STREAM(PU, GE, FL)                                      \
+  {                                                                        \
+    0 /* buf */, 0 /* unget */, FL /* flags */, 0 /* size */, 0 /* len */, \
+        PU /* put */, GE /* get */, 0 /* udata */                          \
+  }
+
 #define print_from_prg_mem(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
 #if defined(DEBUG_OUTPUT)

@@ -1,7 +1,6 @@
-#include <stdio.h>
-
 #include "hal/context_switch_macros.h"
 #include "hal/hal.h"
+#include "io_helpers.h"
 #include "simplos.h"
 #include "tasks.h"
 #include "timers.h"
@@ -17,15 +16,6 @@ volatile uint16_t next_task_sp
     __attribute((section(".next_task_sp_location"))) = 0;
 volatile uint16_t scheduler_task_sp
     __attribute((section(".scheduler_task_sp_location"))) = 0;
-
-// Workaround due to avr-libc issue #898
-// https://github.com/avrdudes/avr-libc/issues/898
-#undef FDEV_SETUP_STREAM
-#define FDEV_SETUP_STREAM(PU, GE, FL)                                      \
-  {                                                                        \
-    0 /* buf */, 0 /* unget */, FL /* flags */, 0 /* size */, 0 /* len */, \
-        PU /* put */, GE /* get */, 0 /* udata */                          \
-  }
 
 int main(void) {
 #ifdef MOCK_HAL
