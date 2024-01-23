@@ -31,8 +31,7 @@ void reschedule(Kernel *kernel) {
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
-uint8_t prioritize_tasks(Simplos_Task *volatile tasks,
-                         volatile uint8_t *out_priority_list) {
+uint8_t prioritize_tasks(Simplos_Task *tasks, uint8_t *out_priority_list) {
   uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
     for (uint8_t i = 0; i < TASKS_MAX; i++) {

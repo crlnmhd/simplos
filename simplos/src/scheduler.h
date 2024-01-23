@@ -21,8 +21,7 @@ void reschedule(Kernel *kernel);
  *
  * Return: number of prioritzed tasks
  * */
-uint8_t prioritize_tasks(Simplos_Task *tasks,
-                         volatile uint8_t *out_priority_list);
+uint8_t prioritize_tasks(Simplos_Task *tasks, uint8_t *out_priority_list);
 
 /*
  * Wrapper around start_scheduler that injects the (global) kernel.

@@ -110,7 +110,6 @@ CFLAGS := -std=gnu++20 $\
 					-Wconversion $\
 					-Wstrict-overflow $\
 					-Wno-aggressive-loop-optimizations $\
-					-Wno-volatile $\
 					-Wno-missing-field-initializers $\
 					-fno-omit-frame-pointer $\
 					-fno-common $\
