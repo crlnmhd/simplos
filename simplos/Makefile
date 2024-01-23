@@ -59,16 +59,23 @@ UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.c, $(DEBUG_BUILD)/%.unit_tes
 
 ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c)
 MAIN_FILE := $(SRC)/main.c
-SOURCES := $(filter-out $(MAIN_FILE), $(ALL_SOURCES))
+
+# Needed due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=48026
+ALWAYS_OPTIMIZED_FILES := $(SRC)/hal/serial.c
+
+SOURCES := $(filter-out $(MAIN_FILE) $(ALWAYS_OPTIMIZED_FILES), $(ALL_SOURCES))
 
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
+ALWAYS_OPTIMIZED_OBJECTS:= $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(ALWAYS_OPTIMIZED_FILES))
 TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(DEBUG_BUILD)/%.o, $(SOURCES))
+ALWAYS_OPTIMIZED_TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(DEBUG_BUILD)/%.o, $(ALWAYS_OPTIMIZED_FILES))
 
 ASM_SRC:= src/asm
 ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
 ASM_OBJECTS := $(patsubst $(ASM_SRC)/%.s, $(OBJ)/asm/%.o, $(ASM_SOURCES))
 
 ALL_OBJECTS := $(OBJECTS)
+ALL_OBJECTS += $(ALWAYS_OPTIMIZED_OBJECTS)
 ALL_OBJECTS += $(ASM_OBJECTS)
 
 SIMPLOS_EXECUTABLE := $(OBJ)/simplos.out
@@ -77,7 +84,7 @@ LATEST_EXECUTABLE_SOFTLINK := latest_executable
 UNIT_TEST_OUTPUT_FILE := unit_test_output.log
 
 .DEFAULT_GOAL := build
-CC := avr-gcc
+CC := avr-g++
 AVRINC := /usr/avr/include
 SIMAVR := simavr
 AVR_GDB := avr-gdb
@@ -85,24 +92,26 @@ SIMAVR_DEBUG := $(SIMAVR_DEBUG)
 
 BUILD_OPT_LEVEL := -O0
 DEBUG_OPT_LEVEL := -O0
+ALWAYS_OPTIMIZED_OPT_LEVEL := -Os
 
 UNIT_TEST_FLAGS :=	-g $\
 										-DMOCK_HAL $\
 										-Wno-unused-parameter
 
-
-CFLAGS := -Werror $\
-					-pedantic $\
+CFLAGS := -std=gnu++20 $\
+					-Werror $\
 					-Wall $\
+					-pedantic $\
 					-Wextra $\
-					-Wstrict-prototypes $\
+					-Wsuggest-attribute=const $\
 					-Wshadow $\
 					-Wpointer-arith $\
 					-Wswitch-enum $\
 					-Wconversion $\
 					-Wstrict-overflow $\
 					-Wno-aggressive-loop-optimizations $\
-					-std=gnu17 $\
+					-Wno-volatile $\
+					-Wno-missing-field-initializers $\
 					-fno-omit-frame-pointer $\
 					-fno-common $\
 					-fshort-enums $\
@@ -112,9 +121,8 @@ CFLAGS := -Werror $\
 					-mmcu=$(uP) $\
 					-I$(AVRINC) $\
 					-I/include/ $\
-					-g
 
-CLANGD_FLAGS := -ferror-limit=0 -Wno-language-extension-token $\
+CLANGD_FLAGS := -ferror-limit=0 -Wno-language-extension-token
 
 DATA_SECTIONS := 	-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
 									-Wl,--section-start=.next_task_sp_location=$(NEXT_TASK_SP_LOCATION) $\
@@ -166,22 +174,39 @@ build: compile_commands dir all
 build_tests: compile_commands dir all_test
 	ln -s -f $(UNIT_TESTS) $(LATEST_EXECUTABLE_SOFTLINK)
 
-all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
+all: $(ALL_OBJECTS) build/main.o $(ALWAYS_OPTIMZED)
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) $^ -o $(SIMPLOS_EXECUTABLE)
 	avr-size -A -x $(SIMPLOS_EXECUTABLE)
 
-all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
+all_test: $(TEST_OBJECTS) $(ALWAYS_OPTIMIZED_TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
 	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(UNIT_TESTS)
 	avr-size -A -x $(UNIT_TESTS)
 
 $(OBJ)/%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
+	set +e; 																																		\
+	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
+		opt_flag=$(ALWAYS_OPTIMIZED_OPT_LEVEL);																		\
+  else 																																				\
+		opt_flag=$(BUILD_OPT_LEVEL); 																							\
+	fi;                                                                      		\
+	echo "For file: " $< "This is the opt level: " $${opt_flag}; 								\
+	$(CC) $(CFLAGS) $${opt_flag} $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
 $(DEBUG_BUILD)/%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
+	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
+		opt_flag="-Os";																														\
+  else 																																				\
+		opt_flag=$(DEBUG_OPT_LEVEL); 																							\
+	fi ;                                                                     		\
+	$(CC) $(CFLAGS) $${opt_flag} $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
 $(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.c
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
+	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
+		opt_flag="-Os";																														\
+  else 																																				\
+		opt_flag=$(DEBUG_OPT_LEVEL); 																							\
+	fi ;                                                                     		\
+	$(CC) $(CFLAGS) $${opt_flag} $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
 
 $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@

@@ -1,3 +1,13 @@
+/*
+ * Note: Must be compiled with optimizations.
+ *
+ * G++ bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=48026 causes the
+ * includes to be evalugated *before* the pragmas. Optimizations thus do not
+ * affect the included files, as desired.
+ *
+ * A workaround is to handle this file separatly in the build system.
+ * */
+
 #pragma GCC push_options
 #pragma GCC optimize("Os")
 

@@ -19,7 +19,15 @@ uint8_t rank(void);
 pid_t pid(void);
 pid_t spawn(void (*fn)(void), uint8_t const priority, char const *name);
 void set_priority(uint8_t const priority);
+
+// Extern C for access from asm. Otherwise the name would be mangled.
+#ifdef __cplusplus
+extern "C" {
+#endif  // __cplusplus
 void kill_curr_task(void);
+#ifdef __cplusplus
+}
+#endif  // __cplusplus
 
 void wait_for_task_finnish(pid_t);
 

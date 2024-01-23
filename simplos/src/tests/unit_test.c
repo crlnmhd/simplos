@@ -3,6 +3,14 @@
 #include "test.h"
 #include "test_suite.h"
 
+// Workaround due to avr-libc issue #898
+// https://github.com/avrdudes/avr-libc/issues/898
+#undef FDEV_SETUP_STREAM
+#define FDEV_SETUP_STREAM(PU, GE, FL)                                      \
+  {                                                                        \
+    0 /* buf */, 0 /* unget */, FL /* flags */, 0 /* size */, 0 /* len */, \
+        PU /* put */, GE /* get */, 0 /* udata */                          \
+  }
 #define RUN_TEST_SUITE(test_fn, name, statistics) \
   (run_test_suite(test_fn, PSTR(name), statistics))
 
