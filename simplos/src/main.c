@@ -6,7 +6,7 @@
 #include "timers.h"
 
 volatile Kernel internal_kernel_location
-    __attribute((section(".kernel_data_location"))) = {0};
+    __attribute((section(".kernel_data_location"))) = {};
 volatile Kernel *volatile global_kernel = &internal_kernel_location;
 
 volatile uint16_t task_sp __attribute__((section(".task_sp_location"))) = 0;

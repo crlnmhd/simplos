@@ -5,7 +5,7 @@
 
 bool test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_available(
     void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
   given_kernel.schedule.queue.queue_position = 1;
   const uint8_t expected_queue_position = 0;
 
@@ -17,7 +17,7 @@ bool test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_availa
 
 bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
   next_task_sp = 0xFFFF;
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
   given_kernel.schedule.queue.queue_position = 1;
   const uint8_t expected_queue_position = 0;
 
@@ -34,7 +34,7 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
 }
 
 bool test_select_next_task_returns_index_of_selected_task(void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
   given_kernel.schedule.queue.queue_position = 1;
   const uint8_t expected_task_index = 4;
   given_kernel.schedule.queue.task_index_queue[0] = expected_task_index;
@@ -46,7 +46,7 @@ bool test_select_next_task_returns_index_of_selected_task(void) {
 
 bool test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready(
     void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
 
   given_kernel.schedule.queue.tasks[0].status = READY;
   given_kernel.schedule.queue.tasks[1].status = READY;
@@ -63,7 +63,7 @@ bool test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready(
   return TEST_PASSED;
 }
 bool test_prioritize_tasks_returns_number_of_tasks_with_status_ready(void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
 
   given_kernel.schedule.queue.tasks[0].status = SLEEPING;
   given_kernel.schedule.queue.tasks[1].status = READY;
@@ -81,7 +81,7 @@ bool test_prioritize_tasks_returns_number_of_tasks_with_status_ready(void) {
 }
 
 bool test_reschedule_reschedules_all_tasks_with_staus_ready(void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
   Scheduler *schedule_with_only_active_tasks = &given_kernel.schedule;
 
   schedule_with_only_active_tasks->queue.tasks[0].status = READY;
@@ -108,7 +108,7 @@ bool test_reschedule_reschedules_all_tasks_with_staus_ready(void) {
 }
 
 bool test_reschedule_does_not_reschedule_any_task_if_none_is_marke_ready(void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
   Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
 
   schedule_with_three_active_tasks->queue.tasks[0].status = SLEEPING;
@@ -142,7 +142,7 @@ bool test_reschedule_does_not_reschedule_any_task_if_none_is_marke_ready(void) {
 
 bool test_reschedule_prioritizes_the_active_tasks_in_ascending_order_of_priority(
     void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
   Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
 
   schedule_with_three_active_tasks->queue.tasks[0].priority = 4;
@@ -176,7 +176,7 @@ bool test_reschedule_prioritizes_the_active_tasks_in_ascending_order_of_priority
 }
 
 bool invalidate_scheduled_queue_sets_queue_position_to_zero(void) {
-  Kernel_type given_kernel = {0};
+  Kernel_type given_kernel = {};
   given_kernel.schedule.queue.queue_position = 4;
 
   invalidate_scheduled_queue(&given_kernel);
@@ -186,7 +186,7 @@ bool invalidate_scheduled_queue_sets_queue_position_to_zero(void) {
 }
 
 struct TestStatistics unit_test_scheduler(void) {
-  struct TestStatistics results = {0};
+  struct TestStatistics results = {};
   RUN_TEST(
       test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_available,
       &results);

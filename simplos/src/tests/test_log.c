@@ -94,7 +94,7 @@ bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
 }
 
 struct TestStatistics unit_test_hal_log(void) {
-  struct TestStatistics test_resutls = {0};
+  struct TestStatistics test_resutls = {};
 
   RUN_TEST(test_does_not_append_to_log_when_bufferspace_is_insufficiant,
            &test_resutls);

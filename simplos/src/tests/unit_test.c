@@ -17,7 +17,7 @@
       : /* No inputs */           \
       : "memory");
 
-volatile Kernel internal_kernel_location = {0};
+volatile Kernel internal_kernel_location = {};
 volatile Kernel *volatile kernel = &internal_kernel_location;
 
 volatile uint16_t task_sp = 0;
@@ -65,7 +65,7 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  struct TestStatistics test_results = {0};
+  struct TestStatistics test_results = {};
 
   RUN_TEST_SUITE(unit_test_hal_log, "Test the testing hal log", &test_results);
 

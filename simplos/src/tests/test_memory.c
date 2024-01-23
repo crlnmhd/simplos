@@ -10,7 +10,7 @@ volatile uint16_t at_prev_task_sp
     __attribute__((section(".prev_task_sp_location"))) = 0;
 
 volatile Kernel at_kernel_location
-    __attribute__((section(".kernel_data_location"))) = {0};
+    __attribute__((section(".kernel_data_location"))) = {};
 
 bool test_location_of_task_sp_is_readable_at_0x2100_to_0x2101(void) {
   at_task_sp = 0x0123;
@@ -116,7 +116,7 @@ bool test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack(void) {
 }
 
 struct TestStatistics unit_test_memory(void) {
-  struct TestStatistics results = {0};
+  struct TestStatistics results = {};
   RUN_TEST(test_location_of_task_sp_is_readable_at_0x2100_to_0x2101, &results);
 
   RUN_TEST(test_location_of_scheduler_task_sp_is_readable_at_0x20FE_to_0x20FF,
