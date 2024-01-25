@@ -11,7 +11,7 @@
 
 #ifdef MOCK_HAL  // FIXME: avoid knowledge about the mock hal
 #include <io_helpers.h>
-static Kernel *os_kernel_ptr = NULL;
+static Kernel *os_kernel_ptr = nullptr;
 
 void set_os_kernel(Kernel *kernel) { os_kernel_ptr = kernel; }
 
@@ -22,7 +22,7 @@ void __attribute__((noinline)) yield(void) { k_yield(); }
 
 Kernel *get_os_kernel(void) {
 #ifdef MOCK_HAL
-  if (os_kernel_ptr == NULL) {
+  if (os_kernel_ptr == nullptr) {
     FATAL_ERROR("No os kernel set for mock hal\n");
   }
   return os_kernel_ptr;
@@ -82,7 +82,7 @@ NORETURN void halt(void) {
 }
 void *malloc(size_t bytes) {
   if (bytes == 0) {
-    return NULL;
+    return nullptr;
   }
   // debug_print("Heap map located at: %p\n", kernel->heap_mapping);
   /*
@@ -90,5 +90,5 @@ void *malloc(size_t bytes) {
   uint8_t div = bytes / HEAP_PAGE_SIZE;
   uint8_t chunks_needed = 1;
   */
-  return NULL;
+  return nullptr;
 }

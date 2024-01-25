@@ -7,8 +7,8 @@
 #include "memory.h"
 
 void print_task(Simplos_Task *task, Kernel *kernel) {
-  if (task == NULL) {
-    FATAL_ERROR("Error, task is NULL\n");
+  if (task == nullptr) {
+    FATAL_ERROR("Error, task is nullptr\n");
   }
 
   uint8_t const task_index = task->task_memory_block;

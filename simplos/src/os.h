@@ -33,7 +33,8 @@ void wait_for_task_finnish(pid_t);
 
 void terminate(void);
 /*
- * Attempts to allocate 'bytes' of continuous memory. Returns NULL on failure.
+ * Attempts to allocate 'bytes' of continuous memory. Returns nullptr on
+ * failure.
  * */
 void *malloc(size_t bytes);
 

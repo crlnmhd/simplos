@@ -185,12 +185,12 @@ Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
     }
   }
   SCILENT_ENABLE_MT();
-  return NULL;
+  return nullptr;
 }
 
 enum Task_Status task_status(pid_type pid, Kernel *kernel) {
   Simplos_Task *task = get_task(pid, kernel);
-  if (task == NULL) {
+  if (task == nullptr) {
     return Task_Status::EMPTY;  // FIXME: bad choise
   }
   return task->status;
