@@ -5,8 +5,6 @@
 #include <string.h>
 
 #include "memory.h"
-#include "os.h"
-#include "simplos.h"
 
 void print_task(Simplos_Task *task, Kernel *kernel) {
   if (task == NULL) {
