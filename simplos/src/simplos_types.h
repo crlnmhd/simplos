@@ -8,7 +8,7 @@
 
 #define TASKS_MAX 5U
 
-enum Task_Status {
+enum class Task_Status {
   SLEEPING,
   READY,
   RUNNING,

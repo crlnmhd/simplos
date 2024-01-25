@@ -29,19 +29,19 @@ void print_task(Simplos_Task *task, Kernel *kernel) {
   debug_print(" [0x%X - 0x%X] ", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {
-    case READY:
+    case Task_Status::READY:
       debug_print("  READY");
       break;
-    case EMPTY:
+    case Task_Status::EMPTY:
       debug_print("  EMPTY");
       break;
-    case RUNNING:
+    case Task_Status::RUNNING:
       debug_print("  RUNNING");
       break;
-    case SLEEPING:
+    case Task_Status::SLEEPING:
       debug_print("  SLEEPING");
       break;
-    case SCHEDULER:
+    case Task_Status::SCHEDULER:
       debug_print("  SCHEDULER");
       break;
     default:

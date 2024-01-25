@@ -23,7 +23,7 @@ void init_task_list(Task_Queue *queue) {
     task->task_sp_adr = task_sp_range_high(task->task_memory_block);
     debug_print("Initiating mem block %u at 0x%X-0x%X\n", i,
                 task_sp_range_low(task->task_memory_block), task->task_sp_adr);
-    task->status = EMPTY;
+    task->status = Task_Status::EMPTY;
   }
 }
 
@@ -31,10 +31,10 @@ uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
   for (uint8_t i = 0; i < TASKS_MAX; ++i) {
     Simplos_Task *task = (Simplos_Task *)&queue->tasks[i];
     // Take if available
-    if (task->status == EMPTY) {
+    if (task->status == Task_Status::EMPTY) {
       verbose_print("Initiating space for new function at block %u\n", i);
       task->priority = priority;
-      task->status = READY;
+      task->status = Task_Status::READY;
       task->task_sp_adr = task_sp_range_high(task->task_memory_block);
       task->pid = UINT16_MAX;
       return i;
@@ -89,14 +89,14 @@ pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
   uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
 
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[new_task_index];
-  new_task->status = RUNNING;
+  new_task->status = Task_Status::RUNNING;
 
   uint16_t const new_task_pid = new_task->pid;
 
   Simplos_Task *old_task =
       &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
 
-  old_task->status = READY;
+  old_task->status = Task_Status::READY;
 
 #if defined(SW_TIME_MEASSREMENTS)
   old_task->time_counter += GET_TICK_COUNTER();
@@ -146,7 +146,7 @@ inline Index create_simplos_task(const char *name, const uint8_t priority,
                                  Kernel *kernel) {
   uint8_t const index = add_to_task_list(priority, &kernel->schedule.queue);
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
-  new_task->status = RUNNING;
+  new_task->status = Task_Status::RUNNING;
   new_task->pid = kernel->pid_cnt++;
   set_task_name(index, name, kernel);
 
@@ -168,7 +168,7 @@ void kill_current_task(Kernel *kernel) {
   uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(kernel);
 
   Simplos_Task *task = &kernel->schedule.queue.tasks[curr_task_index];
-  task->status = EMPTY;
+  task->status = Task_Status::EMPTY;
   task->task_sp_adr = task_sp_range_high(curr_task_index);
   kernel->task_names[curr_task_index][0] = '\0';
   kernel->ended_task_time_counter += task->time_counter;
@@ -191,7 +191,7 @@ Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
 enum Task_Status task_status(pid_type pid, Kernel *kernel) {
   Simplos_Task *task = get_task(pid, kernel);
   if (task == NULL) {
-    return EMPTY;
+    return Task_Status::EMPTY;  // FIXME: bad choise
   }
   return task->status;
 }

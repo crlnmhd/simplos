@@ -48,11 +48,11 @@ bool test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready(
     void) {
   Kernel_type given_kernel = {};
 
-  given_kernel.schedule.queue.tasks[0].status = READY;
-  given_kernel.schedule.queue.tasks[1].status = READY;
-  given_kernel.schedule.queue.tasks[2].status = READY;
-  given_kernel.schedule.queue.tasks[3].status = READY;
-  given_kernel.schedule.queue.tasks[4].status = READY;
+  given_kernel.schedule.queue.tasks[0].status = Task_Status::READY;
+  given_kernel.schedule.queue.tasks[1].status = Task_Status::READY;
+  given_kernel.schedule.queue.tasks[2].status = Task_Status::READY;
+  given_kernel.schedule.queue.tasks[3].status = Task_Status::READY;
+  given_kernel.schedule.queue.tasks[4].status = Task_Status::READY;
 
   const uint8_t num_prioritized_tasks =
       prioritize_tasks(given_kernel.schedule.queue.tasks,
@@ -65,11 +65,11 @@ bool test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready(
 bool test_prioritize_tasks_returns_number_of_tasks_with_status_ready(void) {
   Kernel_type given_kernel = {};
 
-  given_kernel.schedule.queue.tasks[0].status = SLEEPING;
-  given_kernel.schedule.queue.tasks[1].status = READY;
-  given_kernel.schedule.queue.tasks[2].status = EMPTY;
-  given_kernel.schedule.queue.tasks[3].status = READY;
-  given_kernel.schedule.queue.tasks[4].status = READY;
+  given_kernel.schedule.queue.tasks[0].status = Task_Status::SLEEPING;
+  given_kernel.schedule.queue.tasks[1].status = Task_Status::READY;
+  given_kernel.schedule.queue.tasks[2].status = Task_Status::EMPTY;
+  given_kernel.schedule.queue.tasks[3].status = Task_Status::READY;
+  given_kernel.schedule.queue.tasks[4].status = Task_Status::READY;
 
   const uint8_t num_prioritized_tasks =
       prioritize_tasks(given_kernel.schedule.queue.tasks,
@@ -84,11 +84,11 @@ bool test_reschedule_reschedules_all_tasks_with_staus_ready(void) {
   Kernel_type given_kernel = {};
   Scheduler *schedule_with_only_active_tasks = &given_kernel.schedule;
 
-  schedule_with_only_active_tasks->queue.tasks[0].status = READY;
-  schedule_with_only_active_tasks->queue.tasks[1].status = READY;
-  schedule_with_only_active_tasks->queue.tasks[2].status = READY;
-  schedule_with_only_active_tasks->queue.tasks[3].status = READY;
-  schedule_with_only_active_tasks->queue.tasks[4].status = READY;
+  schedule_with_only_active_tasks->queue.tasks[0].status = Task_Status::READY;
+  schedule_with_only_active_tasks->queue.tasks[1].status = Task_Status::READY;
+  schedule_with_only_active_tasks->queue.tasks[2].status = Task_Status::READY;
+  schedule_with_only_active_tasks->queue.tasks[3].status = Task_Status::READY;
+  schedule_with_only_active_tasks->queue.tasks[4].status = Task_Status::READY;
 
   schedule_with_only_active_tasks->queue.tasks[0].priority = 4;
   schedule_with_only_active_tasks->queue.tasks[1].priority = 0;
@@ -111,11 +111,15 @@ bool test_reschedule_does_not_reschedule_any_task_if_none_is_marke_ready(void) {
   Kernel_type given_kernel = {};
   Scheduler *schedule_with_three_active_tasks = &given_kernel.schedule;
 
-  schedule_with_three_active_tasks->queue.tasks[0].status = SLEEPING;
-  schedule_with_three_active_tasks->queue.tasks[1].status = EMPTY;
-  schedule_with_three_active_tasks->queue.tasks[2].status = SCHEDULER;
-  schedule_with_three_active_tasks->queue.tasks[3].status = SCHEDULER;
-  schedule_with_three_active_tasks->queue.tasks[4].status = RUNNING;
+  schedule_with_three_active_tasks->queue.tasks[0].status =
+      Task_Status::SLEEPING;
+  schedule_with_three_active_tasks->queue.tasks[1].status = Task_Status::EMPTY;
+  schedule_with_three_active_tasks->queue.tasks[2].status =
+      Task_Status::SCHEDULER;
+  schedule_with_three_active_tasks->queue.tasks[3].status =
+      Task_Status::SCHEDULER;
+  schedule_with_three_active_tasks->queue.tasks[4].status =
+      Task_Status::RUNNING;
 
   schedule_with_three_active_tasks->queue.tasks[0].priority = 1;
   schedule_with_three_active_tasks->queue.tasks[1].priority = 2;
@@ -151,11 +155,15 @@ bool test_reschedule_prioritizes_the_active_tasks_in_ascending_order_of_priority
   schedule_with_three_active_tasks->queue.tasks[3].priority = 10;  // C
   schedule_with_three_active_tasks->queue.tasks[4].priority = 7;   // B
 
-  schedule_with_three_active_tasks->queue.tasks[0].status = SCHEDULER;
-  schedule_with_three_active_tasks->queue.tasks[1].status = READY;  // A
-  schedule_with_three_active_tasks->queue.tasks[2].status = EMPTY;
-  schedule_with_three_active_tasks->queue.tasks[3].status = READY;  // C
-  schedule_with_three_active_tasks->queue.tasks[4].status = READY;  // B
+  schedule_with_three_active_tasks->queue.tasks[0].status =
+      Task_Status::SCHEDULER;
+  schedule_with_three_active_tasks->queue.tasks[1].status =
+      Task_Status::READY;  // A
+  schedule_with_three_active_tasks->queue.tasks[2].status = Task_Status::EMPTY;
+  schedule_with_three_active_tasks->queue.tasks[3].status =
+      Task_Status::READY;  // C
+  schedule_with_three_active_tasks->queue.tasks[4].status =
+      Task_Status::READY;  // B
 
   // Should not be touched.
   given_kernel.schedule.queue.task_index_queue[3] = (uint8_t)0xAA;

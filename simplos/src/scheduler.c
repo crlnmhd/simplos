@@ -35,7 +35,7 @@ uint8_t prioritize_tasks(Simplos_Task *tasks, uint8_t *out_priority_list) {
   uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
     for (uint8_t i = 0; i < TASKS_MAX; i++) {
-      const bool task_is_active = tasks[i].status == READY;
+      const bool task_is_active = tasks[i].status == Task_Status::READY;
       if (task_is_active && tasks[i].priority == priority) {
         out_priority_list[num_sored] = i;
         num_sored++;
@@ -82,7 +82,7 @@ void start_scheduler_with_os_kernel(void) {
 void start_scheduler(Kernel *kernel) {
   SCILENT_DISABLE_MT();
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
-      SCHEDULER;
+      Task_Status::SCHEDULER;
 
   SET_RETURN_POINT(scheduler_loop_entry_point);
   SAVE_CONTEXT()
@@ -116,16 +116,16 @@ void start_scheduler(Kernel *kernel) {
 }
 
 void handle_previous_task(Simplos_Task *prev, Kernel *kernel) {
-  if (prev->status == EMPTY) {
+  if (prev->status == Task_Status::EMPTY) {
     return;  // Validation of task sp is not required since the task is empty.
   }
 
-  if (prev->status == SCHEDULER) {
+  if (prev->status == Task_Status::SCHEDULER) {
     prev->task_sp_adr = scheduler_task_sp;
-    prev->status = SCHEDULER;
-  } else if (prev->status == RUNNING) {
+    prev->status = Task_Status::SCHEDULER;
+  } else if (prev->status == Task_Status::RUNNING) {
     prev->task_sp_adr = prev_task_sp;
-    prev->status = READY;
+    prev->status = Task_Status::READY;
   }
 #if defined(VERBOSE_OUTPUT)
   print_schedule(kernel);
@@ -166,13 +166,13 @@ void prepare_next_task(Simplos_Task *next,
   print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
   assert_task_pointer_integrity(next, kernel);
-  if (next->status == EMPTY) {
+  if (next->status == Task_Status::EMPTY) {
     FATAL_ERROR("Error, can not select an empty task!\n");
-  } else if (next->status == SCHEDULER) {
+  } else if (next->status == Task_Status::SCHEDULER) {
     FATAL_ERROR(
         "ERROR, Can not select scheduler task selected as next task!\n");
   } else {
-    next->status = RUNNING;
+    next->status = Task_Status::RUNNING;
   }
 }
 
