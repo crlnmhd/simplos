@@ -57,7 +57,7 @@ UNIT_TESTS_SRC := src/tests
 TEST_SOURCES := $(wildcard $(UNIT_TESTS_SRC)/*.c)
 UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.c, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
-ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c)
+ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c $(SRC)/user_tasks/*.c)
 MAIN_FILE := $(SRC)/main.c
 
 # Needed due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=48026
@@ -163,9 +163,11 @@ dir:
 	mkdir -p $(OBJ)/asm
 	mkdir -p $(OBJ)/tests
 	mkdir -p $(OBJ)/hal
+	mkdir -p $(OBJ)/user_tasks
 	mkdir -p $(LOG_DIR)
 	mkdir -p $(DEBUG_BUILD)
 	mkdir -p $(DEBUG_BUILD)/hal
+	mkdir -p $(DEBUG_BUILD)/user_tasks
 
 # Target to compile and generate database for clangd.
 build: compile_commands dir all

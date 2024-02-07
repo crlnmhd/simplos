@@ -2,8 +2,8 @@
 #include "hal/hal.h"
 #include "io_helpers.h"
 #include "simplos.h"
-#include "tasks.h"
 #include "timers.h"
+#include "user_tasks/idle_function.h"
 
 volatile Kernel internal_kernel_location
     __attribute((section(".kernel_data_location"))) = {};

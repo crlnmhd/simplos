@@ -1,10 +1,9 @@
-#include "tasks.h"
-
 #include <stdio.h>
 
-#include "io_helpers.h"
-#include "os.h"
-#include "scheduler.h"
+#include "../io_helpers.h"
+#include "../os.h"
+#include "../scheduler.h"
+#include "idle_function.h"
 
 volatile uint8_t shared_x = 5;
 
