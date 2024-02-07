@@ -16,6 +16,7 @@ class Log {
 
   bool add_entry(const char *entry);
   bool contains_entry(const char *expected_entry) const;
+  size_t available_space_bytes() const;
 
   char *buffer;
   char *end;

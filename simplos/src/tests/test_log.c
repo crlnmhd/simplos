@@ -15,9 +15,9 @@ bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
 
 bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
     void) {
-  const uint8_t sufficient_buffer_size = 10;
-  char buf[sufficient_buffer_size];
-  Log log{buf, sufficient_buffer_size};
+  const uint8_t specified_buffer_size = 10;
+  char buf[specified_buffer_size];
+  Log log{buf, specified_buffer_size};
   const size_t expected_buffer_size_after_addition = 6;
   const char *message = "Hej";  // 4 bytes including null terminator.
 
@@ -42,9 +42,9 @@ bool test_log_contains_entry_finds_entry_in_buffer(void) {
 }
 
 bool test_can_add_multiple_messages(void) {
-  const uint16_t sufficient_buffer_size = 30;
-  char buffer[sufficient_buffer_size];
-  Log log{buffer, sufficient_buffer_size};
+  const uint16_t specified_buffer_size = 30;
+  char buffer[specified_buffer_size];
+  Log log{buffer, specified_buffer_size};
 
   const char *entry_1 = "Hejsan";
   const char *entry_2 = "Svejsan";
@@ -61,15 +61,26 @@ bool test_can_add_multiple_messages(void) {
   return TEST_PASSED;
 }
 bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
-  const uint16_t sufficient_buffer_size = 15;
-  char buffer[sufficient_buffer_size];
-  Log log{buffer, sufficient_buffer_size};
+  const uint16_t specified_buffer_size = 15;
+  char buffer[specified_buffer_size];
+  Log log{buffer, specified_buffer_size};
 
   const char *real_log_entry = "Start";
   const char *not_in_log = "StartingWith";
 
   CHECK_TRUE(log.add_entry(real_log_entry));
   CHECK_FALSE(log.contains_entry(not_in_log));
+
+  return TEST_PASSED;
+}
+
+bool test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty(
+    void) {
+  const uint16_t specified_buffer_size = 15;
+  char buffer[specified_buffer_size];
+  Log log{buffer, specified_buffer_size};
+
+  CHECK_EQ(log.available_space_bytes(), specified_buffer_size, "%u");
 
   return TEST_PASSED;
 }
@@ -90,6 +101,10 @@ struct TestStatistics unit_test_hal_log(void) {
 
   RUN_TEST(test_does_not_falsely_find_log_entires_finding_in_log,
            &test_resutls);
+
+  RUN_TEST(
+      test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty,
+      &test_resutls);
 
   return test_resutls;
 }
