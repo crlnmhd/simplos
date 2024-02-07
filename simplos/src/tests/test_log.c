@@ -55,7 +55,7 @@ bool test_log_contains_entry_finds_entry_in_buffer(void) {
   const char *entry = "Hejsan";
 
   CHECK_TRUE(log.add_entry(entry));
-  CHECK_TRUE(log_contains_entry(&log, entry));
+  CHECK_TRUE(log.contains_entry(entry));
 
   return TEST_PASSED;
 }
@@ -73,9 +73,9 @@ bool test_can_add_multiple_messages(void) {
   CHECK_TRUE(log.add_entry(entry_2));
   CHECK_TRUE(log.add_entry(entry_3));
 
-  CHECK_TRUE(log_contains_entry(&log, entry_1));
-  CHECK_TRUE(log_contains_entry(&log, entry_3));  // try out of order access
-  CHECK_TRUE(log_contains_entry(&log, entry_2));
+  CHECK_TRUE(log.contains_entry(entry_1));
+  CHECK_TRUE(log.contains_entry(entry_3));  // try out of order access
+  CHECK_TRUE(log.contains_entry(entry_2));
 
   return TEST_PASSED;
 }
@@ -88,7 +88,7 @@ bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
   const char *not_in_log = "StartingWith";
 
   CHECK_TRUE(log.add_entry(real_log_entry));
-  CHECK_FALSE(log_contains_entry(&log, not_in_log));
+  CHECK_FALSE(log.contains_entry(not_in_log));
 
   return TEST_PASSED;
 }

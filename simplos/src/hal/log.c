@@ -42,7 +42,3 @@ bool Log::contains_entry(const char *expected_entry) const {
   }
   return false;
 }
-
-bool log_contains_entry(Log *log, const char *expected_entry) {
-  return log->contains_entry(expected_entry);
-}
