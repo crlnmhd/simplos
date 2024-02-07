@@ -1,10 +1,10 @@
 
-#include "io_helpers.h"
+#include "io_helpers.hpp"
 
-#include <stdio.h>
+#include <stdio.h>  // FIXME delete?
 #include <string.h>
 
-#include "memory.h"
+#include "memory.hpp"
 
 void print_task(Simplos_Task *task, Kernel *kernel) {
   if (task == nullptr) {

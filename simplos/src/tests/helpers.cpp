@@ -1,4 +1,4 @@
-#include "test.h"
+#include "test.hpp"
 
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
                        struct TestStatistics *statistics) {

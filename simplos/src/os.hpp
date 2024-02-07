@@ -47,7 +47,7 @@ void *malloc(size_t bytes);
 void halt(void);
 
 #ifdef MOCK_HAL
-#include "simplos_types.h"
+#include "simplos_types.hpp"
 void set_os_kernel(Kernel *kernel);
 #endif  // MOCK_HAL
 

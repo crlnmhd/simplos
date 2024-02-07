@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "memory_layout.h"
+#include "memory_layout.hpp"
 
 #define TASKS_MAX 5U
 

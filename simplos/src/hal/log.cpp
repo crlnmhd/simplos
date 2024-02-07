@@ -1,7 +1,7 @@
-#include "log.h"
+#include "log.hpp"
 
 #ifndef MOCK_HAL
-#include "../io_helpers.h"
+#include "../io_helpers.hpp"
 #endif  // MOCK_HAL
 
 #include <stdint.h>

@@ -54,21 +54,21 @@ DEBUG_BUILD := tests
 LOG_DIR := log
 
 UNIT_TESTS_SRC := src/tests
-TEST_SOURCES := $(wildcard $(UNIT_TESTS_SRC)/*.c)
-UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.c, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
+TEST_SOURCES := $(wildcard $(UNIT_TESTS_SRC)/*.cpp)
+UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.cpp, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
-ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c $(SRC)/user_tasks/*.c)
-MAIN_FILE := $(SRC)/main.c
+ALL_SOURCES := $(wildcard $(SRC)/*.cpp $(SRC)/hal/*.cpp $(SRC)/user_tasks/*.cpp)
+MAIN_FILE := $(SRC)/main.cpp
 
 # Needed due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=48026
-ALWAYS_OPTIMIZED_FILES := $(SRC)/hal/serial.c
+ALWAYS_OPTIMIZED_FILES := $(SRC)/hal/serial.cpp
 
 SOURCES := $(filter-out $(MAIN_FILE) $(ALWAYS_OPTIMIZED_FILES), $(ALL_SOURCES))
 
-OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
-ALWAYS_OPTIMIZED_OBJECTS:= $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(ALWAYS_OPTIMIZED_FILES))
-TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(DEBUG_BUILD)/%.o, $(SOURCES))
-ALWAYS_OPTIMIZED_TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(DEBUG_BUILD)/%.o, $(ALWAYS_OPTIMIZED_FILES))
+OBJECTS := $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
+ALWAYS_OPTIMIZED_OBJECTS:= $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(ALWAYS_OPTIMIZED_FILES))
+TEST_OBJECTS := $(patsubst $(SRC)/%.cpp, $(DEBUG_BUILD)/%.o, $(SOURCES))
+ALWAYS_OPTIMIZED_TEST_OBJECTS := $(patsubst $(SRC)/%.cpp, $(DEBUG_BUILD)/%.o, $(ALWAYS_OPTIMIZED_FILES))
 
 ASM_SRC:= src/asm
 ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
@@ -138,7 +138,7 @@ FRAMEWORK := wiring
 .PHONY: %.compdb_entry compile_commands dir all all_test log
 
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
-%.compdb_entry: %.c
+%.compdb_entry: %.cpp
 	@echo "    {"                                                           		>  $@
 	@echo "        \"command\": \"$(CC) $(CFLAGS) $(CLANGD_FLAGS) $(DATA_SECTIONS) -c $<\"," 	>> $@
 	@echo "        \"directory\": \"$(CURDIR)\","            										>> $@
@@ -184,7 +184,7 @@ all_test: $(TEST_OBJECTS) $(ALWAYS_OPTIMIZED_TEST_OBJECTS) $(UNIT_TEST_OBJECTS) 
 	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(UNIT_TESTS)
 	avr-size -A -x $(UNIT_TESTS)
 
-$(OBJ)/%.o: $(SRC)/%.c
+$(OBJ)/%.o: $(SRC)/%.cpp
 	set +e; 																																		\
 	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
 		opt_flag=$(ALWAYS_OPTIMIZED_OPT_LEVEL);																		\
@@ -194,7 +194,7 @@ $(OBJ)/%.o: $(SRC)/%.c
 	echo "For file: " $< "This is the opt level: " $${opt_flag}; 								\
 	$(CC) $(CFLAGS) $${opt_flag} $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
-$(DEBUG_BUILD)/%.o: $(SRC)/%.c
+$(DEBUG_BUILD)/%.o: $(SRC)/%.cpp
 	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
 		opt_flag="-Os";																														\
   else 																																				\
@@ -202,7 +202,7 @@ $(DEBUG_BUILD)/%.o: $(SRC)/%.c
 	fi ;                                                                     		\
 	$(CC) $(CFLAGS) $${opt_flag} $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
-$(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.c
+$(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.cpp
 	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
 		opt_flag="-Os";																														\
   else 																																				\

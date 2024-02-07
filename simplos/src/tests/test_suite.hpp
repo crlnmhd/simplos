@@ -1,7 +1,7 @@
 #ifndef TEST_SUITE_H_
 #define TEST_SUITE_H_
 
-#include "test.h"
+#include "test.hpp"
 
 struct TestStatistics unit_test_context_switch(void);
 

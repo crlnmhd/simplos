@@ -18,7 +18,7 @@ extern volatile uint16_t scheduler_task_sp;
 #endif
 
 #ifdef MOCK_HAL  // FIXME: avoid if possible
-#include "log.h"
+#include "log.hpp"
 // TODO: save list of called commands?
 struct HardwareState {
   bool interrupt_enabled;

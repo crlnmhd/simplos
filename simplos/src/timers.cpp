@@ -1,9 +1,9 @@
-#include "timers.h"
+#include "timers.hpp"
 
 #include <stdio.h>
 
-#include "hal/hal.h"
-#include "io_helpers.h"
+#include "hal/hal.hpp"
+#include "io_helpers.hpp"
 
 void init_scheduler_interupts(void) {
   debug_print("Setting up interrupts\n");

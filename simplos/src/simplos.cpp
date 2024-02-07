@@ -1,18 +1,18 @@
-#include "simplos.h"
+#include "simplos.hpp"
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "hal/context_switch_macros.h"
-#include "hal/hal.h"
-#include "io_helpers.h"
-#include "memory.h"
-#include "memory_layout.h"
-#include "os.h"
-#include "scheduler.h"
-#include "simplos_types.h"
-#include "timers.h"
+#include "hal/context_switch_macros.hpp"
+#include "hal/hal.hpp"
+#include "io_helpers.hpp"
+#include "memory.hpp"
+#include "memory_layout.hpp"
+#include "os.hpp"
+#include "scheduler.hpp"
+#include "simplos_types.hpp"
+#include "timers.hpp"
 
 void init_task_list(Task_Queue *queue) {
   warn_if_task_memory_can_not_be_divided_evenly_between_tasks();

@@ -1,15 +1,15 @@
-#include "scheduler.h"
+#include "scheduler.hpp"
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
-#include "hal/context_switch_macros.h"
-#include "hal/hal.h"
-#include "io_helpers.h"
-#include "simplos.h"
-#include "simplos_types.h"
-#include "timers.h"
+#include "hal/context_switch_macros.hpp"
+#include "hal/hal.hpp"
+#include "io_helpers.hpp"
+#include "simplos.hpp"
+#include "simplos_types.hpp"
+#include "timers.hpp"
 
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);

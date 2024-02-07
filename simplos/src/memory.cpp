@@ -1,12 +1,13 @@
-#include "memory_layout.h"
-#include "simplos.h"
 #define _GNU_SOURCE
+#include "memory.hpp"
+
 #include <stdint.h>
 
-#include "hal/hal.h"
-#include "io_helpers.h"
-#include "memory.h"
-#include "simplos_types.h"
+#include "hal/hal.hpp"
+#include "io_helpers.hpp"
+#include "memory_layout.hpp"
+#include "simplos.hpp"
+#include "simplos_types.hpp"
 
 void verify_canaries(void);
 bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_number, Kernel *kernel);

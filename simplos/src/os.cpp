@@ -1,16 +1,16 @@
-#include "os.h"
+#include "os.hpp"
 
 #include <string.h>
 
-#include "hal/hal.h"
-#include "io_helpers.h"
-#include "memory_layout.h"
-#include "simplos.h"
-#include "simplos_types.h"
-#include "timers.h"
+#include "hal/hal.hpp"
+#include "io_helpers.hpp"
+#include "memory_layout.hpp"
+#include "simplos.hpp"
+#include "simplos_types.hpp"
+#include "timers.hpp"
 
 #ifdef MOCK_HAL  // FIXME: avoid knowledge about the mock hal
-#include <io_helpers.h>
+#include <io_helpers.hpp>
 static Kernel *os_kernel_ptr = nullptr;
 
 void set_os_kernel(Kernel *kernel) { os_kernel_ptr = kernel; }

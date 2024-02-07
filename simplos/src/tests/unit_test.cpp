@@ -1,7 +1,7 @@
-#include "../hal/hal.h"
-#include "../simplos_types.h"
-#include "test.h"
-#include "test_suite.h"
+#include "../hal/hal.hpp"
+#include "../simplos_types.hpp"
+#include "test.hpp"
+#include "test_suite.hpp"
 
 // Workaround due to avr-libc issue #898
 // https://github.com/avrdudes/avr-libc/issues/898

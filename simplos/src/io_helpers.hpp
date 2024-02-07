@@ -4,8 +4,8 @@
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 
-#include "hal/hal.h"  // used by macros
-#include "simplos_types.h"
+#include "hal/hal.hpp"  // used by macros
+#include "simplos_types.hpp"
 
 void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
                                             const char *fmt,
@@ -21,6 +21,9 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
   }
 
 #define print_from_prg_mem(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
+
+// void print(const uint8_t u8) { print_from_prg_mem("%u", u8); }
+// void print(const uint16_t u16) { print_from_prg_mem("%ul", u16); }
 
 #if defined(DEBUG_OUTPUT)
 #define debug_print(fmt, ...) print_from_prg_mem(fmt, ##__VA_ARGS__);

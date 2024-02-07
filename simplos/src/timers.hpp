@@ -1,7 +1,7 @@
 #ifndef TIMERS_H
 #define TIMERS_H
 
-#include "io_helpers.h"
+#include "io_helpers.hpp"
 
 #define ENABLE_MT()    \
   SCILENT_ENABLE_MT(); \

@@ -3,7 +3,7 @@
 #define MEMORY_H_
 #include <stdint.h>
 
-#include "simplos_types.h"
+#include "simplos_types.hpp"
 
 enum MEM_REGION {
   REGISTERS = 0,

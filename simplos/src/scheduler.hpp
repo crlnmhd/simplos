@@ -1,7 +1,7 @@
 #ifndef SCHEDULER_H_
 #define SCHEDULER_H_
 
-#include "simplos_types.h"
+#include "simplos_types.hpp"
 /*
   Set curr_task_index for the schedule and return it.
 */

@@ -1,5 +1,5 @@
-#include "../memory.h"
-#include "test.h"
+#include "../memory.hpp"
+#include "test.hpp"
 
 volatile uint16_t at_task_sp __attribute__((section(".task_sp_location"))) = 0;
 volatile uint16_t at_scheduler_task_sp

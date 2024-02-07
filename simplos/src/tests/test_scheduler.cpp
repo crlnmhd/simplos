@@ -1,7 +1,7 @@
-#include "../hal/hal.h"
-#include "../scheduler.h"
-#include "test.h"
-#include "test_suite.h"
+#include "../hal/hal.hpp"
+#include "../scheduler.hpp"
+#include "test.hpp"
+#include "test_suite.hpp"
 
 bool test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_available(
     void) {

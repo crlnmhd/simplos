@@ -1,8 +1,8 @@
 #if !defined(SIMPLOS_H_)
 #define SIMPLOS_H_
 
-#include "memory.h"
-#include "simplos_types.h"
+#include "memory.hpp"
+#include "simplos_types.hpp"
 
 #define INLINED static inline __attribute__((always_inline))
 

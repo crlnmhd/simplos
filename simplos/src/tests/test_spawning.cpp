@@ -1,5 +1,5 @@
-#include "test.h"
-#include "test_suite.h"
+#include "test.hpp"
+#include "test_suite.hpp"
 
 bool test_spawn_task_creates_new_simplos_task(void) { return true; }
 

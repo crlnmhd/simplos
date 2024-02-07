@@ -10,7 +10,7 @@
     "Test header can not be included in non-test mode due to memory contraints."
 #endif  // MOCK_HAL
 
-#include "../io_helpers.h"
+#include "../io_helpers.hpp"
 #define TEST_PASSED true
 
 struct TestStatistics {

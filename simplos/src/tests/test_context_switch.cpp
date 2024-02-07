@@ -1,7 +1,7 @@
-#include "../hal/context_switch_macros.h"
-#include "../hal/hal.h"
-#include "test.h"
-#include "test_suite.h"
+#include "../hal/context_switch_macros.hpp"
+#include "../hal/hal.hpp"
+#include "test.hpp"
+#include "test_suite.hpp"
 /*
  * Pushes three canaries (0xAA) onto the stack. See CHECK_STACK_CANARIES.
  * */

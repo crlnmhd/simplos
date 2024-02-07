@@ -1,9 +1,9 @@
-#include "hal/context_switch_macros.h"
-#include "hal/hal.h"
-#include "io_helpers.h"
-#include "simplos.h"
-#include "timers.h"
-#include "user_tasks/idle_function.h"
+#include "hal/context_switch_macros.hpp"
+#include "hal/hal.hpp"
+#include "io_helpers.hpp"
+#include "simplos.hpp"
+#include "timers.hpp"
+#include "user_tasks/idle_function.hpp"
 
 volatile Kernel internal_kernel_location
     __attribute((section(".kernel_data_location"))) = {};

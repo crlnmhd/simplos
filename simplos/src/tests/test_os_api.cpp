@@ -1,5 +1,5 @@
-#include "test.h"
-#include "test_suite.h"
+#include "test.hpp"
+#include "test_suite.hpp"
 
 bool test_get_task_disables_mt_on_exit(void) { return TEST_PASSED; }
 
