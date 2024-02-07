@@ -14,6 +14,8 @@ class Log {
     // FIXME: Handle insufficient buffer
   }
 
+  bool add_entry(const char *entry);
+
   char *buffer;
   char *end;
   size_t num_buffer_bytes_remaining;

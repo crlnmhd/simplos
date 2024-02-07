@@ -7,21 +7,25 @@
 #include <stdint.h>
 #include <string.h>
 
-bool add_log_entry(Log *log, const char *message) {
+bool Log::add_entry(const char *message) {
   const size_t message_lenght_with_terminator = strlen(message) + 1;
-  if (message_lenght_with_terminator > log->num_buffer_bytes_remaining) {
+  if (message_lenght_with_terminator > this->num_buffer_bytes_remaining) {
 #ifndef MOCK_HAL  // Surpess mesasge in test mode.
     WARNING("Unable to add entry: '%s' to log. Insufficient buffer space.\n",
             message);
 #endif  // MOCK_HAL
     return false;
   }
-  memcpy(log->end, message, message_lenght_with_terminator);
+  memcpy(this->end, message, message_lenght_with_terminator);
 
-  log->end += message_lenght_with_terminator;
-  log->num_buffer_bytes_remaining -= message_lenght_with_terminator;
+  this->end += message_lenght_with_terminator;
+  this->num_buffer_bytes_remaining -= message_lenght_with_terminator;
 
   return true;
+}
+
+bool add_log_entry(Log *log, const char *message) {
+  return log->add_entry(message);
 }
 
 bool log_contains_entry(Log *log, const char *expected_entry) {
