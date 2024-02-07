@@ -22,7 +22,8 @@ bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
   const char *message = "Hej";  // 4 bytes including null terminator.
 
   CHECK_TRUE(log.add_entry(message));
-  CHECK_EQ(log.num_buffer_bytes_remaining, expected_buffer_size_after_addition,
+
+  CHECK_EQ(log.available_space_bytes(), expected_buffer_size_after_addition,
            "%zu");
 
   return TEST_PASSED;
