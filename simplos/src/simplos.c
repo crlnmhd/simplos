@@ -136,14 +136,13 @@ return_point:
   return new_task_pid;
 }
 
-inline void set_task_name(const Index task_index, const char *name,
-                          Kernel *kernel) {
+void set_task_name(const Index task_index, const char *name, Kernel *kernel) {
   strlcpy((char *)kernel->task_names[task_index], name,
           FUNCTION_NAME_MAX_LENGTH + 1);
 }
 
-inline Index create_simplos_task(const char *name, const uint8_t priority,
-                                 Kernel *kernel) {
+Index create_simplos_task(const char *name, const uint8_t priority,
+                          Kernel *kernel) {
   uint8_t const index = add_to_task_list(priority, &kernel->schedule.queue);
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
   new_task->status = Task_Status::RUNNING;
