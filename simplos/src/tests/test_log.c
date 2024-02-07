@@ -1,8 +1,8 @@
 #include "../hal/log.h"
-#include "../io_helpers.h"
 #include "string.h"
 #include "test.h"
 #include "test_suite.h"
+
 bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   const uint8_t buf_size = 3;
   char buf[buf_size];
