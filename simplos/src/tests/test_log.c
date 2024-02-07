@@ -6,7 +6,7 @@
 bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   const uint8_t buf_size = 3;
   char buf[buf_size];
-  struct Log log = init_log(buf, buf_size);
+  Log log = init_log(buf, buf_size);
   const char *too_long_message = "Hej";  // 4 bytes including null terminator.
 
   CHECK_FALSE(add_log_entry(&log, too_long_message));
@@ -17,7 +17,7 @@ bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
     void) {
   const uint8_t sufficient_buffer_size = 10;
   char buf[sufficient_buffer_size];
-  struct Log log = init_log(buf, sufficient_buffer_size);
+  Log log = init_log(buf, sufficient_buffer_size);
   const size_t expected_buffer_size_after_addition = 6;
   const char *message = "Hej";  // 4 bytes including null terminator.
 
@@ -31,7 +31,7 @@ bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
 bool test_adds_message_to_the_end_of_the_given_buffer(void) {
   const uint8_t sufficient_buffer_size = 10;
   char buf[sufficient_buffer_size];
-  struct Log log = init_log(buf, sufficient_buffer_size);
+  Log log = init_log(buf, sufficient_buffer_size);
   const size_t expected_message_lenght = 4;
   const char *message = "Hej";  // 4 bytes including null terminator.
 
@@ -50,7 +50,7 @@ bool test_adds_message_to_the_end_of_the_given_buffer(void) {
 bool test_log_contains_entry_finds_entry_in_buffer(void) {
   const uint16_t buffer_size = 10;
   char buffer[buffer_size];
-  struct Log log = init_log(buffer, buffer_size);
+  Log log = init_log(buffer, buffer_size);
 
   const char *entry = "Hejsan";
 
@@ -63,7 +63,7 @@ bool test_log_contains_entry_finds_entry_in_buffer(void) {
 bool test_can_add_multiple_messages(void) {
   const uint16_t sufficient_buffer_size = 30;
   char buffer[sufficient_buffer_size];
-  struct Log log = init_log(buffer, sufficient_buffer_size);
+  Log log = init_log(buffer, sufficient_buffer_size);
 
   const char *entry_1 = "Hejsan";
   const char *entry_2 = "Svejsan";
@@ -82,7 +82,7 @@ bool test_can_add_multiple_messages(void) {
 bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
   const uint16_t sufficient_buffer_size = 15;
   char buffer[sufficient_buffer_size];
-  struct Log log = init_log(buffer, sufficient_buffer_size);
+  Log log = init_log(buffer, sufficient_buffer_size);
 
   const char *real_log_entry = "Start";
   const char *not_in_log = "StartingWith";

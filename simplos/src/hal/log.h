@@ -7,13 +7,14 @@
  * matching calls made though the testing hal withouth causing side effects.
  * */
 
-struct Log {
+class Log {
+ public:
   char *buffer;
   size_t num_buffer_bytes_remaining;
   char *end;
 };
 
-bool add_log_entry(struct Log *log, const char *entry);
-struct Log init_log(char *buffer, const size_t buf_size);
-bool log_contains_entry(struct Log *log, const char *expected_entry);
+bool add_log_entry(Log *log, const char *entry);
+Log init_log(char *buffer, const size_t buf_size);
+bool log_contains_entry(Log *log, const char *expected_entry);
 #endif  // LOG_H_
