@@ -16,34 +16,36 @@ enum class Task_Status {
   SCHEDULER,
 };
 
-typedef struct Simplos_Task {
+class Simplos_Task {
+ public:
   uint32_t time_counter;
   uint16_t task_sp_adr;
   uint16_t pid;
   uint8_t task_memory_block;
   uint8_t priority;
   enum Task_Status status;
-} Simplos_Task;
+};
 
-typedef struct Task_Queue_type {
+class Task_Queue {
+ public:
   Simplos_Task tasks[TASKS_MAX];
   uint8_t task_index_queue[TASK_QUEUE_LENGTH];
   uint8_t queue_position;
-} Task_Queue_type;
-typedef Task_Queue_type Task_Queue;
+};
 
-typedef struct Scheduler_type {
+class Scheduler {
+ public:
   Task_Queue queue;
   uint16_t os_task_sp;
   uint8_t active_task_block;
   uint8_t task_scheduled;  // used as a boolean
-} Scheduler_type;
-typedef Scheduler_type Scheduler;
+};
 
 typedef uint16_t pid_type;
 
 // TODO use this for all global variables.
-typedef struct Kernel_type {
+class Kernel {
+ public:
   Scheduler schedule;
   char task_names[TASKS_MAX][FUNCTION_NAME_MAX_LENGTH + 1];
   struct MemorySpan task_RAM_ranges[TASKS_MAX];
@@ -52,7 +54,7 @@ typedef struct Kernel_type {
   uint16_t heap_start;  // dynamically determined by the RAM needed for the init
                         // section (main function).
   uint16_t pid_cnt;
-} Kernel_type;
-typedef Kernel_type Kernel;
+};
+typedef Kernel Kernel_type;
 
 #endif  // SIMPLOS_TYPES_H_
