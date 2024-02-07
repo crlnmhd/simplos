@@ -9,12 +9,16 @@
 
 class Log {
  public:
+  Log(char *buf, const size_t buf_size)
+      : buffer(buf), end(buffer), num_buffer_bytes_remaining(buf_size) {
+    // FIXME: Handle insufficient buffer
+  }
+
   char *buffer;
-  size_t num_buffer_bytes_remaining;
   char *end;
+  size_t num_buffer_bytes_remaining;
 };
 
 bool add_log_entry(Log *log, const char *entry);
-Log init_log(char *buffer, const size_t buf_size);
 bool log_contains_entry(Log *log, const char *expected_entry);
 #endif  // LOG_H_

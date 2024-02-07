@@ -24,13 +24,6 @@ bool add_log_entry(Log *log, const char *message) {
   return true;
 }
 
-Log init_log(char *buffer, const size_t buf_size) {
-  // FIXME: Handle insufficient buffer
-  Log log = {
-      .buffer = buffer, .num_buffer_bytes_remaining = buf_size, .end = buffer};
-  return log;
-}
-
 bool log_contains_entry(Log *log, const char *expected_entry) {
   const uint16_t expected_entry_length = strlen(expected_entry);
 
