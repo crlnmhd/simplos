@@ -16,18 +16,17 @@ enum class Task_Status {
   SCHEDULER,
 };
 
-typedef struct Simplos_Task_type {
+typedef struct Simplos_Task {
   uint32_t time_counter;
   uint16_t task_sp_adr;
   uint16_t pid;
   uint8_t task_memory_block;
   uint8_t priority;
   enum Task_Status status;
-} Simplos_Task_type;
-typedef Simplos_Task_type Simplos_Task;
+} Simplos_Task;
 
 typedef struct Task_Queue_type {
-  Simplos_Task_type tasks[TASKS_MAX];
+  Simplos_Task tasks[TASKS_MAX];
   uint8_t task_index_queue[TASK_QUEUE_LENGTH];
   uint8_t queue_position;
 } Task_Queue_type;
