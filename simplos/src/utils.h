@@ -10,6 +10,12 @@ class DeletedDefaultImplementations {
   DeletedDefaultImplementations(DeletedDefaultImplementations &&) = delete;
   DeletedDefaultImplementations &operator=(DeletedDefaultImplementations &&) =
       delete;
+
+ protected:
+  struct token {
+    explicit token() = default;
+  };
+  DeletedDefaultImplementations(token) {}
 };
 
 #endif  // UTILS_HPP_
