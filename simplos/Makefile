@@ -104,6 +104,7 @@ CFLAGS := -std=gnu++20 $\
 					-pedantic $\
 					-Wextra $\
 					-Wsuggest-attribute=const $\
+					-Wno-error=suggest-attribute=const $\
 					-Wshadow $\
 					-Wpointer-arith $\
 					-Wswitch-enum $\
