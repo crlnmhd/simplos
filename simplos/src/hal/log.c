@@ -24,16 +24,12 @@ bool Log::add_entry(const char *message) {
   return true;
 }
 
-bool add_log_entry(Log *log, const char *message) {
-  return log->add_entry(message);
-}
-
-bool log_contains_entry(Log *log, const char *expected_entry) {
+bool Log::contains_entry(const char *expected_entry) const {
   const uint16_t expected_entry_length = strlen(expected_entry);
 
-  char *next_entry = log->buffer;
+  char *next_entry = this->buffer;
   uint16_t next_entry_length = strlen(next_entry);
-  while (next_entry + next_entry_length <= log->end) {
+  while (next_entry + next_entry_length <= this->end) {
     if (expected_entry_length == next_entry_length) {
       const int comparison_found_and_expected =
           strcmp(next_entry, expected_entry);
@@ -45,4 +41,8 @@ bool log_contains_entry(Log *log, const char *expected_entry) {
     next_entry_length = strlen(next_entry);
   }
   return false;
+}
+
+bool log_contains_entry(Log *log, const char *expected_entry) {
+  return log->contains_entry(expected_entry);
 }
