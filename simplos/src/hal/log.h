@@ -18,6 +18,7 @@ class Log {
   bool contains_entry(const char *expected_entry) const;
   size_t available_space_bytes() const;
 
+ private:
   char *buffer;
   char *end;
   size_t num_buffer_bytes_remaining;
