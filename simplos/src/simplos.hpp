@@ -70,7 +70,6 @@ enum Task_Status task_status(pid_type pid, Kernel *kernel);
 void kill_current_task(Kernel *kernel);
 
 typedef uint8_t Index;
-void set_task_name(Index task_index, const char *name, Kernel *kernel);
 Index create_simplos_task(const char *name, const uint8_t priority,
                           Kernel *kernel);
 

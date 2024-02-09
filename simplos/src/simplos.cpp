@@ -67,7 +67,7 @@ void init_kernel(Kernel *kernel) {
   kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
-    set_task_name(i, "", kernel);
+    kernel->set_task_name(i, "");
 
     // Set task RAM range.
     struct MemorySpan *task_stack_range = &kernel->task_RAM_ranges[i];
@@ -136,18 +136,13 @@ return_point:
   return new_task_pid;
 }
 
-void set_task_name(const Index task_index, const char *name, Kernel *kernel) {
-  strlcpy((char *)kernel->task_names[task_index], name,
-          FUNCTION_NAME_MAX_LENGTH + 1);
-}
-
 Index create_simplos_task(const char *name, const uint8_t priority,
                           Kernel *kernel) {
   uint8_t const index = add_to_task_list(priority, &kernel->schedule.queue);
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
   new_task->status = Task_Status::RUNNING;
   new_task->pid = kernel->pid_cnt++;
-  set_task_name(index, name, kernel);
+  kernel->set_task_name(index, name);
 
   debug_print("Created simplos task %s with pid %u\n", name, new_task->pid);
   return index;
