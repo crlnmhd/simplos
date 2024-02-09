@@ -17,9 +17,10 @@ bool test_set_name_sets_name_of_task() {
   const char *given_task_name = "Task 1";
 
   kernel.set_task_name(task_index, given_task_name);
+  Simplos_Task *task = &kernel.schedule.queue.tasks[task_index];
 
   const bool task_name_is_equal_to_expected =
-      !strcmp(kernel.task_names[task_index],
+      !strcmp(task->name,
               given_task_name);  // bounded strncmp  not available
 
   CHECK_TRUE(task_name_is_equal_to_expected);

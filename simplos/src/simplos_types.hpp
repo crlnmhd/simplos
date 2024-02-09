@@ -20,6 +20,7 @@ class Simplos_Task {
  public:
   Simplos_Task()
       : time_counter(),
+        name(nullptr),
         task_sp_adr(0),
         pid(0),
         task_memory_block(0),
@@ -27,6 +28,7 @@ class Simplos_Task {
         status(Task_Status::EMPTY){};
 
   uint32_t time_counter;
+  const char *name;
   uint16_t task_sp_adr;
   uint16_t pid;
   uint8_t task_memory_block;
