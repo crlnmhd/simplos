@@ -164,7 +164,7 @@ void kill_current_task(Kernel *kernel) {
   Simplos_Task *task = &kernel->schedule.queue.tasks[curr_task_index];
   task->status = Task_Status::EMPTY;
   task->task_sp_adr = task_sp_range_high(curr_task_index);
-  kernel->task_names[curr_task_index][0] = '\0';
+  kernel->set_task_name(curr_task_index, "");
   kernel->ended_task_time_counter += task->time_counter;
   invalidate_scheduled_queue(kernel);
   k_yield();  // re-enables interrupts.

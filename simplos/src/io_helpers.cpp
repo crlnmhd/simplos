@@ -12,13 +12,18 @@ void print_task(Simplos_Task *task, Kernel *kernel) {
   }
 
   uint8_t const task_index = task->task_memory_block;
-  char const *task_name = kernel->task_names[task_index];
   if (kernel->schedule.active_task_block == task->task_memory_block) {
     debug_print("* ");
   } else {
     debug_print("  ");
   }
-  debug_print("Task: \"%s\". Block: %u", task_name, task_index);
+  debug_print("Task: ");
+  if (task->name == nullptr) {
+    debug_print("\"\"");
+  } else {
+    debug_print("\"%s\"", task->name);
+  }
+  debug_print(" Block: %u", task_index);
   debug_print(" PID: %u", task->pid);
   debug_print(" Priority: %u", task->priority);
   debug_print(" SP: 0x%X", task->task_sp_adr);
