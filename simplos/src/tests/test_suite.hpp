@@ -17,4 +17,8 @@ struct TestStatistics unit_test_memory(void);
 
 struct TestStatistics unit_test_os(void);
 
+struct TestStatistics unit_test_tasks(void);
+
+struct TestStatistics unit_test_kernel_status(void);
+
 #endif  // TEST_SUITE_H_

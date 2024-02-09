@@ -69,7 +69,11 @@ int main(void) {
 
   RUN_TEST_SUITE(unit_test_hal_log, "Test the testing hal log", &test_results);
 
+  RUN_TEST_SUITE(unit_test_tasks, "Test tasks", &test_results);
+
   RUN_TEST_SUITE(unit_test_scheduler, "Scheduler", &test_results);
+
+  RUN_TEST_SUITE(unit_test_kernel_status, "Test kernel status", &test_results);
 
   RUN_TEST_SUITE(unit_test_context_switch, "Context switching", &test_results);
 

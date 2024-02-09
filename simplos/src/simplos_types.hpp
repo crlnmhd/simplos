@@ -18,6 +18,14 @@ enum class Task_Status {
 
 class Simplos_Task {
  public:
+  Simplos_Task()
+      : time_counter(),
+        task_sp_adr(0),
+        pid(0),
+        task_memory_block(0),
+        priority(0),
+        status(Task_Status::EMPTY){};
+
   uint32_t time_counter;
   uint16_t task_sp_adr;
   uint16_t pid;
@@ -28,6 +36,8 @@ class Simplos_Task {
 
 class Task_Queue {
  public:
+  Task_Queue() : queue_position(0) {}
+
   Simplos_Task tasks[TASKS_MAX];
   uint8_t task_index_queue[TASK_QUEUE_LENGTH];
   uint8_t queue_position;
@@ -35,6 +45,9 @@ class Task_Queue {
 
 class Scheduler {
  public:
+  Scheduler()
+      : queue(), os_task_sp(0), active_task_block(0), task_scheduled(0) {}
+
   Task_Queue queue;
   uint16_t os_task_sp;
   uint8_t active_task_block;
@@ -46,6 +59,13 @@ typedef uint16_t pid_type;
 // TODO use this for all global variables.
 class Kernel {
  public:
+  Kernel()
+      : schedule(),
+        cs_time_counter(0),
+        ended_task_time_counter(0),
+        heap_start(0),
+        pid_cnt(0) {}
+
   Scheduler schedule;
   char task_names[TASKS_MAX][FUNCTION_NAME_MAX_LENGTH + 1];
   struct MemorySpan task_RAM_ranges[TASKS_MAX];
