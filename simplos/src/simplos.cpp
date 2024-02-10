@@ -144,7 +144,7 @@ Index create_simplos_task(const ProgmemString &name, const uint8_t priority,
   new_task->pid = kernel->pid_cnt++;
   new_task->set_name(name);
 
-  debug_print("Created simplos task %S with pid %u\n", name.progmem_str,
+  debug_print("Created simplos task \"%S\" with pid %u\n", name.progmem_str,
               new_task->pid);
   return index;
 }
