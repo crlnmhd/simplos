@@ -2,6 +2,7 @@
 
 #include "../io_helpers.hpp"
 #include "../os.hpp"
+#include "../progmem.hpp"
 #include "../scheduler.hpp"
 #include "idle_function.hpp"
 
@@ -64,17 +65,20 @@ void run_idle_fn(void) {
 #else
 
   print("Starting scheduler\n");
-  spawn(start_scheduler_with_os_kernel, 0, "OS sched");  // yields emidiatly.
+  spawn(start_scheduler_with_os_kernel, 0,
+        progmem_string("OS sched"));  // yields emidiatly.
 
   print("Startin single task\n");
-  const uint16_t singel_task_pid = spawn(just_a_loop, 0, "looper");
+  const uint16_t singel_task_pid =
+      spawn(just_a_loop, 0, progmem_string("looper"));
 
   print("Waiting for task to finnish\n");
   wait_for_task_finnish(singel_task_pid);
 
-  spawn(worker_2_fn, 1, "worker2");
-  const uint16_t wait_for_child_pid = spawn(wait_for_child, 2, "waits");
-  const uint16_t worker1_pid = spawn(worker_1_fn, 1, "worker1");
+  spawn(worker_2_fn, 1, progmem_string("worker2"));
+  const uint16_t wait_for_child_pid =
+      spawn(wait_for_child, 2, progmem_string("waits"));
+  const uint16_t worker1_pid = spawn(worker_1_fn, 1, progmem_string("worker1"));
   wait_for_task_finnish(wait_for_child_pid);
 
   wait_for_task_finnish(worker1_pid);

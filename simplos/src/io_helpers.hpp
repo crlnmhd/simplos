@@ -1,7 +1,6 @@
 #ifndef IO_HELPERS_
 #define IO_HELPERS_
 
-#include <avr/pgmspace.h>
 #include <stdbool.h>
 
 #include "hal/hal.hpp"  // used by macros

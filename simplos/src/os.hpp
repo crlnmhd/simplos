@@ -8,6 +8,7 @@ _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
 
 #include <avr/pgmspace.h>
 #include <stdint.h>
+#include "progmem.hpp"
 
 typedef uint16_t pid_t;
 
@@ -17,7 +18,8 @@ void yield(void);
 // uint8_t fork(void);
 uint8_t rank(void);
 pid_t pid(void);
-pid_t spawn(void (*fn)(void), uint8_t const priority, char const *name);
+pid_t spawn(void (*fn)(void), uint8_t const priority,
+            const ProgmemString &name);
 void set_priority(uint8_t const priority);
 
 // Extern C for access from asm. Otherwise the name would be mangled.

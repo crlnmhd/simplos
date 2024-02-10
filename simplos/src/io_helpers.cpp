@@ -18,10 +18,10 @@ void print_task(Simplos_Task *task, Kernel *kernel) {
     debug_print("  ");
   }
   debug_print("Task: ");
-  if (task->name == nullptr) {
+  if (task->name.progmem_str == nullptr) {
     debug_print("\"\"");
   } else {
-    debug_print("\"%s\"", task->name);
+    debug_print("\"%S\"", task->name.progmem_str);
   }
   debug_print(" Block: %u", task_index);
   debug_print(" PID: %u", task->pid);

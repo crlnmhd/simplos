@@ -70,7 +70,7 @@ enum Task_Status task_status(pid_type pid, Kernel *kernel);
 void kill_current_task(Kernel *kernel);
 
 typedef uint8_t Index;
-Index create_simplos_task(const char *name, const uint8_t priority,
+Index create_simplos_task(const ProgmemString &name, const uint8_t priority,
                           Kernel *kernel);
 
 #endif  // SIMPLOS_H_

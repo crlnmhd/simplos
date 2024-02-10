@@ -38,17 +38,15 @@ uint16_t pid(void) {
       .pid;
 }
 
-uint16_t spawn(void (*fn)(void), uint8_t const priority, char const *name) {
+uint16_t spawn(void (*fn)(void), uint8_t const priority,
+               const ProgmemString &name) {
   // Validate name length
-  uint16_t const name_length = strlen(name);
-  ASSERT(name_length <= FUNCTION_NAME_MAX_LENGTH,
-         "Function name length exceeded.");
   debug_print("Calling function located at: %p\n", fn);
 
   uint16_t const spawned_task_pid =
       spawn_task(fn, priority, name, get_os_kernel());
 
-  debug_print("done spawning task \"%s\"---- new pid is %u\n", name,
+  debug_print("done spawning task \"%S\"---- new pid is %u\n", name.progmem_str,
               spawned_task_pid);
 
   return spawned_task_pid;

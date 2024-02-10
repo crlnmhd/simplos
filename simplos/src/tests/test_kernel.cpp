@@ -14,14 +14,14 @@ bool test_kernel_data_is_initilized_with_pid_counter_set_to_zero() {
 bool test_set_name_sets_name_of_task() {
   Kernel kernel{};
   constexpr uint8_t task_index{3};
-  const char *given_task_name = "Task 1";
+  constexpr char expected_task_name[] = "Task 1";
 
-  kernel.set_task_name(task_index, given_task_name);
+  kernel.set_task_name_P(task_index, progmem_string("Task 1"));
   Simplos_Task *task = &kernel.schedule.queue.tasks[task_index];
 
   const bool task_name_is_equal_to_expected =
-      !strcmp(task->name,
-              given_task_name);  // bounded strncmp  not available
+      !strcmp_P(expected_task_name,
+                task->name.progmem_str);  // bounded strncmp  not available
 
   CHECK_TRUE(task_name_is_equal_to_expected);
   return TEST_PASSED;

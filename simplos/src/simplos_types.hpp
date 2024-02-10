@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "memory_layout.hpp"
+#include "progmem.hpp"
 
 #define TASKS_MAX 5U
 
@@ -20,7 +21,7 @@ class Simplos_Task {
  public:
   Simplos_Task()
       : time_counter(),
-        name(nullptr),
+        name(),
         task_sp_adr(0),
         pid(0),
         task_memory_block(0),
@@ -28,7 +29,7 @@ class Simplos_Task {
         status(Task_Status::EMPTY){};
 
   uint32_t time_counter;
-  const char *name;
+  ProgmemString name;
   uint16_t task_sp_adr;
   uint16_t pid;
   uint8_t task_memory_block;
@@ -68,10 +69,9 @@ class Kernel {
         heap_start(0),
         pid_cnt(0) {}
 
-  void set_task_name(const uint8_t task_index, const char *name);
+  void set_task_name_P(const uint8_t task_index, const ProgmemString &name);
 
   Scheduler schedule;
-  char task_names[TASKS_MAX][FUNCTION_NAME_MAX_LENGTH + 1];
   struct MemorySpan task_RAM_ranges[TASKS_MAX];
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;

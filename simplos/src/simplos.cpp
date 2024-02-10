@@ -67,7 +67,7 @@ void init_kernel(Kernel *kernel) {
   kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
-    kernel->set_task_name(i, "");
+    kernel->set_task_name_P(i, progmem_string(""));
 
     // Set task RAM range.
     struct MemorySpan *task_stack_range = &kernel->task_RAM_ranges[i];
@@ -82,8 +82,8 @@ void verify_that_kernel_is_uninitilized(Kernel *kernel) {
   }
 }
 
-pid_type spawn_task(void (*fn)(void), uint8_t const priority, char const *name,
-                    Kernel *kernel) {
+pid_type spawn_task(void (*fn)(void), uint8_t const priority,
+                    const ProgmemString &name, Kernel *kernel) {
   disable_interrupts();
   SCILENT_DISABLE_MT();
   uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
@@ -136,15 +136,16 @@ return_point:
   return new_task_pid;
 }
 
-Index create_simplos_task(const char *name, const uint8_t priority,
+Index create_simplos_task(const ProgmemString &name, const uint8_t priority,
                           Kernel *kernel) {
   uint8_t const index = add_to_task_list(priority, &kernel->schedule.queue);
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
   new_task->status = Task_Status::RUNNING;
   new_task->pid = kernel->pid_cnt++;
-  kernel->set_task_name(index, name);
+  kernel->set_task_name_P(index, name);
 
-  debug_print("Created simplos task %s with pid %u\n", name, new_task->pid);
+  debug_print("Created simplos task %S with pid %u\n", name.progmem_str,
+              new_task->pid);
   return index;
 }
 
@@ -164,7 +165,7 @@ void kill_current_task(Kernel *kernel) {
   Simplos_Task *task = &kernel->schedule.queue.tasks[curr_task_index];
   task->status = Task_Status::EMPTY;
   task->task_sp_adr = task_sp_range_high(curr_task_index);
-  kernel->set_task_name(curr_task_index, "");
+  kernel->set_task_name_P(curr_task_index, progmem_string(""));
   kernel->ended_task_time_counter += task->time_counter;
   invalidate_scheduled_queue(kernel);
   k_yield();  // re-enables interrupts.
