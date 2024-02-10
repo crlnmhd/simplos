@@ -55,8 +55,9 @@ void wait_for_child(void) {
     }
   }
   print("Spawning child task\n");
-  // const uint16_t waiter_pid = spawn(do_some_yields, 1, "yielder");
-  // wait_for_task_finnish(waiter_pid);
+  const uint16_t waiter_pid =
+      spawn(do_some_yields, 1, progmem_string("yielder"));
+  wait_for_task_finnish(waiter_pid);
 }
 
 void run_idle_fn(void) {
@@ -84,6 +85,7 @@ void run_idle_fn(void) {
   wait_for_task_finnish(worker1_pid);
   // wait_for_task_finnish(worker2_pid);
 
+  print("DONE\n");
   terminate();
 #endif  // MOCK_HAL
 }
