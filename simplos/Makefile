@@ -94,7 +94,7 @@ BUILD_OPT_LEVEL := -O0
 DEBUG_OPT_LEVEL := -O0
 ALWAYS_OPTIMIZED_OPT_LEVEL := -Os
 
-UNIT_TEST_FLAGS :=	-g $\
+UNIT_TEST_FLAGS :=	-g2 $\
 										-DMOCK_HAL $\
 										-Wno-unused-parameter
 
