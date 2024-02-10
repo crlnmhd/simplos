@@ -67,7 +67,7 @@ void init_kernel(Kernel *kernel) {
   kernel->schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < TASKS_MAX; i++) {
     // Empty task name.
-    kernel->set_task_name(i, progmem_string(""));
+    kernel->schedule.queue.tasks[i].set_name(progmem_string(""));
 
     // Set task RAM range.
     struct MemorySpan *task_stack_range = &kernel->task_RAM_ranges[i];
@@ -142,7 +142,7 @@ Index create_simplos_task(const ProgmemString &name, const uint8_t priority,
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
   new_task->status = Task_Status::RUNNING;
   new_task->pid = kernel->pid_cnt++;
-  kernel->set_task_name(index, name);
+  new_task->set_name(name);
 
   debug_print("Created simplos task %S with pid %u\n", name.progmem_str,
               new_task->pid);
@@ -165,7 +165,7 @@ void kill_current_task(Kernel *kernel) {
   Simplos_Task *task = &kernel->schedule.queue.tasks[curr_task_index];
   task->status = Task_Status::EMPTY;
   task->task_sp_adr = task_sp_range_high(curr_task_index);
-  kernel->set_task_name(curr_task_index, progmem_string(""));
+  task->set_name(progmem_string(""));
   kernel->ended_task_time_counter += task->time_counter;
   invalidate_scheduled_queue(kernel);
   k_yield();  // re-enables interrupts.
