@@ -1,3 +1,4 @@
+#include <stdint.h>
 #if !defined(MEMORY_LAYOUT_H_)
 #define MEMORY_LAYOUT_H_
 
@@ -9,8 +10,7 @@
  * 0x1000 - ? (<0x2000)  # heap
  */
 
-#define REGISTERS_START 0x1FFU
-
+constexpr uintptr_t registers_start{0x1FFU};
 #define CANARY_START 0x204U
 #define CANARY_END 0x200U
 #define CANARY_VALUE 0x66U  // As good a random value as any.
