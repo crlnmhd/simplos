@@ -28,6 +28,8 @@ class Simplos_Task {
         priority(0),
         status(Task_Status::EMPTY){};
 
+  void set_name(const ProgmemString &new_name) { this->name = new_name; }
+
   uint32_t time_counter;
   ProgmemString name;
   uint16_t task_sp_adr;
