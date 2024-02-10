@@ -16,7 +16,7 @@ bool test_set_name_sets_name_of_task() {
   constexpr uint8_t task_index{3};
   constexpr char expected_task_name[] = "Task 1";
 
-  kernel.set_task_name_P(task_index, progmem_string("Task 1"));
+  kernel.set_task_name(task_index, progmem_string("Task 1"));
   Simplos_Task *task = &kernel.schedule.queue.tasks[task_index];
 
   const bool task_name_is_equal_to_expected =

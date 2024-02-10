@@ -69,7 +69,7 @@ class Kernel {
         heap_start(0),
         pid_cnt(0) {}
 
-  void set_task_name_P(const uint8_t task_index, const ProgmemString &name);
+  void set_task_name(const uint8_t task_index, const ProgmemString &name);
 
   Scheduler schedule;
   struct MemorySpan task_RAM_ranges[TASKS_MAX];
