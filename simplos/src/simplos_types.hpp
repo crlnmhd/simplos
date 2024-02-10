@@ -41,7 +41,7 @@ class Simplos_Task {
 
 class Task_Queue {
  public:
-  Task_Queue() : queue_position(0) {}
+  Task_Queue() : tasks(), task_index_queue(), queue_position(0) {}
 
   Simplos_Task tasks[TASKS_MAX];
   uint8_t task_index_queue[TASK_QUEUE_LENGTH];
@@ -66,6 +66,7 @@ class Kernel {
  public:
   Kernel()
       : schedule(),
+        task_RAM_ranges(),
         cs_time_counter(0),
         ended_task_time_counter(0),
         heap_start(0),
