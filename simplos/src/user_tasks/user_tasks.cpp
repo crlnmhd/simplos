@@ -66,7 +66,7 @@ void run_idle_fn(void) {
 
   print("Starting scheduler\n");
   spawn(start_scheduler_with_os_kernel, 0,
-        progmem_string("OS sched"));  // yields emidiatly.
+        progmem_string("OS scheduler"));  // yields emidiatly.
 
   print("Startin single task\n");
   const uint16_t singel_task_pid =
@@ -77,7 +77,7 @@ void run_idle_fn(void) {
 
   spawn(worker_2_fn, 1, progmem_string("worker2"));
   const uint16_t wait_for_child_pid =
-      spawn(wait_for_child, 2, progmem_string("waits"));
+      spawn(wait_for_child, 2, progmem_string("wait for others"));
   const uint16_t worker1_pid = spawn(worker_1_fn, 1, progmem_string("worker1"));
   wait_for_task_finnish(wait_for_child_pid);
 
