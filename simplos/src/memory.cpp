@@ -103,7 +103,7 @@ void verify_canaries(void) {
   }
 }
 
-enum MEM_REGION memory_region(Simplos_Task *adr, Kernel *kernel) {
+enum MEM_REGION memory_region(const Simplos_Task *adr, Kernel *kernel) {
   const size_t sp = adr->task_sp_adr;
   if (in_region(sp, REGISTERS_START, 0)) {
     return REGISTERS;
