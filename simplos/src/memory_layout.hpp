@@ -10,13 +10,6 @@
  * 0x350 - 0xFFF         # (5) task stack
  * 0x1000 - ? (<0x2000)  # heap
  */
-/*
-#define tasks_max 5U
-#define registers_start 0x1FFU
-#define canary_start 0x204U
-#define canary_end 0x200U
-#define canary_value 0x66U  // as good a random value as any.
-*/
 
 constexpr uint8_t tasks_max{5};
 constexpr uintptr_t registers_start{0x1FFU};
