@@ -1,8 +1,3 @@
-# AVR-c makefile
-# Looks for source and header files in src/ and places .o files in build
-
-
-############### Configurations ######################
 uP := atmega2560 #  (e.g. atmega328p, atmega2560)
 BAUD := 115200
 CPU_FREQ := 16000000UL
