@@ -152,13 +152,6 @@ Index create_simplos_task(const ProgmemString &name, const uint8_t priority,
   return index;
 }
 
-uint16_t num_context_switch_overhead_bytes(void) {
-  const uint16_t num_registers = 32;
-  const uint16_t num_pc_bytes = 3;
-  const uint16_t num_sreg_bytes = 1;
-  return num_pc_bytes + num_registers + num_sreg_bytes;
-}
-
 void kill_current_task(Kernel *kernel) {
   disable_interrupts();
   SCILENT_DISABLE_MT();

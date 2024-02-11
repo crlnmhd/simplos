@@ -62,7 +62,12 @@ void init_memory(void);
  * */
 void verify_that_kernel_is_uninitilized(Kernel *kernel);
 
-uint16_t num_context_switch_overhead_bytes(void);
+constexpr uint16_t num_context_switch_overhead_bytes(void) {
+  constexpr uint16_t num_registers = 32;
+  constexpr uint16_t num_pc_bytes = 3;
+  constexpr uint16_t num_sreg_bytes = 1;
+  return num_pc_bytes + num_registers + num_sreg_bytes;
+}
 
 Simplos_Task *get_task(pid_type pid, Kernel *kernel);
 enum Task_Status task_status(pid_type pid, Kernel *kernel);
