@@ -5,8 +5,8 @@
 
 #include "simplos_types.hpp"
 
-enum MEM_REGION {
-  REGISTERS = 0,
+enum class MEM_REGION {
+  REGISTERS,
   REGISTERS_CANARY,
   OS_STACK,
   TASK_RAM,

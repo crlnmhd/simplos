@@ -57,7 +57,7 @@ uint16_t task_sp_range_low(uint8_t const task_memory_block) {
 }
 
 void assert_task_pointer_integrity(Simplos_Task *task, Kernel *kernel) {
-  ASSERT_EQ(memory_region(task, kernel), TASK_RAM, "0x%X",
+  ASSERT_EQ(memory_region(task, kernel), MEM_REGION::TASK_RAM, "0x%X",
             "MEMORY ERROR! Task pointer outside task pointer region!");
 
   ASSERT(mem_adr_belongs_to_task(task->task_sp_adr, task->task_memory_block,
@@ -106,18 +106,18 @@ void verify_canaries(void) {
 enum MEM_REGION memory_region(const Simplos_Task *adr, Kernel *kernel) {
   const size_t sp = adr->task_sp_adr;
   if (in_region(sp, registers_start, 0)) {
-    return REGISTERS;
+    return MEM_REGION::REGISTERS;
   } else if (in_region(sp, canary_start, canary_end)) {
-    return REGISTERS_CANARY;
+    return MEM_REGION::REGISTERS_CANARY;
   } else if (in_region(sp, os_stack_start, os_stack_end)) {
-    return OS_STACK;
+    return MEM_REGION::OS_STACK;
   } else if (in_region(sp, task_ram_start, task_ram_end)) {
-    return TASK_RAM;
+    return MEM_REGION::TASK_RAM;
   } else if (in_region(sp, kernel->heap_start, heap_end)) {
-    return HEAP;
+    return MEM_REGION::HEAP;
   } else if (in_region(sp, RAMEND, kernel->heap_start + 1)) {
-    return INIT;
+    return MEM_REGION::INIT;
   } else {
-    return UNKNOWN;
+    return MEM_REGION::UNKNOWN;
   }
 }
