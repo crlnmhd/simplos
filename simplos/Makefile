@@ -76,8 +76,11 @@ ALL_SOURCES := 	$(SRC)/io_helpers.cpp \
 								$(SRC)/task.cpp \
 								$(SRC)/timers.cpp
 
-ALL_SOURCES += $(SRC)/user_tasks/user_tasks.cpp
-ALL_SOURCES += $(wildcard $(SRC)/hal/*.cpp)
+ALL_SOURCES += 	$(SRC)/user_tasks/user_tasks.cpp
+
+# serial.cpp is NOT includes do to special optimization requirenemts.
+ALL_SOURCES += 	$(SRC)/hal/hal.cpp \
+								$(SRC)/hal/log.cpp \
 
 MAIN_FILE := $(SRC)/main.cpp
 
