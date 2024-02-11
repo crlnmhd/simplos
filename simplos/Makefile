@@ -67,7 +67,9 @@ TEST_SOURCES := $(UNIT_TESTS_SRC)/helpers.cpp \
 
 UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.cpp, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
-ALL_SOURCES := $(wildcard $(SRC)/*.cpp $(SRC)/hal/*.cpp $(SRC)/user_tasks/*.cpp)
+ALL_SOURCES := $(wildcard $(SRC)/*.cpp)
+ALL_SOURCES += $(wildcard $(SRC)/user_tasks/*.cpp)
+ALL_SOURCES += $(wildcard $(SRC)/hal/*.cpp)
 MAIN_FILE := $(SRC)/main.cpp
 
 # Needed due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=48026
