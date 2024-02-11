@@ -56,7 +56,7 @@ void print_task(Simplos_Task *task, Kernel *kernel) {
 
 void print_schedule(Kernel *kernel) {
   debug_print(" -- Schedule --\n");
-  for (uint8_t i = 0; i < TASKS_MAX; ++i) {
+  for (uint8_t i = 0; i < tasks_max; ++i) {
     Simplos_Task *task = &kernel->schedule.queue.tasks[i];
     // debug_print("DEBUG:: has mem block: %d\n", task->task_memory_block);
     print_task(task, kernel);
@@ -69,7 +69,7 @@ void print_timing_data(__attribute__((unused)) Kernel *kernel) {
   debug_print("Timing data:\nOS: %u\n", kernel->cs_time_counter);
   // FIXME risk of overflow!
   uint32_t running_total = 0;
-  for (uint8_t i = 0; i < TASKS_MAX; i++) {
+  for (uint8_t i = 0; i < tasks_max; i++) {
     Simplos_Task *task = &global_kernel->schedule->queue.tasks[i];
     if (task->status != EMPTY) {
       debug_print("Task %u: %u\n", i, task->time_counter);

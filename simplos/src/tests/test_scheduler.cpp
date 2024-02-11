@@ -58,7 +58,7 @@ bool test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready(
       prioritize_tasks(given_kernel.schedule.queue.tasks,
                        given_kernel.schedule.queue.task_index_queue);
 
-  CHECK_EQ(num_prioritized_tasks, TASKS_MAX, "%u");
+  CHECK_EQ(num_prioritized_tasks, tasks_max, "%u");
 
   return TEST_PASSED;
 }

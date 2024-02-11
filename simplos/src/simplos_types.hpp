@@ -7,8 +7,6 @@
 #include "memory_layout.hpp"
 #include "progmem.hpp"
 
-#define TASKS_MAX 5U
-
 enum class Task_Status {
   SLEEPING,
   READY,
@@ -43,8 +41,8 @@ class Task_Queue {
  public:
   Task_Queue() : tasks(), task_index_queue(), queue_position(0) {}
 
-  Simplos_Task tasks[TASKS_MAX];
-  uint8_t task_index_queue[TASK_QUEUE_LENGTH];
+  Simplos_Task tasks[tasks_max];
+  uint8_t task_index_queue[task_queue_length];
   uint8_t queue_position;
 };
 
@@ -73,7 +71,7 @@ class Kernel {
         pid_cnt(0) {}
 
   Scheduler schedule;
-  struct MemorySpan task_RAM_ranges[TASKS_MAX];
+  struct MemorySpan task_RAM_ranges[tasks_max];
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;
   uint16_t heap_start;  // dynamically determined by the RAM needed for the init

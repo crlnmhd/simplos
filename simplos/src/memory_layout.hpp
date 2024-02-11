@@ -1,6 +1,7 @@
-#include <stdint.h>
 #if !defined(MEMORY_LAYOUT_H_)
 #define MEMORY_LAYOUT_H_
+
+#include <stdint.h>
 
 /*
  * 0x0-1FF               # Registers
@@ -9,29 +10,38 @@
  * 0x350 - 0xFFF         # (5) task stack
  * 0x1000 - ? (<0x2000)  # heap
  */
+/*
+#define tasks_max 5U
+#define registers_start 0x1FFU
+#define canary_start 0x204U
+#define canary_end 0x200U
+#define canary_value 0x66U  // as good a random value as any.
+*/
 
-constexpr uintptr_t registers_start{0x1FFU};
-#define CANARY_START 0x204U
-#define CANARY_END 0x200U
-#define CANARY_VALUE 0x66U  // As good a random value as any.
+static constexpr uint8_t tasks_max{5};
+static constexpr uintptr_t registers_start{0x1FFU};
+static constexpr uintptr_t canary_start{0x204U};
+static constexpr uintptr_t canary_end{0x200U};
+static constexpr uintptr_t canary_value{
+    0x66U};  // as good a random value as any.
 
-#define OS_STACK_START 0x3F4U
-#define OS_STACK_END 0x205U
+constexpr uintptr_t os_stack_start{0x3FFU};
+constexpr uintptr_t os_stack_end{0x205U};
 
-// NOTE: there is an unused area between the 'OS' range and the first task that
-// is currently *not* verified with canaries.
-#define TASK_RAM_END 0x350U
-#define TASK_RAM_START 0xFFFU
-#define TASK_MEMORY_SIZE ((TASK_RAM_START - TASK_RAM_END) / TASKS_MAX)
+// note: there is an unused area between the 'os' range and the first task
+// that is currently *not* verified with canaries.
+constexpr uintptr_t task_ram_end{0x350U};
+constexpr uintptr_t task_ram_start{0xFFFU};
+constexpr uintptr_t task_memory_size{(task_ram_start - task_ram_end) /
+                                     tasks_max};
 
-#define HEAP_END (TASK_RAM_START + 1U)
-// Start of heap (high) is dynamically defined based on the size of the RAM
+constexpr uintptr_t heap_end{(task_ram_start + 1)};
+// start of heap (high) is dynamically defined based on the size of the ram
 // needed by init (the main function).
 
-#define FUNCTION_NAME_MAX_LENGTH 8U
-#define TASK_QUEUE_LENGTH 6U
+constexpr uintptr_t function_name_max_length{8};
+constexpr uint8_t task_queue_length{6};
 
-#include <stdint.h>
 struct MemorySpan {
   uint16_t low;
   uint16_t high;

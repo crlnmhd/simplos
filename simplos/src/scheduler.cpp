@@ -34,7 +34,7 @@ void reschedule(Kernel *kernel) {
 uint8_t prioritize_tasks(Simplos_Task *tasks, uint8_t *out_priority_list) {
   uint8_t num_sored = 0;
   for (uint8_t priority = 0; priority < (uint8_t)UINT8_MAX; priority++) {
-    for (uint8_t i = 0; i < TASKS_MAX; i++) {
+    for (uint8_t i = 0; i < tasks_max; i++) {
       const bool task_is_active = tasks[i].status == Task_Status::READY;
       if (task_is_active && tasks[i].priority == priority) {
         out_priority_list[num_sored] = i;

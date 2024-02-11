@@ -16,7 +16,7 @@
 
 void init_task_list(Task_Queue *queue) {
   warn_if_task_memory_can_not_be_divided_evenly_between_tasks();
-  for (uint8_t i = 0; i < TASKS_MAX; ++i) {
+  for (uint8_t i = 0; i < tasks_max; ++i) {
     Simplos_Task *task = &queue->tasks[i];
     task->task_memory_block = i;
     task->time_counter = 0;
@@ -28,7 +28,7 @@ void init_task_list(Task_Queue *queue) {
 }
 
 uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
-  for (uint8_t i = 0; i < TASKS_MAX; ++i) {
+  for (uint8_t i = 0; i < tasks_max; ++i) {
     Simplos_Task *task = (Simplos_Task *)&queue->tasks[i];
     // Take if available
     if (task->status == Task_Status::EMPTY) {
@@ -46,7 +46,7 @@ uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
 }
 
 void init_schedule(Kernel *kernel) {
-  kernel->schedule.os_task_sp = OS_STACK_START;
+  kernel->schedule.os_task_sp = os_stack_start;
   init_task_list(&(kernel->schedule.queue));
   kernel->cs_time_counter = 0;
   kernel->schedule.active_task_block = 0;
@@ -67,7 +67,7 @@ k_yield(void) {
 
 void init_kernel(Kernel *kernel) {
   kernel->schedule.queue.queue_position = 0;
-  for (uint8_t i = 0; i < TASKS_MAX; i++) {
+  for (uint8_t i = 0; i < tasks_max; i++) {
     // Empty task name.
     kernel->schedule.queue.tasks[i].set_name(progmem_string(""));
 
@@ -176,7 +176,7 @@ void kill_current_task(Kernel *kernel) {
 
 Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
   SCILENT_DISABLE_MT();
-  for (uint8_t t = 0; t < TASKS_MAX; ++t) {
+  for (uint8_t t = 0; t < tasks_max; ++t) {
     if (kernel->schedule.queue.tasks[t].pid == pid) {
       SCILENT_ENABLE_MT();
       return &kernel->schedule.queue.tasks[t];
@@ -195,18 +195,18 @@ enum Task_Status task_status(pid_type pid, Kernel *kernel) {
 }
 
 void init_memory(void) {
-  for (uint8_t *canary_adr = (uint8_t *)CANARY_START;
-       (size_t)canary_adr >= CANARY_END; canary_adr--) {
-    write_mm(canary_adr, CANARY_VALUE);
+  for (uint8_t *canary_adr = (uint8_t *)canary_start;
+       (size_t)canary_adr >= canary_end; canary_adr--) {
+    write_mm(canary_adr, canary_value);
   }
-  ASSERT_EQ(read_from_mm_adr(0x204), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x204), canary_value, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_from_mm_adr(0x203), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x203), canary_value, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_from_mm_adr(0x202), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x202), canary_value, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_from_mm_adr(0x201), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x201), canary_value, "0x%X",
             "Failed to write canary between registers and stack!");
-  ASSERT_EQ(read_from_mm_adr(0x200), CANARY_VALUE, "0x%X",
+  ASSERT_EQ(read_from_mm_adr(0x200), canary_value, "0x%X",
             "Failed to write register os stack canary!");
 }
