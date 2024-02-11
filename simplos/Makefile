@@ -115,10 +115,9 @@ SIMAVR := simavr
 AVR_GDB := avr-gdb
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
 
-BUILD_OPT_LEVEL := -O0
+BUILD_OPT_LEVEL := -O0 -ftoplevel-reorder
 DEBUG_OPT_LEVEL := -O0
 ALWAYS_OPTIMIZED_OPT_LEVEL := -Os
-
 UNIT_TEST_FLAGS :=	-g2 $\
 										-DMOCK_HAL $\
 										-Wno-unused-parameter
