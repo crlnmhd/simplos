@@ -63,11 +63,19 @@ TEST_SOURCES := $(UNIT_TESTS_SRC)/helpers.cpp \
 								$(UNIT_TESTS_SRC)/test_scheduler.cpp \
 								$(UNIT_TESTS_SRC)/test_spawning.cpp \
 								$(UNIT_TESTS_SRC)/test_tasks.cpp \
-								$(UNIT_TESTS_SRC)/unit_test.cpp \
+								$(UNIT_TESTS_SRC)/unit_test.cpp
 
 UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.cpp, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
-ALL_SOURCES := $(wildcard $(SRC)/*.cpp)
+ALL_SOURCES := 	$(SRC)/io_helpers.cpp \
+								$(SRC)/kernel_status.cpp \
+								$(SRC)/memory.cpp \
+								$(SRC)/os.cpp \
+								$(SRC)/scheduler.cpp \
+								$(SRC)/simplos.cpp \
+								$(SRC)/task.cpp \
+								$(SRC)/timers.cpp
+
 ALL_SOURCES += $(wildcard $(SRC)/user_tasks/*.cpp)
 ALL_SOURCES += $(wildcard $(SRC)/hal/*.cpp)
 MAIN_FILE := $(SRC)/main.cpp
