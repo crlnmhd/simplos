@@ -54,7 +54,17 @@ DEBUG_BUILD := tests
 LOG_DIR := log
 
 UNIT_TESTS_SRC := src/tests
-TEST_SOURCES := $(wildcard $(UNIT_TESTS_SRC)/*.cpp)
+TEST_SOURCES := $(UNIT_TESTS_SRC)/helpers.cpp \
+								$(UNIT_TESTS_SRC)/test_context_switch.cpp \
+								$(UNIT_TESTS_SRC)/test_kernel.cpp  \
+								$(UNIT_TESTS_SRC)/test_log.cpp \
+								$(UNIT_TESTS_SRC)/test_memory.cpp \
+								$(UNIT_TESTS_SRC)/test_os_api.cpp \
+								$(UNIT_TESTS_SRC)/test_scheduler.cpp \
+								$(UNIT_TESTS_SRC)/test_spawning.cpp \
+								$(UNIT_TESTS_SRC)/test_tasks.cpp \
+								$(UNIT_TESTS_SRC)/unit_test.cpp \
+
 UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.cpp, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
 ALL_SOURCES := $(wildcard $(SRC)/*.cpp $(SRC)/hal/*.cpp $(SRC)/user_tasks/*.cpp)
