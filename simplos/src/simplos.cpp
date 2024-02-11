@@ -52,9 +52,8 @@ void init_schedule(Kernel *kernel) {
   kernel->schedule.active_task_block = 0;
 }
 
-__attribute__((noinline, naked))
-__attribute__((optimize("-fno-defer-pop"))) void
-k_yield(void) {
+__attribute__((noinline, naked, optimize("-fno-defer-pop"))) void k_yield(
+    void) {
   asm volatile("cli" ::: "memory");
   CONTEXT_SWTICH();
   asm volatile(
