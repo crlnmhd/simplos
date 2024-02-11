@@ -17,6 +17,8 @@ PREV_TASK_SP_LOCATION := 0x8020FA
 KERNEL_DATA_LOCATION := 0x802102
 DATA_SECTION_START := 0x802000
 
+UNIT_TEST_DATA_SECTION_START := 0x801000
+
 DEFINES :=
 # Static scheduling
 # DEFINES += -DUSE_STATIC
@@ -99,7 +101,6 @@ ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
 ASM_OBJECTS := $(patsubst $(ASM_SRC)/%.s, $(OBJ)/asm/%.o, $(ASM_SOURCES))
 
 ALL_OBJECTS := $(OBJECTS)
-ALL_OBJECTS += $(ALWAYS_OPTIMIZED_OBJECTS)
 ALL_OBJECTS += $(ASM_OBJECTS)
 
 SIMPLOS_EXECUTABLE := $(OBJ)/simplos.out
@@ -157,6 +158,8 @@ DATA_SECTIONS := 	-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
 # Data sections that are not suitable for unit testing.
 NON_UNIT_TEST_DATA_SECIONS := -Wl,--section-start=.data=$(DATA_SECTION_START)
 
+UNIT_TEST_DATA_SECIONS := -Wl,--section-start=.data=$(UNIT_TEST_DATA_SECTION_START)
+
 FRAMEWORK := wiring
 
 .PHONY: %.compdb_entry compile_commands dir all all_test log
@@ -206,34 +209,23 @@ all: $(ALL_OBJECTS) build/main.o $(ALWAYS_OPTIMIZED_OBJECTS)
 	avr-size -A -x $(SIMPLOS_EXECUTABLE)
 
 all_test: $(TEST_OBJECTS) $(ALWAYS_OPTIMIZED_TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(UNIT_TESTS)
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) $^ -o $(UNIT_TESTS)
 	avr-size -A -x $(UNIT_TESTS)
 
+$(ALWAYS_OPTIMIZED_OBJECTS): $(ALWAYS_OPTIMIZED_FILES)
+	$(CC) $(CFLAGS) $(ALWAYS_OPTIMIZED_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
+
 $(OBJ)/%.o: $(SRC)/%.cpp
-	set +e; 																																		\
-	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
-		opt_flag=$(ALWAYS_OPTIMIZED_OPT_LEVEL);																		\
-  else 																																				\
-		opt_flag=$(BUILD_OPT_LEVEL); 																							\
-	fi;                                                                      		\
-	echo "For file: " $< "This is the opt level: " $${opt_flag}; 								\
-	$(CC) $(CFLAGS) $${opt_flag} $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
+	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
+
+$(ALWAYS_OPTIMIZED_TEST_OBJECTS): $(ALWAYS_OPTIMIZED_FILES)
+	$(CC) $(CFLAGS) $(ALWAYS_OPTIMIZED_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
 $(DEBUG_BUILD)/%.o: $(SRC)/%.cpp
-	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
-		opt_flag="-Os";																														\
-  else 																																				\
-		opt_flag=$(DEBUG_OPT_LEVEL); 																							\
-	fi ;                                                                     		\
-	$(CC) $(CFLAGS) $${opt_flag} $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
 $(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.cpp
-	if echo $(ALWAYS_OPTIMIZED_FILES) | tr " " "\n" | grep -F -x -q "$<"; then 	\
-		opt_flag="-Os";																														\
-  else 																																				\
-		opt_flag=$(DEBUG_OPT_LEVEL); 																							\
-	fi ;                                                                     		\
-	$(CC) $(CFLAGS) $${opt_flag} $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
 
 $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
