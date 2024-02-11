@@ -70,7 +70,7 @@ constexpr uint16_t num_context_switch_overhead_bytes(void) {
 }
 
 Simplos_Task *get_task(pid_type pid, Kernel *kernel);
-enum Task_Status task_status(pid_type pid, Kernel *kernel);
+Task_Status task_status(pid_type pid, Kernel *kernel);
 
 void kill_current_task(Kernel *kernel);
 

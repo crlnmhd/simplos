@@ -15,7 +15,7 @@ enum class MEM_REGION {
   UNKNOWN,
 };
 
-enum MEM_REGION memory_region(const Simplos_Task *, Kernel *kernel);
+MEM_REGION memory_region(const Simplos_Task *, Kernel *kernel);
 
 uint16_t task_sp_range_high(uint8_t task_index);
 
