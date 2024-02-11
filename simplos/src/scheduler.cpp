@@ -79,7 +79,8 @@ void start_scheduler_with_os_kernel(void) {
 }  // Note: see header
 #endif  // MOCK_HAL
 
-void start_scheduler(Kernel *kernel) {
+void __attribute__((optimize("-fno-defer-pop")))
+start_scheduler(Kernel *kernel) {
   SCILENT_DISABLE_MT();
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
       Task_Status::SCHEDULER;

@@ -52,7 +52,9 @@ void init_schedule(Kernel *kernel) {
   kernel->schedule.active_task_block = 0;
 }
 
-__attribute__((noinline, naked)) void k_yield(void) {
+__attribute__((noinline, naked))
+__attribute__((optimize("-fno-defer-pop"))) void
+k_yield(void) {
   asm volatile("cli" ::: "memory");
   CONTEXT_SWTICH();
   asm volatile(
@@ -82,8 +84,9 @@ void verify_that_kernel_is_uninitilized(Kernel *kernel) {
   }
 }
 
-pid_type spawn_task(void (*fn)(void), uint8_t const priority,
-                    const ProgmemString &name, Kernel *kernel) {
+pid_type __attribute__((optimize("-fno-defer-pop")))
+spawn_task(void (*fn)(void), uint8_t const priority, const ProgmemString &name,
+           Kernel *kernel) {
   disable_interrupts();
   SCILENT_DISABLE_MT();
   uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
