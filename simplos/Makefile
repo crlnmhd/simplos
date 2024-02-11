@@ -115,7 +115,7 @@ SIMAVR := simavr
 AVR_GDB := avr-gdb
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
 
-BUILD_OPT_LEVEL := -O0 -ftoplevel-reorder
+BUILD_OPT_LEVEL := -Os -ftoplevel-reorder
 DEBUG_OPT_LEVEL := -O0
 ALWAYS_OPTIMIZED_OPT_LEVEL := -Os
 UNIT_TEST_FLAGS :=	-g2 $\
