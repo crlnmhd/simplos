@@ -200,7 +200,7 @@ build: compile_commands dir all
 build_tests: compile_commands dir all_test
 	ln -s -f $(UNIT_TESTS) $(LATEST_EXECUTABLE_SOFTLINK)
 
-all: $(ALL_OBJECTS) build/main.o $(ALWAYS_OPTIMZED)
+all: $(ALL_OBJECTS) build/main.o $(ALWAYS_OPTIMIZED_OBJECTS)
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) $^ -o $(SIMPLOS_EXECUTABLE)
 	avr-size -A -x $(SIMPLOS_EXECUTABLE)
 
