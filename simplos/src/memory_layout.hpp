@@ -18,12 +18,11 @@
 #define canary_value 0x66U  // as good a random value as any.
 */
 
-static constexpr uint8_t tasks_max{5};
-static constexpr uintptr_t registers_start{0x1FFU};
-static constexpr uintptr_t canary_start{0x204U};
-static constexpr uintptr_t canary_end{0x200U};
-static constexpr uintptr_t canary_value{
-    0x66U};  // as good a random value as any.
+constexpr uint8_t tasks_max{5};
+constexpr uintptr_t registers_start{0x1FFU};
+constexpr uintptr_t canary_start{0x204U};
+constexpr uintptr_t canary_end{0x200U};
+constexpr uintptr_t canary_value{0x66U};  // as good a random value as any.
 
 constexpr uintptr_t os_stack_start{0x3FFU};
 constexpr uintptr_t os_stack_end{0x205U};
