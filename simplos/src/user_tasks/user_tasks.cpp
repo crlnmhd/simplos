@@ -9,11 +9,9 @@
 volatile uint8_t shared_x = 5;
 
 void just_a_loop(void) {
-  for (uint16_t i = 0; i < 100; ++i) {
+  for (uint16_t i = 0; i < 10; ++i) {
     print("looper 1: %u%%\n", i);
-    for (uint16_t j = 0; j < UINT16_MAX / 32; ++j) {
-      ;
-    }
+    yield();
   }
   print("Loop DONE\n");
 }
