@@ -171,6 +171,7 @@ FRAMEWORK := wiring
 
 COMPDB_ENTRIES = $(addsuffix .compdb_entry, $(basename $(SOURCES)))
 COMPDB_ENTRIES += $(addsuffix .compdb_entry, $(basename $(TEST_SOURCES)))
+COMPDB_ENTRIES += $(addsuffix .compdb_entry, $(basename $(ALWAYS_OPTIMIZED_FILES)))
 
 compile_commands: $(COMPDB_ENTRIES)
 	@echo "[" > $@.tmp
