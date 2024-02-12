@@ -19,7 +19,7 @@ struct TestStatistics {
   uint8_t skipped;
 };
 
-void combine_statistics(TestStatistics *statistics, TestStatistics *to_add);
+void combine_statistics(TestStatistics &statistics, TestStatistics &to_add);
 
 #define SKIP_TEST(test_fn, function_name, test_statistics)       \
   test_statistics.skipped += 1;                                  \

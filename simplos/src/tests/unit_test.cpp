@@ -44,7 +44,7 @@ void run_test_suite(TestStatistics (*test_fn)(void), PGM_P name,
     }
     debug_printf("\n%S\n\n", PSTR("--- end ---"));  // FIXME???
   }
-  combine_statistics(&total_results, &test_suite_results);
+  combine_statistics(total_results, test_suite_results);
 }
 
 void print_total_test_results(TestStatistics &results) {
