@@ -11,7 +11,7 @@ INLINED void enable_mt() {
 }
 
 INLINED void disable_mt() {
-  SCILENT_DISABLE_MT();
+  scilent_disable_mt();
   debug_print("disabling MT\n");
 }
 

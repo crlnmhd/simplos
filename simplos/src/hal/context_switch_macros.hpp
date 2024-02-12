@@ -58,7 +58,7 @@
       [enable_bit] "I"(OCIE1A)                                          \
       : "memory");  // Set enable bit for TIMSK1
 
-INLINED void SCILENT_DISABLE_MT() {
+INLINED void scilent_disable_mt() {
   asm volatile(
       "push r16                         \n\t "
       "lds r16, %[timer_adr]            \n\t "
@@ -210,7 +210,7 @@ INLINED void SCILENT_DISABLE_MT() {
 #define CONTEXT_SWTICH()                \
   SAVE_CONTEXT();                       \
   SAVE_SP_TO_ADR(&prev_task_sp)         \
-  SCILENT_DISABLE_MT();                 \
+  scilent_disable_mt();                 \
   SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
   RESET_TIMER();                        \
   RESTORE_CONTEXT();                    \

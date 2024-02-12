@@ -81,7 +81,7 @@ void start_scheduler_with_os_kernel(void) {
 
 void __attribute__((optimize("-fno-defer-pop")))
 start_scheduler(Kernel *kernel) {
-  SCILENT_DISABLE_MT();
+  scilent_disable_mt();
   kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
       Task_Status::SCHEDULER;
 
@@ -93,7 +93,7 @@ start_scheduler(Kernel *kernel) {
   scheduler_loop_entry_point:
     asm volatile("nop");
     asm volatile("nop");
-    SCILENT_DISABLE_MT();
+    scilent_disable_mt();
     verbose_print("################## BEGIN SCHEDULING\n\n");
     verbose_print("Selecting next task...\n");
     Simplos_Task *prev =

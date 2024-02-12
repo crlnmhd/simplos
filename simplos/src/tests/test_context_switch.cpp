@@ -147,10 +147,10 @@ bool test_disable_mt_clears_enable_bit_for_tmsk1(void) {
   TIMSK1 = 0;
   SCILENT_ENABLE_MT();
   CHECK_EQ(TIMSK1, 1 << OCIE1A, "0x%X");
-  SCILENT_DISABLE_MT();
+  scilent_disable_mt();
   CHECK_EQ(TIMSK1, 0, "0x%X");
   TIMSK1 = 0xFF;
-  SCILENT_DISABLE_MT();
+  scilent_disable_mt();
   CHECK_EQ(TIMSK1, 0xFF ^ 1 << OCIE1A, "0x%X");
   TIMSK1 = original_timsk1_content;
 

@@ -87,7 +87,7 @@ pid_type __attribute__((optimize("-fno-defer-pop")))
 spawn_task(void (*fn)(void), uint8_t const priority, const ProgmemString &name,
            Kernel *kernel) {
   disable_interrupts();
-  SCILENT_DISABLE_MT();
+  scilent_disable_mt();
   uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
 
   Simplos_Task *new_task = &kernel->schedule.queue.tasks[new_task_index];
@@ -153,7 +153,7 @@ Index create_simplos_task(const ProgmemString &name, const uint8_t priority,
 
 void kill_current_task(Kernel *kernel) {
   disable_interrupts();
-  SCILENT_DISABLE_MT();
+  scilent_disable_mt();
 
   uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(kernel);
 
@@ -167,7 +167,7 @@ void kill_current_task(Kernel *kernel) {
 }
 
 Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
-  SCILENT_DISABLE_MT();
+  scilent_disable_mt();
   for (uint8_t t = 0; t < tasks_max; ++t) {
     if (kernel->schedule.queue.tasks[t].pid == pid) {
       SCILENT_ENABLE_MT();
