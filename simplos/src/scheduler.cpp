@@ -86,8 +86,8 @@ start_scheduler(Kernel *kernel) {
       Task_Status::SCHEDULER;
 
   SET_RETURN_POINT(scheduler_loop_entry_point);
-  SAVE_CONTEXT()
-  SAVE_SP_TO_ADR(&scheduler_task_sp);
+  SAVE_CONTEXT();
+  SAVE_SP_TO_ADR(scheduler_task_sp);
   while (true) {
     asm volatile("rjmp .+2");
   scheduler_loop_entry_point:

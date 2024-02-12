@@ -108,19 +108,20 @@ INLINED void scilent_disable_mt() {
       "push  r31                    \n\t"); \
   SAVE_SP()
 
-#define SAVE_SP() SAVE_SP_TO_ADR(&task_sp)
+#define SAVE_SP() SAVE_SP_TO_ADR(task_sp)
 
-#define SAVE_SP_TO_ADR(adr)       \
-  asm volatile(                   \
-      "ldi  r26, lo8(%0)    \n\t" \
-      "ldi  r27, hi8(%0)    \n\t" \
-      "in   r16, __SP_L__   \n\t" \
-      "st   x+, r16         \n\t" \
-      "in   r16, __SP_H__   \n\t" \
-      "st   x+, r16         \n\t" \
-      : /* No outputs*/           \
-      : "i"(adr)                  \
+INLINED void SAVE_SP_TO_ADR(volatile uint16_t &adr_of_adr_holder) {
+  asm volatile(
+      "ldi  r26, lo8(%0)    \n\t"
+      "ldi  r27, hi8(%0)    \n\t"
+      "in   r16, __SP_L__   \n\t"
+      "st   x+, r16         \n\t"
+      "in   r16, __SP_H__   \n\t"
+      "st   x+, r16         \n\t"
+      : /* No outputs*/
+      : "i"(&adr_of_adr_holder)
       : "r16", "r26", "r27", "memory");
+}
 
 // REWORK to not use r28, r29. They are needed as frame pointers.
 #define SELECT_SCHEDULED_TASK_OR_SCHEDULER()                                   \
@@ -209,7 +210,7 @@ INLINED void scilent_disable_mt() {
 
 #define CONTEXT_SWTICH()                \
   SAVE_CONTEXT();                       \
-  SAVE_SP_TO_ADR(&prev_task_sp)         \
+  SAVE_SP_TO_ADR(prev_task_sp);         \
   scilent_disable_mt();                 \
   SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
   RESET_TIMER();                        \
