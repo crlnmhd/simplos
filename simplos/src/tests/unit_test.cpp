@@ -5,8 +5,8 @@
 
 // Workaround due to avr-libc issue #898
 // https://github.com/avrdudes/avr-libc/issues/898
-#define RUN_TEST_SUITE(test_fn, name, statistics) \
-  (run_test_suite(test_fn, PSTR(name), statistics))
+#define RUN_TEST_SUITE(test_fn, statistics) \
+  (run_test_suite(test_fn, PSTR(#test_fn), statistics))
 
 // sleeping with interupts disabled triggers simavr to exit.
 #define EXIT_SIMULATOR()          \
@@ -67,21 +67,21 @@ int main(void) {
 
   TestStatistics test_results = {};
 
-  RUN_TEST_SUITE(unit_test_hal_log, "Test the testing hal log", &test_results);
+  RUN_TEST_SUITE(unit_test_hal_log, &test_results);
 
-  RUN_TEST_SUITE(unit_test_tasks, "Test tasks", &test_results);
+  RUN_TEST_SUITE(unit_test_tasks, &test_results);
 
-  RUN_TEST_SUITE(unit_test_scheduler, "Scheduler", &test_results);
+  RUN_TEST_SUITE(unit_test_scheduler, &test_results);
 
-  RUN_TEST_SUITE(unit_test_kernel_status, "Test kernel status", &test_results);
+  RUN_TEST_SUITE(unit_test_kernel_status, &test_results);
 
-  RUN_TEST_SUITE(unit_test_context_switch, "Context switching", &test_results);
+  RUN_TEST_SUITE(unit_test_context_switch, &test_results);
 
-  RUN_TEST_SUITE(unit_test_spawning, "Task spawning", &test_results);
+  RUN_TEST_SUITE(unit_test_spawning, &test_results);
 
-  RUN_TEST_SUITE(unit_test_memory, "Memory", &test_results);
+  RUN_TEST_SUITE(unit_test_memory, &test_results);
 
-  RUN_TEST_SUITE(unit_test_os, "OS Interface", &test_results);
+  RUN_TEST_SUITE(unit_test_os, &test_results);
 
   debug_printf("Test suite completed.\n", &test_results);
   print_total_test_results(&test_results);
