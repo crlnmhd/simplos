@@ -15,7 +15,7 @@ void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
 void handle_previous_task(Simplos_Task *prev, Kernel *kernel);
 void prepare_next_task(Simplos_Task *next, Kernel *kernel);
-void print_queue(uint8_t num_active_tasks, Kernel *kernel);
+void print_queue(uint8_t num_active_tasks, Kernel &kernel);
 
 void reschedule(Kernel *kernel) {
   const uint8_t num_active_tasks = prioritize_tasks(
@@ -27,7 +27,7 @@ void reschedule(Kernel *kernel) {
   kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
 
 #if defined(VERBOSE_OUTPUT)
-  print_queue(num_active_tasks, kernel);
+  print_queue(num_active_tasks, *kernel);
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
@@ -45,13 +45,13 @@ uint8_t prioritize_tasks(Simplos_Task *tasks, uint8_t *out_priority_list) {
   return num_sored;
 }
 
-void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
+void print_queue(uint8_t num_active_tasks, Kernel &kernel) {
   debug_print("Start of queue:\n-------------\n");
   for (uint8_t i = 0; i < num_active_tasks; i++) {
     debug_print("%u: ", i);
-    uint8_t task_index = kernel->schedule.queue.task_index_queue[i];
-    Simplos_Task &task = kernel->schedule.queue.tasks[task_index];
-    print_task(task, *kernel);
+    uint8_t task_index = kernel.schedule.queue.task_index_queue[i];
+    Simplos_Task &task = kernel.schedule.queue.tasks[task_index];
+    print_task(task, kernel);
   }
   debug_print("End of queue:\n-------------\n");
 }
@@ -107,7 +107,7 @@ start_scheduler(Kernel *kernel) {
         &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
     verbose_print("Selected next task: \n");
 #if defined(VERBOSE_OUTPUT)
-    print_task(next, kernel);
+    print_task(*next, *kernel);
 #endif  // defined VERBOSE_OUTPUT
     prepare_next_task(next, kernel);
     verbose_print("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
@@ -164,7 +164,7 @@ void prepare_next_task(Simplos_Task *next,
                        __attribute__((unused)) Kernel *kernel) {
   verbose_print("printing next:\n");
 #if defined(VERBOSE_OUTPUT)
-  print_task(next, kernel);
+  print_task(*next, *kernel);
 #endif  // defined VERBOSE_OUTPUT
   assert_task_pointer_integrity(next, kernel);
   if (next->status == Task_Status::EMPTY) {
