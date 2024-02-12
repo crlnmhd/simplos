@@ -91,22 +91,21 @@ TestStatistics unit_test_hal_log(void) {
   TestStatistics test_resutls = {};
 
   RUN_TEST(test_does_not_append_to_log_when_bufferspace_is_insufficiant,
-           &test_resutls);
+           test_resutls);
 
   RUN_TEST(
       test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator,
-      &test_resutls);
+      test_resutls);
 
-  RUN_TEST(test_can_add_multiple_messages, &test_resutls);
+  RUN_TEST(test_can_add_multiple_messages, test_resutls);
 
-  RUN_TEST(test_log_contains_entry_finds_entry_in_buffer, &test_resutls);
+  RUN_TEST(test_log_contains_entry_finds_entry_in_buffer, test_resutls);
 
-  RUN_TEST(test_does_not_falsely_find_log_entires_finding_in_log,
-           &test_resutls);
+  RUN_TEST(test_does_not_falsely_find_log_entires_finding_in_log, test_resutls);
 
   RUN_TEST(
       test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty,
-      &test_resutls);
+      test_resutls);
 
   return test_resutls;
 }

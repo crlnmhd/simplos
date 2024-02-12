@@ -197,29 +197,29 @@ TestStatistics unit_test_scheduler(void) {
   TestStatistics results = {};
   RUN_TEST(
       test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_available,
-      &results);
+      results);
 
   RUN_TEST(test_select_next_task_sets_next_task_sp_to_next_available_task,
-           &results);
+           results);
 
-  RUN_TEST(test_select_next_task_returns_index_of_selected_task, &results);
+  RUN_TEST(test_select_next_task_returns_index_of_selected_task, results);
 
   RUN_TEST(
       test_reschedule_prioritizes_the_active_tasks_in_ascending_order_of_priority,
-      &results);
+      results);
 
-  RUN_TEST(test_reschedule_reschedules_all_tasks_with_staus_ready, &results);
+  RUN_TEST(test_reschedule_reschedules_all_tasks_with_staus_ready, results);
 
   RUN_TEST(test_reschedule_does_not_reschedule_any_task_if_none_is_marke_ready,
-           &results);
+           results);
 
   RUN_TEST(test_prioritize_tasks_returns_number_of_tasks_with_status_ready,
-           &results);
+           results);
 
   RUN_TEST(
       test_prioritize_tasks_returns_TASKS_MAX_if_all_tasks_have_status_ready,
-      &results);
+      results);
 
-  RUN_TEST(invalidate_scheduled_queue_sets_queue_position_to_zero, &results);
+  RUN_TEST(invalidate_scheduled_queue_sets_queue_position_to_zero, results);
   return results;
 }

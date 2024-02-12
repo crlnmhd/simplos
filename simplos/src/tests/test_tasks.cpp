@@ -26,9 +26,9 @@ bool test_set_name_sets_name_of_task() {
 TestStatistics unit_test_tasks() {
   TestStatistics results{};
 
-  RUN_TEST(test_task_is_initilized_with_status_empty, &results)
+  RUN_TEST(test_task_is_initilized_with_status_empty, results)
 
-  RUN_TEST(test_set_name_sets_name_of_task, &results);
+  RUN_TEST(test_set_name_sets_name_of_task, results);
 
   return results;
 }

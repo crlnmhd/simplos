@@ -1,13 +1,13 @@
 #include "test.hpp"
 
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
-                       TestStatistics *statistics) {
+                       TestStatistics &statistics) {
   if (fn_ptr()) {
-    statistics->passed = (uint8_t)(statistics->passed + 1U);
+    statistics.passed = (uint8_t)(statistics.passed + 1U);
   } else {
     debug_printf("%S", function_name);
     debug_printf(" --- FAILED!!\n");
-    statistics->failed = (uint8_t)(statistics->failed + 1U);
+    statistics.failed = (uint8_t)(statistics.failed + 1U);
   }
 }
 

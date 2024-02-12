@@ -222,46 +222,46 @@ bool test_stack_variable_is_kept_after_saving_and_restoring_context(void) {
 TestStatistics unit_test_context_switch(void) {
   TestStatistics results = {};
 
-  RUN_TEST(test_disable_mt_clears_enable_bit_for_tmsk1, &results);
+  RUN_TEST(test_disable_mt_clears_enable_bit_for_tmsk1, results);
 
   RUN_TEST(
       test_select_scheduled_task_or_reschedule_selecte_schedled_task_when_available,
-      &results);
+      results);
 
   RUN_TEST(
       test_select_scheduled_task_or_reschedule_does_not_modify_scheduler_task_when_task_is_scheduled,
-      &results);
+      results);
 
   RUN_TEST(
       test_select_scheduled_task_or_reschedule_clears_next_task_sp_when_sheduled_task_is_selected,
-      &results);
+      results);
 
   RUN_TEST(
       test_select_scheduled_task_or_reschedule_selects_scheduler_task_when_no_task_is_scheduled,
-      &results);
+      results);
 
   RUN_TEST(
       test_setup_and_check_of_stack_canaries_do_not_trigger_when_called_directly,
-      &results);
+      results);
 
   RUN_TEST(
       test_setup_and_check_of_stack_canaries_detect_additional_bytes_pushed,
-      &results);
+      results);
 
   RUN_TEST(
       test_setup_and_check_of_stack_canaries_detect_changes_to_first_canary_byte,
-      &results);
+      results);
 
   RUN_TEST(
       test_setup_and_check_of_stack_canaries_detect_changes_to_second_canary_byte,
-      &results);
+      results);
 
   RUN_TEST(
       test_setup_and_check_of_stack_canaries_detect_changes_to_third_canary_byte,
-      &results);
+      results);
 
   RUN_TEST(test_stack_variable_is_kept_after_saving_and_restoring_context,
-           &results);
+           results);
 
   return results;
 }

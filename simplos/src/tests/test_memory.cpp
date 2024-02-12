@@ -117,31 +117,31 @@ bool test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack(void) {
 
 TestStatistics unit_test_memory(void) {
   TestStatistics results = {};
-  RUN_TEST(test_location_of_task_sp_is_readable_at_0x2100_to_0x2101, &results);
+  RUN_TEST(test_location_of_task_sp_is_readable_at_0x2100_to_0x2101, results);
 
   RUN_TEST(test_location_of_scheduler_task_sp_is_readable_at_0x20FE_to_0x20FF,
-           &results);
+           results);
 
   RUN_TEST(test_location_of_next_task_sp_is_readable_at_0x20FC_to_0x20FD,
-           &results);
+           results);
 
   RUN_TEST(test_location_of_prev_task_sp_is_readable_at_0x20FA_to_0x20FB,
-           &results);
+           results);
 
-  RUN_TEST(test_location_of_kernel_data_starts_at_0x2102, &results);
+  RUN_TEST(test_location_of_kernel_data_starts_at_0x2102, results);
 
-  RUN_TEST(test_size_of_kernel_does_not_lead_to_stack_overflow, &results);
+  RUN_TEST(test_size_of_kernel_does_not_lead_to_stack_overflow, results);
 
   RUN_TEST(test_first_task_high_starts_at_TASK_RAM_END_plus_num_bytes_minus_one,
-           &results);
+           results);
 
-  RUN_TEST(test_task_zero_low_is_at_end_of_availabel_task_ram, &results);
+  RUN_TEST(test_task_zero_low_is_at_end_of_availabel_task_ram, results);
 
-  RUN_TEST(test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack, &results);
+  RUN_TEST(test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack, results);
 
-  RUN_TEST(test_task_1_sp_low_is_directly_after_task_0, &results);
-  RUN_TEST(test_task_2_sp_low_is_directly_after_task_1, &results);
-  RUN_TEST(test_task_3_sp_low_is_directly_after_task_2, &results);
-  RUN_TEST(test_task_4_sp_low_is_directly_after_task_3, &results);
+  RUN_TEST(test_task_1_sp_low_is_directly_after_task_0, results);
+  RUN_TEST(test_task_2_sp_low_is_directly_after_task_1, results);
+  RUN_TEST(test_task_3_sp_low_is_directly_after_task_2, results);
+  RUN_TEST(test_task_4_sp_low_is_directly_after_task_3, results);
   return results;
 }

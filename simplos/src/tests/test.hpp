@@ -27,7 +27,7 @@ void combine_statistics(TestStatistics *statistics, TestStatistics *to_add);
   printf_P(PSTR(function_name));
 
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
-                       TestStatistics *statistics);
+                       TestStatistics &statistics);
 
 #define CHECK_EQ(recieved, expected, fmt)              \
   if ((expected) != (recieved)) {                      \
