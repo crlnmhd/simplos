@@ -4,8 +4,6 @@
 #include "memory.hpp"
 #include "simplos_types.hpp"
 
-#define INLINED static inline __attribute__((always_inline))
-
 // clang-format off
 #if defined(__clang__)
 _Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")

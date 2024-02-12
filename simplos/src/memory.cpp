@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "hal/hal.hpp"
+#include "inline.hpp"
 #include "io_helpers.hpp"
 #include "memory_layout.hpp"
 #include "simplos.hpp"
