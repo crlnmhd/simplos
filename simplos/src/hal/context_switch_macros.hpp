@@ -44,9 +44,10 @@
   asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"( \
       ((uint16_t)(&(io_reg)-0x20))));
 
-#define RESET_TIMER()   \
-  CLEAR_IO_REG(TCNT1H); \
+INLINED void RESET_TIMER() {
+  CLEAR_IO_REG(TCNT1H);
   CLEAR_IO_REG(TCNT1L);
+}
 
 INLINED void scilent_enable_mt() {
   asm volatile(
