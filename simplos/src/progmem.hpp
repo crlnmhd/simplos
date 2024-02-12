@@ -7,7 +7,8 @@ struct ProgmemStringWrapper {
   const char *progmem_string;
 };
 
-struct ProgmemString {
+class ProgmemString {
+ public:
   ProgmemString() : progmem_str(nullptr) {}
   explicit ProgmemString(const ProgmemStringWrapper &wrapper)
       : progmem_str(wrapper.progmem_string) {}
