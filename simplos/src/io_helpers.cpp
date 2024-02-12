@@ -93,7 +93,7 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
 
 // void print_task_stack(Simplos_Task * task){
 //   size_t const stack_start = task_default_sp(task->task_memory_block);
-//   DISABLE_MT();
+//   disable_mt();
 //   debug_print("Stack of task %d (in hexadecimal):",task->task_memory_block)
 
 //   for(size_t s = stack_start; s >= stack_start - TASK_MEMORY_BYTES; -s){

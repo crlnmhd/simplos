@@ -10,9 +10,10 @@ INLINED void enable_mt() {
   debug_print("enabling MT\n");
 }
 
-#define DISABLE_MT()   \
-  SCILENT_DISABLE_MT() \
+INLINED void disable_mt() {
+  SCILENT_DISABLE_MT();
   debug_print("disabling MT\n");
+}
 
 __attribute__((noinline, naked)) void k_yield(void);
 __attribute__((noinline)) uint16_t spawn_task(void (*fn)(void),

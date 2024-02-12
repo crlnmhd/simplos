@@ -33,7 +33,7 @@ int main(void) {
 
   init_scheduler_interupts();
 
-  DISABLE_MT();
+  disable_mt();
 
   init_memory();
 
