@@ -6,31 +6,27 @@
 
 #include "memory.hpp"
 
-void print_task(Simplos_Task *task, Kernel *kernel) {
-  if (task == nullptr) {
-    FATAL_ERROR("Error, task is nullptr\n");
-  }
-
-  uint8_t const task_index = task->task_memory_block;
-  if (kernel->schedule.active_task_block == task->task_memory_block) {
+void print_task(Simplos_Task &task, Kernel &kernel) {
+  uint8_t const task_index = task.task_memory_block;
+  if (kernel.schedule.active_task_block == task.task_memory_block) {
     debug_print("* ");
   } else {
     debug_print("  ");
   }
   debug_print("Task: ");
-  if (task->name.progmem_str == nullptr) {
+  if (task.name.progmem_str == nullptr) {
     debug_print("\"\"");
   } else {
-    debug_print("\"%S\"", task->name.progmem_str);
+    debug_print("\"%S\"", task.name.progmem_str);
   }
   debug_print(" Block: %u", task_index);
-  debug_print(" PID: %u", task->pid);
-  debug_print(" Priority: %u", task->priority);
-  debug_print(" SP: 0x%X", task->task_sp_adr);
-  MemorySpan task_ram_range = *&kernel->task_RAM_ranges[task_index];
+  debug_print(" PID: %u", task.pid);
+  debug_print(" Priority: %u", task.priority);
+  debug_print(" SP: 0x%X", task.task_sp_adr);
+  MemorySpan task_ram_range = *&kernel.task_RAM_ranges[task_index];
   debug_print(" [0x%X - 0x%X] ", task_ram_range.low, task_ram_range.high);
 
-  switch (task->status) {
+  switch (task.status) {
     case Task_Status::READY:
       debug_print("  READY");
       break;
@@ -51,15 +47,15 @@ void print_task(Simplos_Task *task, Kernel *kernel) {
   }
   debug_print("\n");
 
-  // debug_print("Debug -- task memory block: %d\n", task->task_memory_block);
+  // debug_print("Debug -- task memory block: %d\n", task.task_memory_block);
 }
 
 void print_schedule(Kernel *kernel) {
   debug_print(" -- Schedule --\n");
   for (uint8_t i = 0; i < tasks_max; ++i) {
-    Simplos_Task *task = &kernel->schedule.queue.tasks[i];
+    Simplos_Task &task = kernel->schedule.queue.tasks[i];
     // debug_print("DEBUG:: has mem block: %d\n", task->task_memory_block);
-    print_task(task, kernel);
+    print_task(task, *kernel);
   }
   debug_print(" --  end of schedule --\n");
 }

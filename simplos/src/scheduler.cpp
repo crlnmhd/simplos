@@ -50,8 +50,8 @@ void print_queue(uint8_t num_active_tasks, Kernel *kernel) {
   for (uint8_t i = 0; i < num_active_tasks; i++) {
     debug_print("%u: ", i);
     uint8_t task_index = kernel->schedule.queue.task_index_queue[i];
-    Simplos_Task *task_ptr = &kernel->schedule.queue.tasks[task_index];
-    print_task(task_ptr, kernel);
+    Simplos_Task &task = kernel->schedule.queue.tasks[task_index];
+    print_task(task, *kernel);
   }
   debug_print("End of queue:\n-------------\n");
 }
