@@ -48,7 +48,7 @@ int main(void) {
   global_kernel->schedule.queue.task_index_queue[0] = index;
   global_kernel->schedule.queue.queue_position = 0;
 
-  const uint8_t margin_to_main = 10;
+  constexpr uint8_t margin_to_main = 10;
 
   configure_heap_location(margin_to_main, (Kernel *)global_kernel);
   task_sp = global_kernel->schedule.queue.tasks[index].task_sp_adr;

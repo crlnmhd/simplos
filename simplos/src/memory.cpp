@@ -24,8 +24,8 @@ void configure_heap_location(const uint8_t margin_to_main, Kernel *kernel) {
 void warn_if_task_memory_can_not_be_divided_evenly_between_tasks(void) {
   // Warn if not all available task memory has been allocated due to sub-optimal
   // configuration.
-  const uint16_t available_task_stack_size = task_ram_start - task_ram_end;
-  const uint16_t used_task_memory = task_memory_size * tasks_max;
+  constexpr uint16_t available_task_stack_size = task_ram_start - task_ram_end;
+  constexpr uint16_t used_task_memory = task_memory_size * tasks_max;
   if (used_task_memory != available_task_stack_size) {
     WARNING(
         "Could not divide available stack evenly between tasks. Consider "
@@ -38,7 +38,7 @@ INLINED bool in_region(size_t address, size_t region_start, size_t region_end) {
 }
 
 uint16_t task_sp_range_high(uint8_t const task_memory_block) {
-  const uint16_t index_increments =
+  constexpr uint16_t index_increments =
       task_memory_size - 1U;  // Task stack begins at increment 0, so max
                               // increment is TASK_MEMORY_SIZE -1
   return task_sp_range_low(task_memory_block) + index_increments;

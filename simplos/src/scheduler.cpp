@@ -139,9 +139,9 @@ void handle_previous_task(Simplos_Task *prev, Kernel *kernel) {
 }
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task) {
-  const uint8_t num_PC_bytes = 3;
+  constexpr uint8_t num_PC_bytes = 3;
   uint32_t task_PC = 0;
-  const uint16_t on_stack_context_switch_overhead_after_saved_sp =
+  constexpr uint16_t on_stack_context_switch_overhead_after_saved_sp =
       num_context_switch_overhead_bytes() - num_PC_bytes -
       1;  // -1 from SP pointing to first free byte *after* the
           // content
@@ -151,7 +151,7 @@ void assert_stack_pointer_points_to_valid_return_address(
   memcpy((void *)(&task_PC), (const uint16_t *)adr_of_stack_saved_pc,
          num_PC_bytes);  // Only copy the three bytes.
 
-  const uint32_t invalid_bit_mask =
+  constexpr uint32_t invalid_bit_mask =
       0x00FE0000;  // PC is 17 bits wide, upper byte is never copied.
 
   ASSERT_EQ(task_PC & invalid_bit_mask, 0UL, "0x%lX",

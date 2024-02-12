@@ -7,7 +7,7 @@ bool test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_availa
     void) {
   Kernel_type given_kernel = {};
   given_kernel.schedule.queue.queue_position = 1;
-  const uint8_t expected_queue_position = 0;
+  constexpr uint8_t expected_queue_position = 0;
 
   select_next_task(&given_kernel);
   CHECK_EQ(given_kernel.schedule.queue.queue_position, expected_queue_position,
@@ -19,12 +19,12 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
   next_task_sp = 0xFFFF;
   Kernel_type given_kernel = {};
   given_kernel.schedule.queue.queue_position = 1;
-  const uint8_t expected_queue_position = 0;
+  constexpr uint8_t expected_queue_position = 0;
 
-  const uint8_t given_index_of_queued_task = 3;
+  constexpr uint8_t given_index_of_queued_task = 3;
   given_kernel.schedule.queue.task_index_queue[expected_queue_position] =
       given_index_of_queued_task;
-  const uint16_t expected_scheduled_task_sp_adr = 0x1234;
+  constexpr uint16_t expected_scheduled_task_sp_adr = 0x1234;
   given_kernel.schedule.queue.tasks[given_index_of_queued_task].task_sp_adr =
       expected_scheduled_task_sp_adr;
 
@@ -36,7 +36,7 @@ bool test_select_next_task_sets_next_task_sp_to_next_available_task(void) {
 bool test_select_next_task_returns_index_of_selected_task(void) {
   Kernel_type given_kernel = {};
   given_kernel.schedule.queue.queue_position = 1;
-  const uint8_t expected_task_index = 4;
+  constexpr uint8_t expected_task_index = 4;
   given_kernel.schedule.queue.task_index_queue[0] = expected_task_index;
 
   const uint8_t recieved = select_next_task(&given_kernel);

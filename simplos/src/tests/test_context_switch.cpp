@@ -159,7 +159,7 @@ bool test_disable_mt_clears_enable_bit_for_tmsk1(void) {
 }
 bool test_select_scheduled_task_or_reschedule_selecte_schedled_task_when_available(
     void) {
-  const uint16_t expected_scheduled_task_sp = 0x1234;
+  constexpr uint16_t expected_scheduled_task_sp = 0x1234;
   task_sp = 0xFFFF;
   next_task_sp = expected_scheduled_task_sp;
 
@@ -171,7 +171,7 @@ bool test_select_scheduled_task_or_reschedule_selecte_schedled_task_when_availab
 
 bool test_select_scheduled_task_or_reschedule_does_not_modify_scheduler_task_when_task_is_scheduled(
     void) {
-  const uint16_t expected_scheduler_task_sp = 0xABCD;
+  constexpr uint16_t expected_scheduler_task_sp = 0xABCD;
   scheduler_task_sp = expected_scheduler_task_sp;
   next_task_sp = 0x1111;  // anything not 0
 
@@ -183,7 +183,7 @@ bool test_select_scheduled_task_or_reschedule_does_not_modify_scheduler_task_whe
 
 bool test_select_scheduled_task_or_reschedule_clears_next_task_sp_when_sheduled_task_is_selected(
     void) {
-  const uint16_t expected_scheduler_task_sp = 0xABCD;
+  constexpr uint16_t expected_scheduler_task_sp = 0xABCD;
   scheduler_task_sp = expected_scheduler_task_sp;
   next_task_sp = 0x1111;  // anything not 0
 
@@ -195,7 +195,7 @@ bool test_select_scheduled_task_or_reschedule_clears_next_task_sp_when_sheduled_
 
 bool test_select_scheduled_task_or_reschedule_selects_scheduler_task_when_no_task_is_scheduled(
     void) {
-  const uint16_t expected_scheduler_task_sp = 0xABCD;
+  constexpr uint16_t expected_scheduler_task_sp = 0xABCD;
   scheduler_task_sp = expected_scheduler_task_sp;
   next_task_sp = 0;  // no task scheduled
 
@@ -207,7 +207,7 @@ bool test_select_scheduled_task_or_reschedule_selects_scheduler_task_when_no_tas
 }
 
 bool test_stack_variable_is_kept_after_saving_and_restoring_context(void) {
-  const uint32_t given_data = 0xAAAAAAAAU;
+  constexpr uint32_t given_data = 0xAAAAAAAAU;
   volatile uint32_t on_stack_variable = given_data;
 
   SAVE_CONTEXT();

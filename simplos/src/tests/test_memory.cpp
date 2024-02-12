@@ -45,7 +45,7 @@ bool test_location_of_kernel_data_starts_at_0x2102(void) {
    * Note: this order of elements in the struct is not what is important here,
    * just that the kernel data is located where it's supposed to be.
    * */
-  const uint32_t given_first_data_in_struct = 0x12345678;
+  constexpr uint32_t given_first_data_in_struct = 0x12345678;
   at_kernel_location.schedule.queue.tasks[0].time_counter =
       given_first_data_in_struct;
   CHECK_EQ((uint16_t)(&at_kernel_location), (uint16_t)0x2102, "0x%X");
@@ -53,9 +53,9 @@ bool test_location_of_kernel_data_starts_at_0x2102(void) {
   return TEST_PASSED;
 }
 bool test_size_of_kernel_does_not_lead_to_stack_overflow(void) {
-  const uint16_t start_adr = 0x2102;  // see other test
+  constexpr uint16_t start_adr = 0x2102;  // see other test
 
-  const uint16_t next_section = 0x21FF;  // End of SRAM
+  constexpr uint16_t next_section = 0x21FF;  // End of SRAM
   CHECK_TRUE(start_adr + sizeof(Kernel) < next_section);
   return TEST_PASSED;
 }
@@ -68,7 +68,7 @@ bool test_task_zero_low_is_at_end_of_availabel_task_ram(void) {
 
 bool test_first_task_high_starts_at_TASK_RAM_END_plus_num_bytes_minus_one(
     void) {
-  const uint16_t exepcted_task_high = task_ram_end + task_memory_size - 1;
+  constexpr uint16_t exepcted_task_high = task_ram_end + task_memory_size - 1;
   CHECK_EQ(task_sp_range_high(0), exepcted_task_high, "0x%X");
 
   return TEST_PASSED;
