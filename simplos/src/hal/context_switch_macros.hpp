@@ -106,9 +106,7 @@ INLINED void scilent_disable_mt() {
       "push  r29                    \n\t"   \
       "push  r30                    \n\t"   \
       "push  r31                    \n\t"); \
-  SAVE_SP()
-
-#define SAVE_SP() SAVE_SP_TO_ADR(task_sp)
+  SAVE_SP_TO_ADR(task_sp)
 
 INLINED void SAVE_SP_TO_ADR(volatile uint16_t &adr_of_adr_holder) {
   asm volatile(
