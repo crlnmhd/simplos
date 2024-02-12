@@ -47,15 +47,15 @@ void run_test_suite(TestStatistics (*test_fn)(void), PGM_P name,
   combine_statistics(&total_results, &test_suite_results);
 }
 
-void print_total_test_results(TestStatistics *results) {
-  if (results->failed == 0) {
+void print_total_test_results(TestStatistics &results) {
+  if (results.failed == 0) {
     debug_printf("All tests passed\n");
   } else {
     debug_printf("Test failiure(s) encountered. %u test(s) failed\n",
-                 results->failed);
+                 results.failed);
   }
-  if (results->skipped > 0) {
-    debug_printf("Note: %u test(s) were skipped\n", results->skipped);
+  if (results.skipped > 0) {
+    debug_printf("Note: %u test(s) were skipped\n", results.skipped);
   }
 }
 
@@ -84,7 +84,7 @@ int main(void) {
   RUN_TEST_SUITE(unit_test_os, test_results);
 
   debug_printf("Test suite completed.\n");
-  print_total_test_results(&test_results);
+  print_total_test_results(test_results);
 
   EXIT_SIMULATOR();
 }
