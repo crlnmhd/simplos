@@ -48,15 +48,16 @@
   CLEAR_IO_REG(TCNT1H); \
   CLEAR_IO_REG(TCNT1L);
 
-#define scilent_enable_mt()                                             \
-  asm volatile(                                                         \
-      "push r16                         \n\t "                          \
-      "lds r16, %[timer_adr]            \n\t "                          \
-      "ori r16, (1 << %[enable_bit])    \n\t "                          \
-      "sts %[timer_adr], r16            \n\t "                          \
-      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
-      [enable_bit] "I"(OCIE1A)                                          \
+INLINED void scilent_enable_mt() {
+  asm volatile(
+      "push r16                         \n\t "
+      "lds r16, %[timer_adr]            \n\t "
+      "ori r16, (1 << %[enable_bit])    \n\t "
+      "sts %[timer_adr], r16            \n\t "
+      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F),
+      [enable_bit] "I"(OCIE1A)
       : "memory");  // Set enable bit for TIMSK1
+}
 
 INLINED void scilent_disable_mt() {
   asm volatile(
