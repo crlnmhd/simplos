@@ -1,6 +1,9 @@
 #ifndef HAL_CONTEXT_SWITCH_MACROS_H_
 #define HAL_CONTEXT_SWITCH_MACROS_H_
 
+#include <avr/io.h>
+
+#include "../inline.hpp"
 /*
  * Make ret/reti call 'entrypoint_label' instead of the next instruction.
  * Push a modified PC, where the next instruction is a jump to the
@@ -55,15 +58,16 @@
       [enable_bit] "I"(OCIE1A)                                          \
       : "memory");  // Set enable bit for TIMSK1
 
-#define SCILENT_DISABLE_MT()                                            \
-  asm volatile(                                                         \
-      "push r16                         \n\t "                          \
-      "lds r16, %[timer_adr]            \n\t "                          \
-      "andi r16, ~(1 << %[enable_bit])  \n\t "                          \
-      "sts %[timer_adr], r16            \n\t "                          \
-      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
-      [enable_bit] "I"(OCIE1A)                                          \
+INLINED void SCILENT_DISABLE_MT() {
+  asm volatile(
+      "push r16                         \n\t "
+      "lds r16, %[timer_adr]            \n\t "
+      "andi r16, ~(1 << %[enable_bit])  \n\t "
+      "sts %[timer_adr], r16            \n\t "
+      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F),
+      [enable_bit] "I"(OCIE1A)
       : "memory");  // Unset enable bit for TMSK1
+}
 
 #define SAVE_CONTEXT()                      \
   asm volatile(                             \
