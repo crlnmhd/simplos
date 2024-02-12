@@ -130,7 +130,7 @@ bool test_enable_mt_sets_enable_bit_for_tmsk1(void) {
 
   const uint8_t original_timsk1_content = TIMSK1;
   TIMSK1 = 0;
-  SCILENT_ENABLE_MT();
+  scilent_enable_mt();
   CHECK_EQ(TIMSK1, 1 << OCIE1A, "0x%X");
 
   TIMSK1 = original_timsk1_content;
@@ -145,7 +145,7 @@ bool test_disable_mt_clears_enable_bit_for_tmsk1(void) {
 
   const uint8_t original_timsk1_content = TIMSK1;
   TIMSK1 = 0;
-  SCILENT_ENABLE_MT();
+  scilent_enable_mt();
   CHECK_EQ(TIMSK1, 1 << OCIE1A, "0x%X");
   scilent_disable_mt();
   CHECK_EQ(TIMSK1, 0, "0x%X");

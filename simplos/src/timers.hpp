@@ -6,7 +6,7 @@
 #include "io_helpers.hpp"
 
 INLINED void enable_mt() {
-  SCILENT_ENABLE_MT();
+  scilent_enable_mt();
   debug_print("enabling MT\n");
 }
 

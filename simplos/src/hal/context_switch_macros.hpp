@@ -48,7 +48,7 @@
   CLEAR_IO_REG(TCNT1H); \
   CLEAR_IO_REG(TCNT1L);
 
-#define SCILENT_ENABLE_MT()                                             \
+#define scilent_enable_mt()                                             \
   asm volatile(                                                         \
       "push r16                         \n\t "                          \
       "lds r16, %[timer_adr]            \n\t "                          \
@@ -214,6 +214,6 @@ INLINED void scilent_disable_mt() {
   SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
   RESET_TIMER();                        \
   RESTORE_CONTEXT();                    \
-  SCILENT_ENABLE_MT();
+  scilent_enable_mt();
 
 #endif  // HAL_CONTEXT_SWITCH_MACROS_H_
