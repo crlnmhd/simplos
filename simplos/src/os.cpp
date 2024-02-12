@@ -4,7 +4,6 @@
 
 #include "hal/hal.hpp"
 #include "io_helpers.hpp"
-#include "memory_layout.hpp"
 #include "simplos.hpp"
 #include "simplos_types.hpp"
 #include "timers.hpp"
