@@ -118,7 +118,7 @@ spawn_task(void (*fn)(void), uint8_t const priority, const ProgmemString &name,
   invalidate_scheduled_queue(kernel);
   debug_print("Calling function\n");
 
-  ENABLE_MT();
+  enable_mt();
   enable_interrupts();
   fn();
   /*

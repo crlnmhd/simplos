@@ -5,7 +5,7 @@
 #include "inline.hpp"
 #include "io_helpers.hpp"
 
-INLINED void ENABLE_MT() {
+INLINED void enable_mt() {
   SCILENT_ENABLE_MT();
   debug_print("enabling MT\n");
 }
