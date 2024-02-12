@@ -19,8 +19,7 @@ struct TestStatistics {
   uint8_t skipped;
 };
 
-void combine_statistics(struct TestStatistics *statistics,
-                        struct TestStatistics *to_add);
+void combine_statistics(TestStatistics *statistics, TestStatistics *to_add);
 
 #define SKIP_TEST(test_fn, function_name, test_statistics)       \
   test_statistics.skipped += 1;                                  \
@@ -28,7 +27,7 @@ void combine_statistics(struct TestStatistics *statistics,
   printf_P(PSTR(function_name));
 
 void run_test_function(bool (*fn_ptr)(void), PGM_P function_name,
-                       struct TestStatistics *statistics);
+                       TestStatistics *statistics);
 
 #define CHECK_EQ(recieved, expected, fmt)              \
   if ((expected) != (recieved)) {                      \

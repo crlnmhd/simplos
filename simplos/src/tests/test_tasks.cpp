@@ -23,8 +23,8 @@ bool test_set_name_sets_name_of_task() {
   return TEST_PASSED;
 }
 
-struct TestStatistics unit_test_tasks() {
-  struct TestStatistics results {};
+TestStatistics unit_test_tasks() {
+  TestStatistics results{};
 
   RUN_TEST(test_task_is_initilized_with_status_empty, &results)
 

@@ -11,8 +11,8 @@ bool test_kernel_data_is_initilized_with_pid_counter_set_to_zero() {
   return TEST_PASSED;
 }
 
-struct TestStatistics unit_test_kernel_status() {
-  struct TestStatistics results {};
+TestStatistics unit_test_kernel_status() {
+  TestStatistics results{};
 
   RUN_TEST(test_kernel_data_is_initilized_with_pid_counter_set_to_zero,
            &results);

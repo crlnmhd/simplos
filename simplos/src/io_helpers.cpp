@@ -27,7 +27,7 @@ void print_task(Simplos_Task *task, Kernel *kernel) {
   debug_print(" PID: %u", task->pid);
   debug_print(" Priority: %u", task->priority);
   debug_print(" SP: 0x%X", task->task_sp_adr);
-  struct MemorySpan task_ram_range = *&kernel->task_RAM_ranges[task_index];
+  MemorySpan task_ram_range = *&kernel->task_RAM_ranges[task_index];
   debug_print(" [0x%X - 0x%X] ", task_ram_range.low, task_ram_range.high);
 
   switch (task->status) {

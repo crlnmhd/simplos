@@ -71,7 +71,7 @@ void init_kernel(Kernel *kernel) {
     kernel->schedule.queue.tasks[i].set_name(progmem_string(""));
 
     // Set task RAM range.
-    struct MemorySpan *task_stack_range = &kernel->task_RAM_ranges[i];
+    MemorySpan *task_stack_range = &kernel->task_RAM_ranges[i];
     task_stack_range->high = task_sp_range_high(i);
     task_stack_range->low = task_sp_range_low(i);
   }

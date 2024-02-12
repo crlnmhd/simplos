@@ -25,7 +25,7 @@ struct HardwareState {
   bool halted;
 };
 
-extern struct HardwareState state;
+extern HardwareState state;
 
 void halt_exec(void);
 void disable_interrupts(void);

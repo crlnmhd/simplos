@@ -193,8 +193,8 @@ bool invalidate_scheduled_queue_sets_queue_position_to_zero(void) {
   return TEST_PASSED;
 }
 
-struct TestStatistics unit_test_scheduler(void) {
-  struct TestStatistics results = {};
+TestStatistics unit_test_scheduler(void) {
+  TestStatistics results = {};
   RUN_TEST(
       test_select_next_task_sets_queue_positio_to_next_task_when_tasks_are_available,
       &results);

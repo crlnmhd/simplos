@@ -3,22 +3,22 @@
 
 #include "test.hpp"
 
-struct TestStatistics unit_test_context_switch(void);
+TestStatistics unit_test_context_switch(void);
 
-struct TestStatistics unit_test_scheduler(void);
+TestStatistics unit_test_scheduler(void);
 
-struct TestStatistics unit_test_spawning(void);
+TestStatistics unit_test_spawning(void);
 
-struct TestStatistics unit_test_hal_log(void);
+TestStatistics unit_test_hal_log(void);
 
-struct TestStatistics unit_test_yields(void);
+TestStatistics unit_test_yields(void);
 
-struct TestStatistics unit_test_memory(void);
+TestStatistics unit_test_memory(void);
 
-struct TestStatistics unit_test_os(void);
+TestStatistics unit_test_os(void);
 
-struct TestStatistics unit_test_tasks(void);
+TestStatistics unit_test_tasks(void);
 
-struct TestStatistics unit_test_kernel_status(void);
+TestStatistics unit_test_kernel_status(void);
 
 #endif  // TEST_SUITE_H_

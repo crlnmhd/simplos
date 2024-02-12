@@ -87,8 +87,8 @@ bool test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty(
   return TEST_PASSED;
 }
 
-struct TestStatistics unit_test_hal_log(void) {
-  struct TestStatistics test_resutls = {};
+TestStatistics unit_test_hal_log(void) {
+  TestStatistics test_resutls = {};
 
   RUN_TEST(test_does_not_append_to_log_when_bufferspace_is_insufficiant,
            &test_resutls);

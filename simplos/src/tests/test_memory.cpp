@@ -115,8 +115,8 @@ bool test_tasks_are_allocated_TASKS_MEMORY_SIZE_bytes_stack(void) {
   return TEST_PASSED;
 }
 
-struct TestStatistics unit_test_memory(void) {
-  struct TestStatistics results = {};
+TestStatistics unit_test_memory(void) {
+  TestStatistics results = {};
   RUN_TEST(test_location_of_task_sp_is_readable_at_0x2100_to_0x2101, &results);
 
   RUN_TEST(test_location_of_scheduler_task_sp_is_readable_at_0x20FE_to_0x20FF,

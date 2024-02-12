@@ -219,8 +219,8 @@ bool test_stack_variable_is_kept_after_saving_and_restoring_context(void) {
   return true;
 }
 
-struct TestStatistics unit_test_context_switch(void) {
-  struct TestStatistics results = {};
+TestStatistics unit_test_context_switch(void) {
+  TestStatistics results = {};
 
   RUN_TEST(test_disable_mt_clears_enable_bit_for_tmsk1, &results);
 

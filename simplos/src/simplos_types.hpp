@@ -71,7 +71,7 @@ class Kernel {
         pid_cnt(0) {}
 
   Scheduler schedule;
-  struct MemorySpan task_RAM_ranges[tasks_max];
+  MemorySpan task_RAM_ranges[tasks_max];
   uint32_t cs_time_counter;
   uint32_t ended_task_time_counter;
   uint16_t heap_start;  // dynamically determined by the RAM needed for the init

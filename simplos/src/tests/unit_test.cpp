@@ -25,9 +25,9 @@ volatile uint16_t next_task_sp = 0;
 volatile uint16_t prev_task_sp = 0;
 volatile uint16_t scheduler_task_sp = 0;
 
-void run_test_suite(struct TestStatistics (*test_fn)(void), PGM_P name,
-                    struct TestStatistics *total_results) {
-  struct TestStatistics test_suite_results = test_fn();
+void run_test_suite(TestStatistics (*test_fn)(void), PGM_P name,
+                    TestStatistics *total_results) {
+  TestStatistics test_suite_results = test_fn();
 
   if (test_suite_results.failed == 0 && test_suite_results.skipped == 0) {
     debug_printf("PASSED: all.\n");
@@ -47,7 +47,7 @@ void run_test_suite(struct TestStatistics (*test_fn)(void), PGM_P name,
   combine_statistics(total_results, &test_suite_results);
 }
 
-void print_total_test_results(struct TestStatistics *results) {
+void print_total_test_results(TestStatistics *results) {
   if (results->failed == 0) {
     debug_printf("All tests passed\n");
   } else {
@@ -65,7 +65,7 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  struct TestStatistics test_results = {};
+  TestStatistics test_results = {};
 
   RUN_TEST_SUITE(unit_test_hal_log, "Test the testing hal log", &test_results);
 

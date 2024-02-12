@@ -89,8 +89,7 @@ void assert_task_pointer_integrity(Simplos_Task *task, Kernel *kernel) {
 }
 bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_memory_block,
                              Kernel *kernel) {
-  struct MemorySpan task_stack_range =
-      kernel->task_RAM_ranges[task_memory_block];
+  MemorySpan task_stack_range = kernel->task_RAM_ranges[task_memory_block];
 
   return task_stack_range.low <= adr && adr <= task_stack_range.high;
 }
