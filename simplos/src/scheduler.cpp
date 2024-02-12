@@ -14,7 +14,7 @@
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
 void handle_previous_task(Simplos_Task *prev, Kernel *kernel);
-void prepare_next_task(Simplos_Task *next, Kernel *kernel);
+void prepare_next_task(Simplos_Task &next, Kernel &kernel);
 void print_queue(uint8_t num_active_tasks, Kernel &kernel);
 
 void reschedule(Kernel *kernel) {
@@ -103,13 +103,13 @@ start_scheduler(Kernel *kernel) {
 
     kernel->schedule.active_task_block = new_task_index;
 
-    Simplos_Task *next =
-        &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+    Simplos_Task &next =
+        kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
     verbose_print("Selected next task: \n");
 #if defined(VERBOSE_OUTPUT)
-    print_task(*next, *kernel);
+    print_task(next, *kernel);
 #endif  // defined VERBOSE_OUTPUT
-    prepare_next_task(next, kernel);
+    prepare_next_task(next, *kernel);
     verbose_print("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
     verbose_print("################## END SCHEDULING\n\n");
     k_yield();  // enables MT
@@ -160,20 +160,20 @@ void assert_stack_pointer_points_to_valid_return_address(
   ASSERT(task_PC != 0, "MALFORMED program couter for stack");
 }
 
-void prepare_next_task(Simplos_Task *next,
-                       __attribute__((unused)) Kernel *kernel) {
+void prepare_next_task(Simplos_Task &next,
+                       __attribute__((unused)) Kernel &kernel) {
   verbose_print("printing next:\n");
 #if defined(VERBOSE_OUTPUT)
-  print_task(*next, *kernel);
+  print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
-  assert_task_pointer_integrity(next, kernel);
-  if (next->status == Task_Status::EMPTY) {
+  assert_task_pointer_integrity(&next, &kernel);
+  if (next.status == Task_Status::EMPTY) {
     FATAL_ERROR("Error, can not select an empty task!\n");
-  } else if (next->status == Task_Status::SCHEDULER) {
+  } else if (next.status == Task_Status::SCHEDULER) {
     FATAL_ERROR(
         "ERROR, Can not select scheduler task selected as next task!\n");
   } else {
-    next->status = Task_Status::RUNNING;
+    next.status = Task_Status::RUNNING;
   }
 }
 
