@@ -44,7 +44,7 @@
   asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"( \
       ((uint16_t)(&(io_reg)-0x20))));
 
-INLINED void RESET_TIMER() {
+INLINED void reset_timer() {
   CLEAR_IO_REG(TCNT1H);
   CLEAR_IO_REG(TCNT1L);
 }
@@ -213,7 +213,7 @@ INLINED void SAVE_SP_TO_ADR(volatile uint16_t &adr_of_adr_holder) {
   SAVE_SP_TO_ADR(prev_task_sp);         \
   scilent_disable_mt();                 \
   SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
-  RESET_TIMER();                        \
+  reset_timer();                        \
   RESTORE_CONTEXT();                    \
   scilent_enable_mt();
 
