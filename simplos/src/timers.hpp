@@ -1,11 +1,14 @@
 #ifndef TIMERS_H
 #define TIMERS_H
 
+#include "hal/context_switch_macros.hpp"
+#include "inline.hpp"
 #include "io_helpers.hpp"
 
-#define ENABLE_MT()    \
-  SCILENT_ENABLE_MT(); \
+INLINED void ENABLE_MT() {
+  SCILENT_ENABLE_MT();
   debug_print("enabling MT\n");
+}
 
 #define DISABLE_MT()   \
   SCILENT_DISABLE_MT() \
