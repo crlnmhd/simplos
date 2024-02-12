@@ -26,7 +26,7 @@ volatile uint16_t prev_task_sp = 0;
 volatile uint16_t scheduler_task_sp = 0;
 
 void run_test_suite(TestStatistics (*test_fn)(void), PGM_P name,
-                    TestStatistics *total_results) {
+                    TestStatistics &total_results) {
   TestStatistics test_suite_results = test_fn();
 
   if (test_suite_results.failed == 0 && test_suite_results.skipped == 0) {
@@ -44,7 +44,7 @@ void run_test_suite(TestStatistics (*test_fn)(void), PGM_P name,
     }
     debug_printf("\n%S\n\n", PSTR("--- end ---"));  // FIXME???
   }
-  combine_statistics(total_results, &test_suite_results);
+  combine_statistics(&total_results, &test_suite_results);
 }
 
 void print_total_test_results(TestStatistics *results) {
@@ -67,23 +67,23 @@ int main(void) {
 
   TestStatistics test_results = {};
 
-  RUN_TEST_SUITE(unit_test_hal_log, &test_results);
+  RUN_TEST_SUITE(unit_test_hal_log, test_results);
 
-  RUN_TEST_SUITE(unit_test_tasks, &test_results);
+  RUN_TEST_SUITE(unit_test_tasks, test_results);
 
-  RUN_TEST_SUITE(unit_test_scheduler, &test_results);
+  RUN_TEST_SUITE(unit_test_scheduler, test_results);
 
-  RUN_TEST_SUITE(unit_test_kernel_status, &test_results);
+  RUN_TEST_SUITE(unit_test_kernel_status, test_results);
 
-  RUN_TEST_SUITE(unit_test_context_switch, &test_results);
+  RUN_TEST_SUITE(unit_test_context_switch, test_results);
 
-  RUN_TEST_SUITE(unit_test_spawning, &test_results);
+  RUN_TEST_SUITE(unit_test_spawning, test_results);
 
-  RUN_TEST_SUITE(unit_test_memory, &test_results);
+  RUN_TEST_SUITE(unit_test_memory, test_results);
 
-  RUN_TEST_SUITE(unit_test_os, &test_results);
+  RUN_TEST_SUITE(unit_test_os, test_results);
 
-  debug_printf("Test suite completed.\n", &test_results);
+  debug_printf("Test suite completed.\n");
   print_total_test_results(&test_results);
 
   EXIT_SIMULATOR();
