@@ -46,3 +46,8 @@ bool Log::contains_entry(const char *expected_entry) const {
 size_t Log::available_space_bytes() const {
   return this->num_buffer_bytes_remaining;
 }
+
+void Log::clear() {
+  this->end = this->buffer;
+  this->num_buffer_bytes_remaining = this->total_buffer_bytes;
+}

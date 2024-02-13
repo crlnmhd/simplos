@@ -10,18 +10,23 @@
 class Log {
  public:
   Log(char *buf, const size_t buf_size)
-      : buffer(buf), end(buffer), num_buffer_bytes_remaining(buf_size) {
-    // FIXME: Handle insufficient buffer
+      : buffer(buf),
+        end(buffer),
+        num_buffer_bytes_remaining(buf_size),
+        total_buffer_bytes(buf_size) {
+    // FIXME: templetaize size
   }
 
   bool add_entry(const char *entry);
   bool contains_entry(const char *expected_entry) const;
+  void clear();
   size_t available_space_bytes() const;
 
  private:
   char *buffer;
   char *end;
   size_t num_buffer_bytes_remaining;
+  size_t total_buffer_bytes;
 };
 
 #endif  // LOG_H_

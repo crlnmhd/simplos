@@ -87,6 +87,26 @@ bool test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty(
   return TEST_PASSED;
 }
 
+bool test_clear_removed_existing_entries(void) {
+  constexpr uint16_t specified_buffer_size = 32;
+  char buffer[specified_buffer_size];
+  Log log{buffer, specified_buffer_size};
+
+  const char entry1[]{"entry 1"};
+  const char entry2[]{"entry 2"};
+
+  log.add_entry(entry1);
+  log.add_entry(entry2);
+
+  log.clear();
+
+  CHECK_FALSE(log.contains_entry(entry1));
+  CHECK_FALSE(log.contains_entry(entry2));
+  CHECK_EQ(log.available_space_bytes(), specified_buffer_size, "%u");
+
+  return TEST_PASSED;
+}
+
 TestStatistics unit_test_hal_log(void) {
   TestStatistics test_resutls = {};
 
@@ -106,6 +126,8 @@ TestStatistics unit_test_hal_log(void) {
   RUN_TEST(
       test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty,
       test_resutls);
+
+  RUN_TEST(test_clear_removed_existing_entries, test_resutls);
 
   return test_resutls;
 }
