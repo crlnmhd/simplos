@@ -71,7 +71,7 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
 // clang-format off
 
 void print_task(Simplos_Task &task, Kernel &kernel);
-void print_schedule(Kernel *kernel);
+void print_schedule(Kernel &kernel);
 
 // void print_task_stack(uint8_t const pid);
 

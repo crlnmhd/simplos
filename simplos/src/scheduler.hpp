@@ -5,16 +5,16 @@
 /*
   Set curr_task_index for the schedule and return it.
 */
-uint8_t select_next_task(Kernel *);
+uint8_t select_next_task(Kernel &);
 
-void start_scheduler(Kernel *);
+void start_scheduler(Kernel &);
 
-void invalidate_scheduled_queue(Kernel *);
+void invalidate_scheduled_queue(Kernel &);
 
 /*
  * reschedules. Public to make it testable.
  * */
-void reschedule(Kernel *kernel);
+void reschedule(Kernel &kernel);
 /*
  * Sets the priority order of the tasks queue in out_priority_list.
  * In decreasing order of priority.

@@ -29,7 +29,7 @@ int main(void) {
       FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
   stdout = stdin = &uart_file;
 
-  verify_that_kernel_is_uninitilized((Kernel *)global_kernel);
+  verify_that_kernel_is_uninitilized(*(const_cast<Kernel *>(global_kernel)));
 
   init_scheduler_interupts();
 
@@ -37,20 +37,21 @@ int main(void) {
 
   init_memory();
 
-  init_kernel((Kernel *)global_kernel);
-  init_schedule((Kernel *)global_kernel);
+  init_kernel(*(const_cast<Kernel *>(global_kernel)));
+  init_schedule(*(const_cast<Kernel *>(global_kernel)));
 #if defined(SW_TIME_MEASSREMENTS)
   init_ticks();
 #endif  // defined SW_TIME_MEASSREMENTS
 
   uint8_t index = create_simplos_task(progmem_string("idle task"), 0,
-                                      (Kernel *)global_kernel);
+                                      *(const_cast<Kernel *>(global_kernel)));
   global_kernel->schedule.queue.task_index_queue[0] = index;
   global_kernel->schedule.queue.queue_position = 0;
 
   constexpr uint8_t margin_to_main = 10;
 
-  configure_heap_location(margin_to_main, (Kernel *)global_kernel);
+  configure_heap_location(margin_to_main,
+                          *(const_cast<Kernel *>(global_kernel)));
   task_sp = global_kernel->schedule.queue.tasks[index].task_sp_adr;
   SET_SP();
 

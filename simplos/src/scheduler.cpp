@@ -13,21 +13,21 @@
 
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task);
-void handle_previous_task(Simplos_Task *prev, Kernel *kernel);
+void handle_previous_task(Simplos_Task &prev, Kernel &kernel);
 void prepare_next_task(Simplos_Task &next, Kernel &kernel);
 void print_queue(uint8_t num_active_tasks, Kernel &kernel);
 
-void reschedule(Kernel *kernel) {
+void reschedule(Kernel &kernel) {
   const uint8_t num_active_tasks = prioritize_tasks(
-      kernel->schedule.queue.tasks, kernel->schedule.queue.task_index_queue);
+      kernel.schedule.queue.tasks, kernel.schedule.queue.task_index_queue);
   if (num_active_tasks == 0) {
     FATAL_ERROR("Error, no tasks avalable to schedule!");
   }
 
-  kernel->schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
+  kernel.schedule.queue.queue_position = (uint8_t)(num_active_tasks - 1);
 
 #if defined(VERBOSE_OUTPUT)
-  print_queue(num_active_tasks, *kernel);
+  print_queue(num_active_tasks, kernel);
 #endif  // defined(VERBOSE_OUTPUT)
 }
 
@@ -56,33 +56,33 @@ void print_queue(uint8_t num_active_tasks, Kernel &kernel) {
   debug_print("End of queue:\n-------------\n");
 }
 
-uint8_t select_next_task(Kernel *kernel_ptr) {
-  if (kernel_ptr->schedule.queue.queue_position == 0) {
+uint8_t select_next_task(Kernel &kernel_ptr) {
+  if (kernel_ptr.schedule.queue.queue_position == 0) {
     verbose_print("Rescheduling...\n");
     reschedule(kernel_ptr);
   } else {
-    kernel_ptr->schedule.queue.queue_position--;
+    kernel_ptr.schedule.queue.queue_position--;
   }
   const uint8_t selected_task_index =
-      kernel_ptr->schedule.queue
-          .task_index_queue[kernel_ptr->schedule.queue.queue_position];
+      kernel_ptr.schedule.queue
+          .task_index_queue[kernel_ptr.schedule.queue.queue_position];
 
   next_task_sp =
-      kernel_ptr->schedule.queue.tasks[selected_task_index].task_sp_adr;
+      kernel_ptr.schedule.queue.tasks[selected_task_index].task_sp_adr;
   return selected_task_index;
 }
-void schedule_tasks(Kernel *kernel) { reschedule(kernel); }
+void schedule_tasks(Kernel &kernel) { reschedule(kernel); }
 
 #ifndef MOCK_HAL
 void start_scheduler_with_os_kernel(void) {
-  start_scheduler(const_cast<Kernel *>(global_kernel));
+  start_scheduler(*(const_cast<Kernel *>(global_kernel)));
 }  // Note: see header
 #endif  // MOCK_HAL
 
 void __attribute__((optimize("-fno-defer-pop")))
-start_scheduler(Kernel *kernel) {
+start_scheduler(Kernel &kernel) {
   scilent_disable_mt();
-  kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].status =
+  kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)].status =
       Task_Status::SCHEDULER;
 
   SET_RETURN_POINT(scheduler_loop_entry_point);
@@ -96,46 +96,46 @@ start_scheduler(Kernel *kernel) {
     scilent_disable_mt();
     verbose_print("################## BEGIN SCHEDULING\n\n");
     verbose_print("Selecting next task...\n");
-    Simplos_Task *prev =
-        &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+    Simplos_Task &prev =
+        kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)];
     handle_previous_task(prev, kernel);
     const uint8_t new_task_index = select_next_task(kernel);
 
-    kernel->schedule.active_task_block = new_task_index;
+    kernel.schedule.active_task_block = new_task_index;
 
     Simplos_Task &next =
-        kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+        kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)];
     verbose_print("Selected next task: \n");
 #if defined(VERBOSE_OUTPUT)
-    print_task(next, *kernel);
+    print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
-    prepare_next_task(next, *kernel);
+    prepare_next_task(next, kernel);
     verbose_print("Done selecting task. Next task sp = 0x%X\n", next_task_sp);
     verbose_print("################## END SCHEDULING\n\n");
     k_yield();  // enables MT
   }
 }
 
-void handle_previous_task(Simplos_Task *prev, Kernel *kernel) {
-  if (prev->status == Task_Status::EMPTY) {
+void handle_previous_task(Simplos_Task &prev, Kernel &kernel) {
+  if (prev.status == Task_Status::EMPTY) {
     return;  // Validation of task sp is not required since the task is empty.
   }
 
-  if (prev->status == Task_Status::SCHEDULER) {
-    prev->task_sp_adr = scheduler_task_sp;
-    prev->status = Task_Status::SCHEDULER;
-  } else if (prev->status == Task_Status::RUNNING) {
-    prev->task_sp_adr = prev_task_sp;
-    prev->status = Task_Status::READY;
+  if (prev.status == Task_Status::SCHEDULER) {
+    prev.task_sp_adr = scheduler_task_sp;
+    prev.status = Task_Status::SCHEDULER;
+  } else if (prev.status == Task_Status::RUNNING) {
+    prev.task_sp_adr = prev_task_sp;
+    prev.status = Task_Status::READY;
   }
 #if defined(VERBOSE_OUTPUT)
   print_schedule(kernel);
 #endif  // defined (VERBOSE_OUTPUT)
   assert_task_pointer_integrity(prev, kernel);
-  assert_stack_pointer_points_to_valid_return_address(prev->task_sp_adr);
+  assert_stack_pointer_points_to_valid_return_address(prev.task_sp_adr);
 
-  verbose_print("saving previous task %u's SP 0x%X\n", prev->task_memory_block,
-                prev->task_sp_adr);
+  verbose_print("saving previous task %u's SP 0x%X\n", prev.task_memory_block,
+                prev.task_sp_adr);
 }
 void assert_stack_pointer_points_to_valid_return_address(
     uint16_t adr_of_saved_task) {
@@ -166,7 +166,7 @@ void prepare_next_task(Simplos_Task &next,
 #if defined(VERBOSE_OUTPUT)
   print_task(next, kernel);
 #endif  // defined VERBOSE_OUTPUT
-  assert_task_pointer_integrity(&next, &kernel);
+  assert_task_pointer_integrity(next, kernel);
   if (next.status == Task_Status::EMPTY) {
     FATAL_ERROR("Error, can not select an empty task!\n");
   } else if (next.status == Task_Status::SCHEDULER) {
@@ -177,7 +177,7 @@ void prepare_next_task(Simplos_Task &next,
   }
 }
 
-void invalidate_scheduled_queue(Kernel *kernel) {
+void invalidate_scheduled_queue(Kernel &kernel) {
   debug_print("Invalidating queue\n");
-  kernel->schedule.queue.queue_position = 0;
+  kernel.schedule.queue.queue_position = 0;
 }

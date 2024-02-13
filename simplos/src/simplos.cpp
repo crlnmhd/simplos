@@ -45,11 +45,11 @@ uint8_t add_to_task_list(uint8_t priority, Task_Queue *queue) {
   return 0;  // Never reached
 }
 
-void init_schedule(Kernel *kernel) {
-  kernel->schedule.os_task_sp = os_stack_start;
-  init_task_list(&(kernel->schedule.queue));
-  kernel->cs_time_counter = 0;
-  kernel->schedule.active_task_block = 0;
+void init_schedule(Kernel &kernel) {
+  kernel.schedule.os_task_sp = os_stack_start;
+  init_task_list(&(kernel.schedule.queue));
+  kernel.cs_time_counter = 0;
+  kernel.schedule.active_task_block = 0;
 }
 
 __attribute__((noinline, naked, optimize("-fno-defer-pop"))) void k_yield(
@@ -64,55 +64,55 @@ __attribute__((noinline, naked, optimize("-fno-defer-pop"))) void k_yield(
       : "memory");
 }
 
-void init_kernel(Kernel *kernel) {
-  kernel->schedule.queue.queue_position = 0;
+void init_kernel(Kernel &kernel) {
+  kernel.schedule.queue.queue_position = 0;
   for (uint8_t i = 0; i < tasks_max; i++) {
     // Empty task name.
-    kernel->schedule.queue.tasks[i].set_name(progmem_string(""));
+    kernel.schedule.queue.tasks[i].set_name(progmem_string(""));
 
     // Set task RAM range.
-    MemorySpan *task_stack_range = &kernel->task_RAM_ranges[i];
-    task_stack_range->high = task_sp_range_high(i);
-    task_stack_range->low = task_sp_range_low(i);
+    MemorySpan &task_stack_range = kernel.task_RAM_ranges[i];
+    task_stack_range.high = task_sp_range_high(i);
+    task_stack_range.low = task_sp_range_low(i);
   }
 }
 
-void verify_that_kernel_is_uninitilized(Kernel *kernel) {
-  if (kernel->pid_cnt != 0) {
+void verify_that_kernel_is_uninitilized(Kernel &kernel) {
+  if (kernel.pid_cnt != 0) {
     FATAL_ERROR("Attempted to re-run startup process. Memory wrap-arround?");
   }
 }
 
 pid_type __attribute__((optimize("-fno-defer-pop")))
 spawn_task(void (*fn)(void), uint8_t const priority, const ProgmemString &name,
-           Kernel *kernel) {
+           Kernel &kernel) {
   disable_interrupts();
   scilent_disable_mt();
   uint8_t const new_task_index = create_simplos_task(name, priority, kernel);
 
-  Simplos_Task *new_task = &kernel->schedule.queue.tasks[new_task_index];
-  new_task->status = Task_Status::RUNNING;
+  Simplos_Task &new_task = kernel.schedule.queue.tasks[new_task_index];
+  new_task.status = Task_Status::RUNNING;
 
-  uint16_t const new_task_pid = new_task->pid;
+  uint16_t const new_task_pid = new_task.pid;
 
-  Simplos_Task *old_task =
-      &kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)];
+  Simplos_Task &old_task =
+      kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)];
 
-  old_task->status = Task_Status::READY;
+  old_task.status = Task_Status::READY;
 
 #if defined(SW_TIME_MEASSREMENTS)
-  old_task->time_counter += GET_TICK_COUNTER();
+  old_task.time_counter += GET_TICK_COUNTER();
   reset_tick_counter();
 #endif  // SW_TIME_MEASSREMNTS
-  INDEX_OF_CURRENT_TASK(kernel) = new_task_index;
+  INDEX_OF_CURRENT_TASK(&kernel) = new_task_index;
 
   SET_RETURN_POINT(return_point);
 
   SAVE_CONTEXT();
-  old_task->task_sp_adr = task_sp;
+  old_task.task_sp_adr = task_sp;
 
   task_sp =
-      kernel->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(kernel)].task_sp_adr;
+      kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)].task_sp_adr;
   SET_SP();
 
   invalidate_scheduled_queue(kernel);
@@ -139,46 +139,46 @@ return_point:
 }
 
 Index create_simplos_task(const ProgmemString &name, const uint8_t priority,
-                          Kernel *kernel) {
-  uint8_t const index = add_to_task_list(priority, &kernel->schedule.queue);
-  Simplos_Task *new_task = &kernel->schedule.queue.tasks[index];
-  new_task->status = Task_Status::RUNNING;
-  new_task->pid = kernel->pid_cnt++;
-  new_task->set_name(name);
+                          Kernel &kernel) {
+  uint8_t const index = add_to_task_list(priority, &kernel.schedule.queue);
+  Simplos_Task &new_task = kernel.schedule.queue.tasks[index];
+  new_task.status = Task_Status::RUNNING;
+  new_task.pid = kernel.pid_cnt++;
+  new_task.set_name(name);
 
   debug_print("Created simplos task \"%S\" with pid %u\n", name.progmem_str,
-              new_task->pid);
+              new_task.pid);
   return index;
 }
 
-void kill_current_task(Kernel *kernel) {
+void kill_current_task(Kernel &kernel) {
   disable_interrupts();
   scilent_disable_mt();
 
-  uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(kernel);
+  uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(&kernel);
 
-  Simplos_Task *task = &kernel->schedule.queue.tasks[curr_task_index];
-  task->status = Task_Status::EMPTY;
-  task->task_sp_adr = task_sp_range_high(curr_task_index);
-  task->set_name(progmem_string(""));
-  kernel->ended_task_time_counter += task->time_counter;
+  Simplos_Task &task = kernel.schedule.queue.tasks[curr_task_index];
+  task.status = Task_Status::EMPTY;
+  task.task_sp_adr = task_sp_range_high(curr_task_index);
+  task.set_name(progmem_string(""));
+  kernel.ended_task_time_counter += task.time_counter;
   invalidate_scheduled_queue(kernel);
   k_yield();  // re-enables interrupts.
 }
 
-Simplos_Task *get_task(pid_type pid, Kernel *kernel) {
+Simplos_Task *get_task(pid_type pid, Kernel &kernel) {
   scilent_disable_mt();
   for (uint8_t t = 0; t < tasks_max; ++t) {
-    if (kernel->schedule.queue.tasks[t].pid == pid) {
+    if (kernel.schedule.queue.tasks[t].pid == pid) {
       scilent_enable_mt();
-      return &kernel->schedule.queue.tasks[t];
+      return &kernel.schedule.queue.tasks[t];
     }
   }
   scilent_enable_mt();
   return nullptr;
 }
 
-Task_Status task_status(pid_type pid, Kernel *kernel) {
+Task_Status task_status(pid_type pid, Kernel &kernel) {
   Simplos_Task *task = get_task(pid, kernel);
   if (task == nullptr) {
     return Task_Status::EMPTY;  // FIXME: bad choise

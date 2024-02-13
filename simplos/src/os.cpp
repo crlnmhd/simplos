@@ -19,21 +19,21 @@ void set_os_kernel(Kernel *kernel) { os_kernel_ptr = kernel; }
 void set_os_kernel(Kernel *kernel);
 void __attribute__((noinline)) yield(void) { k_yield(); }
 
-Kernel *get_os_kernel(void) {
+Kernel &get_os_kernel(void) {
 #ifdef MOCK_HAL
   if (os_kernel_ptr == nullptr) {
     FATAL_ERROR("No os kernel set for mock hal\n");
   }
-  return os_kernel_ptr;
+  return *os_kernel_ptr;
 #else
-  return (Kernel *)global_kernel;
+  return *(const_cast<Kernel *>(global_kernel));
 #endif
 }
 
-uint8_t rank(void) { return INDEX_OF_CURRENT_TASK(get_os_kernel()); }
+uint8_t rank(void) { return INDEX_OF_CURRENT_TASK(&get_os_kernel()); }
 uint16_t pid(void) {
   return get_os_kernel()
-      ->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
+      .schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&get_os_kernel())]
       .pid;
 }
 
@@ -55,7 +55,7 @@ void kill_curr_task(void) { kill_current_task(get_os_kernel()); }
 
 void set_priority(uint8_t const priority) {
   get_os_kernel()
-      ->schedule.queue.tasks[INDEX_OF_CURRENT_TASK(get_os_kernel())]
+      .schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&get_os_kernel())]
       .priority = priority;
 }
 
@@ -68,7 +68,7 @@ void wait_for_task_finnish(pid_t pid) {
 NORETURN void terminate(void) {
   disable_interrupts();
   debug_print("Simplos terminating...\n");
-  print_timing_data(get_os_kernel());
+  print_timing_data(&get_os_kernel());
   halt();
   __builtin_unreachable();
 }

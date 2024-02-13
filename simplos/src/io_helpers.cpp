@@ -50,12 +50,12 @@ void print_task(Simplos_Task &task, Kernel &kernel) {
   // debug_print("Debug -- task memory block: %d\n", task.task_memory_block);
 }
 
-void print_schedule(Kernel *kernel) {
+void print_schedule(Kernel &kernel) {
   debug_print(" -- Schedule --\n");
   for (uint8_t i = 0; i < tasks_max; ++i) {
-    Simplos_Task &task = kernel->schedule.queue.tasks[i];
-    // debug_print("DEBUG:: has mem block: %d\n", task->task_memory_block);
-    print_task(task, *kernel);
+    Simplos_Task &task = kernel.schedule.queue.tasks[i];
+    // debug_print("DEBUG:: has mem block: %d\n", task.task_memory_block);
+    print_task(task, kernel);
   }
   debug_print(" --  end of schedule --\n");
 }
