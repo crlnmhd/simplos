@@ -14,6 +14,8 @@
 #define TEST_PASSED true
 
 struct TestStatistics {
+  TestStatistics() : failed(0), passed(0), skipped(0) {}
+
   uint8_t failed;
   uint8_t passed;
   uint8_t skipped;
