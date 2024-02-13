@@ -1,3 +1,8 @@
+#ifndef OPTION_HPP_
+#define OPTION_HPP_
+
+#include "../io_helpers.hpp"
+
 template <typename T>
 class Option {
  public:
@@ -5,7 +10,13 @@ class Option {
       : status(Status::VALID), maybe_value(valid_value) {}
   Option() : status(Status::INVALID), maybe_value() {}
 
-  bool is_valid() const { return true; }
+  bool is_valid() const { return status == Status::VALID; }
+  T operator*() const {
+    if (!is_valid()) {
+      FATAL_ERROR("Attempted access of option in invalid state");
+    }
+    return maybe_value;
+  }
 
  private:
   enum class Status {
@@ -16,3 +27,5 @@ class Option {
   Status status;
   const T maybe_value;
 };
+
+#endif  // OPTION_HPP_
