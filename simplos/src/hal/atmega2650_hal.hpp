@@ -1,6 +1,10 @@
 #ifndef ATMEGA2560_HAL_HPP_
 #define ATMEGA2560_HAL_HPP_
 
+#ifdef MOCH_HAL
+#error "Mocked hal must not be enabled together with real hal header"
+#endif
+
 #define NORETURN __attribute__((noreturn))
 
 NORETURN void halt_exec(void);

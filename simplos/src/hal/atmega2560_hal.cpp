@@ -1,26 +1,5 @@
+#ifndef MOCK_HAL
 #include "hal.hpp"
-#ifdef MOCK_HAL
-
-/*
- * Mock hall used for testing
- * */
-
-HardwareState state = {.interrupt_enabled = false, .halted = false};
-void halt_exec(void) { state.halted = true; }
-void enable_interrupts(void) { state.interrupt_enabled = true; }
-void disable_interrupts(void) { state.interrupt_enabled = false; }
-
-/* Placeholders*/
-void write_mm(uint8_t *const mem_ptr, const uint8_t value) {}
-uint8_t read_mm(uint8_t *const mem_ptr) { return 0xFF; }
-uint8_t read_from_mm_adr(const uint16_t mem_adr) { return 0xFF; }
-void printf_flash(const char *fmt, ...) {}
-void setup_interupt_timer(const uint16_t frequenzy_hz) {}
-void init_measurement_ticks(void) {}
-uint16_t get_tick_counter(void) { return 0xFF; }
-void clear_tick_counter(void) {}
-
-#else  // defined MOCK_HAL
 /*
  * Hardware abstraction layer for Atmega 2560p
  * */
@@ -89,5 +68,4 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED) {
   CONTEXT_SWTICH();
   reti();
 }
-
-#endif  // defined MOCK_HAL
+#endif  // ! MOCK_HAL
