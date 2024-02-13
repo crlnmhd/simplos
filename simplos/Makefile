@@ -81,7 +81,7 @@ ALL_SOURCES += 	$(SRC)/user_tasks/user_tasks.cpp
 ALL_SOURCES += 	$(SRC)/data_structures/array.cpp
 
 # serial.cpp is NOT includes do to special optimization requirenemts.
-ALL_SOURCES += 	$(SRC)/hal/hal.cpp \
+ALL_SOURCES += 	$(SRC)/hal/atmega2560_hal.cpp \
 								$(SRC)/hal/log.cpp \
 
 MAIN_FILE := $(SRC)/main.cpp
