@@ -14,8 +14,6 @@
 
 #include "../io_helpers.hpp"
 
-extern Log hal_log;
-
 #define TEST_PASSED true
 
 struct TestStatistics {

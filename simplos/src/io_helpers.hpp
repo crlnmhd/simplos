@@ -59,16 +59,7 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
   }
 
 #ifdef MOCK_HAL
-#include "tests/test.hpp"
-
-#define FATAL_ERROR(str, ...) hal_log.add_entry("FATAL ERROR " str)
 #else
-#define FATAL_ERROR(str, ...)             \
-  disable_interrupts();                   \
-  print_from_prg_mem("FATAL ERROR!\n");   \
-  print_from_prg_mem(str, ##__VA_ARGS__); \
-  print_from_prg_mem("\n");               \
-  halt_exec();
 #endif  // MOCK_HAL
 
 #define WARNING(fmt, ...)          \

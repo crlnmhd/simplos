@@ -3,6 +3,11 @@
 
 #include "hal.hpp"
 
+constexpr uint16_t log_buf_size{512};
+char log_buf[512] = {};
+
+Log hal_log{log_buf, log_buf_size};
+
 /*
  * Mock hall used for testing
  * */
