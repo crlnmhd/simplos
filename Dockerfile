@@ -25,7 +25,7 @@ RUN echo "Downloading binutils..." && \
 
 RUN echo "Downloading avr-gcc..." && \
   cd /build_tools && \
-  git archive --format=tgz --remote=git://gcc.gnu.org/git/gcc.git releases/gcc-8.5.0 > avr_gcc.tgz && \
+  git archive --format=tgz --remote=git://gcc.gnu.org/git/gcc.git releases/gcc-13.2.0 > avr_gcc.tgz && \
   echo "Uncompressing avr-gcc..." && \
   tar zxf avr_gcc.tgz -C avr_gcc && \
   rm avr_gcc.tgz && \
@@ -33,7 +33,7 @@ RUN echo "Downloading avr-gcc..." && \
   mkdir obj-avr && \
   cd obj-avr && \
   echo "Building avr-gcc..." && \
-  ../configure --prefix=$PREFIX --target=avr --enable-languages=c --disable-nls --disable-libssp --with-dwarf2 && \
+  ../configure --prefix=$PREFIX --target=avr --enable-languages=c,c++ --disable-nls --disable-libssp --with-dwarf2 && \
   make -j $(nproc) && \
   echo "installing " && \
   make install
