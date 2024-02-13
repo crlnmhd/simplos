@@ -82,7 +82,7 @@ void start_scheduler_with_os_kernel(void) {
 void __attribute__((optimize("-fno-defer-pop")))
 start_scheduler(Kernel &kernel) {
   SCILENT_DISABLE_MT();
-  kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)].status =
+  kernel.schedule.queue.tasks[index_of_current_task(kernel)].status =
       Task_Status::SCHEDULER;
 
   SET_RETURN_POINT(scheduler_loop_entry_point);
@@ -97,14 +97,14 @@ start_scheduler(Kernel &kernel) {
     verbose_print("################## BEGIN SCHEDULING\n\n");
     verbose_print("Selecting next task...\n");
     Simplos_Task &prev =
-        kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)];
+        kernel.schedule.queue.tasks[index_of_current_task(kernel)];
     handle_previous_task(prev, kernel);
     const uint8_t new_task_index = select_next_task(kernel);
 
     kernel.schedule.active_task_block = new_task_index;
 
     Simplos_Task &next =
-        kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)];
+        kernel.schedule.queue.tasks[index_of_current_task(kernel)];
     verbose_print("Selected next task: \n");
 #if defined(VERBOSE_OUTPUT)
     print_task(next, kernel);

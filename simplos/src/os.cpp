@@ -30,10 +30,10 @@ Kernel &get_os_kernel(void) {
 #endif
 }
 
-uint8_t rank(void) { return INDEX_OF_CURRENT_TASK(&get_os_kernel()); }
+uint8_t rank(void) { return index_of_current_task(get_os_kernel()); }
 uint16_t pid(void) {
   return get_os_kernel()
-      .schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&get_os_kernel())]
+      .schedule.queue.tasks[index_of_current_task(get_os_kernel())]
       .pid;
 }
 
@@ -55,7 +55,7 @@ void kill_curr_task(void) { kill_current_task(get_os_kernel()); }
 
 void set_priority(uint8_t const priority) {
   get_os_kernel()
-      .schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&get_os_kernel())]
+      .schedule.queue.tasks[index_of_current_task(get_os_kernel())]
       .priority = priority;
 }
 

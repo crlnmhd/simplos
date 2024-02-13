@@ -96,15 +96,15 @@ spawn_task(void (*fn)(void), uint8_t const priority, const ProgmemString &name,
   uint16_t const new_task_pid = new_task.pid;
 
   Simplos_Task &old_task =
-      kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)];
+      kernel.schedule.queue.tasks[index_of_current_task(kernel)];
 
   old_task.status = Task_Status::READY;
 
 #if defined(SW_TIME_MEASSREMENTS)
   old_task.time_counter += GET_TICK_COUNTER();
   reset_tick_counter();
-#endif  // SW_TIME_MEASSREMNTS
-  INDEX_OF_CURRENT_TASK(&kernel) = new_task_index;
+#endif                                                 // SW_TIME_MEASSREMNTS
+  kernel.schedule.active_task_block = new_task_index;  // TODO: refactor
 
   SET_RETURN_POINT(return_point);
 
@@ -112,7 +112,7 @@ spawn_task(void (*fn)(void), uint8_t const priority, const ProgmemString &name,
   old_task.task_sp_adr = task_sp;
 
   task_sp =
-      kernel.schedule.queue.tasks[INDEX_OF_CURRENT_TASK(&kernel)].task_sp_adr;
+      kernel.schedule.queue.tasks[index_of_current_task(kernel)].task_sp_adr;
   SET_SP();
 
   invalidate_scheduled_queue(kernel);
@@ -155,7 +155,7 @@ void kill_current_task(Kernel &kernel) {
   disable_interrupts();
   SCILENT_DISABLE_MT();
 
-  uint8_t const curr_task_index = INDEX_OF_CURRENT_TASK(&kernel);
+  uint8_t const curr_task_index = index_of_current_task(kernel);
 
   Simplos_Task &task = kernel.schedule.queue.tasks[curr_task_index];
   task.status = Task_Status::EMPTY;

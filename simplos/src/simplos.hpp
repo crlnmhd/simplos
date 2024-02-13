@@ -1,6 +1,7 @@
 #if !defined(SIMPLOS_H_)
 #define SIMPLOS_H_
 
+#include "inline.hpp"
 #include "memory.hpp"
 #include "simplos_types.hpp"
 
@@ -31,9 +32,9 @@ extern Kernel volatile *volatile global_kernel;
 #define GCC_IGNORE_END() _Pragma("GCC diagnostic pop")
 #endif  // __GNUC__
 
-
-//TODO: refactor
-#define INDEX_OF_CURRENT_TASK(kernel) ((kernel)->schedule.active_task_block)
+INLINED uint8_t index_of_current_task(Kernel &kernel){
+  return kernel.schedule.active_task_block;
+}
 
 /*
  * Add a task to the task queue. This is needed to let the the task execute.
