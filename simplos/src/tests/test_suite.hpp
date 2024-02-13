@@ -21,4 +21,6 @@ TestStatistics unit_test_tasks(void);
 
 TestStatistics unit_test_kernel_status(void);
 
+TestStatistics unit_test_data_structures(void);
+
 #endif  // TEST_SUITE_H_

@@ -62,6 +62,8 @@ TEST_SOURCES := $(UNIT_TESTS_SRC)/helpers.cpp \
 								$(UNIT_TESTS_SRC)/test_tasks.cpp \
 								$(UNIT_TESTS_SRC)/unit_test.cpp
 
+TEST_SOURCES += $(UNIT_TESTS_SRC)/data_structures/test_array.cpp
+
 UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.cpp, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
 ALL_SOURCES := 	$(SRC)/io_helpers.cpp \
@@ -74,6 +76,8 @@ ALL_SOURCES := 	$(SRC)/io_helpers.cpp \
 								$(SRC)/timers.cpp
 
 ALL_SOURCES += 	$(SRC)/user_tasks/user_tasks.cpp
+
+ALL_SOURCES += 	$(SRC)/data_structures/array.cpp
 
 # serial.cpp is NOT includes do to special optimization requirenemts.
 ALL_SOURCES += 	$(SRC)/hal/hal.cpp \
@@ -186,10 +190,12 @@ dir:
 	mkdir -p $(OBJ)/tests
 	mkdir -p $(OBJ)/hal
 	mkdir -p $(OBJ)/user_tasks
+	mkdir -p $(OBJ)/data_structures
 	mkdir -p $(LOG_DIR)
 	mkdir -p $(DEBUG_BUILD)
 	mkdir -p $(DEBUG_BUILD)/hal
 	mkdir -p $(DEBUG_BUILD)/user_tasks
+	mkdir -p $(DEBUG_BUILD)/data_structures
 
 # Target to compile and generate database for clangd.
 build: compile_commands dir all
