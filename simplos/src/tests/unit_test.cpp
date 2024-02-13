@@ -3,6 +3,11 @@
 #include "test.hpp"
 #include "test_suite.hpp"
 
+constexpr uint16_t log_buf_size{512};
+char log_buf[512] = {};
+
+Log hal_log{log_buf, log_buf_size};
+
 // Workaround due to avr-libc issue #898
 // https://github.com/avrdudes/avr-libc/issues/898
 #define RUN_TEST_SUITE(test_fn, statistics) \
