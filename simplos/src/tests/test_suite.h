@@ -15,4 +15,6 @@ struct TestStatistics unit_test_yields(void);
 
 struct TestStatistics unit_test_memory(void);
 
+struct TestStatistics unit_test_os(void);
+
 #endif  // TEST_SUITE_H_

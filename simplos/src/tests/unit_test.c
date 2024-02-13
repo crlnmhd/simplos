@@ -75,6 +75,8 @@ int main(void) {
 
   RUN_TEST_SUITE(unit_test_memory, "Memory", &test_results);
 
+  RUN_TEST_SUITE(unit_test_memory, "OS Interface", &test_results);
+
   debug_printf("Test suite completed.\n", &test_results);
   print_total_test_results(&test_results);
 
