@@ -4,11 +4,11 @@
 #include "../test.hpp"
 #include "../test_suite.hpp"
 
-bool test_can_initiate_array_with_specified_size() {
+bool test_can_initiate_array_with_default_values() {
   constexpr size_t given_size{5};
   Array<uint8_t, given_size> arr;
 
-  CHECK_EQ(sizeof(arr.data) / sizeof(arr.data[0]), given_size, "%lu");
+  CHECK_EQ(arr.at(4), 0, "%lu");
 
   return TEST_PASSED;
 }
@@ -16,7 +16,7 @@ bool test_can_initiate_array_with_specified_size() {
 TestStatistics unit_test_data_structures() {
   TestStatistics results;
 
-  RUN_TEST(test_can_initiate_array_with_specified_size, results);
+  RUN_TEST(test_can_initiate_array_with_default_values, results);
 
   return results;
 }

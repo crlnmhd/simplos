@@ -62,7 +62,8 @@ TEST_SOURCES := $(UNIT_TESTS_SRC)/helpers.cpp \
 								$(UNIT_TESTS_SRC)/test_tasks.cpp \
 								$(UNIT_TESTS_SRC)/unit_test.cpp
 
-TEST_SOURCES += $(UNIT_TESTS_SRC)/data_structures/test_array.cpp
+TEST_SOURCES += $(UNIT_TESTS_SRC)/data_structures/test_array.cpp \
+								$(UNIT_TESTS_SRC)/data_structures/test_option.cpp
 
 UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.cpp, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
 
