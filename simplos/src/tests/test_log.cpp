@@ -43,6 +43,68 @@ bool test_log_contains_entry_finds_entry_in_buffer(void) {
   return TEST_PASSED;
 }
 
+bool test_log_contains_entry_starting_with_returns_true_for_exact_match(void) {
+  constexpr uint16_t buffer_size = 10;
+  char buffer[buffer_size];
+  Log log{buffer, buffer_size};
+
+  const char *entry = "Hejsan";
+  CHECK_TRUE(log.add_entry(entry));
+
+  CHECK_TRUE(log.contains_entry_starting_with(entry));
+
+  return TEST_PASSED;
+}
+
+bool test_log_contains_entry_starting_with_returns_false_if_the_requested_string_is_empty(
+    void) {
+  constexpr uint16_t buffer_size = 10;
+  char buffer[buffer_size];
+  Log log{buffer, buffer_size};
+
+  const char *entry = "Anything";
+  const char *empty = "";
+  CHECK_TRUE(log.add_entry(entry));
+
+  CHECK_FALSE(log.contains_entry_starting_with(empty));
+
+  return TEST_PASSED;
+}
+
+bool test_log_contains_entry_starting_with_returns_true_when_an_entry_starting_with_the_given_string_is_found(
+    void) {
+  constexpr uint16_t buffer_size = 20;
+  char buffer[buffer_size];
+  Log log{buffer, buffer_size};
+
+  CHECK_TRUE(log.add_entry("Hello World"));
+
+  CHECK_TRUE(log.contains_entry_starting_with("Hel"));
+  CHECK_TRUE(log.contains_entry_starting_with("Hello"));
+  CHECK_TRUE(log.contains_entry_starting_with("Hello Wor"));
+
+  return TEST_PASSED;
+}
+
+bool test_log_contains_entry_starting_with_returns_false_when_entry_does_not_start_with_given_string(
+    void) {
+  constexpr uint16_t buffer_size = 20;
+  char buffer[buffer_size];
+  Log log{buffer, buffer_size};
+
+  const char *entry1{"ABC123"};
+  const char *entry2{"Hello World"};
+  CHECK_TRUE(log.add_entry(entry1));
+  CHECK_TRUE(log.add_entry(entry2));
+
+  CHECK_FALSE(log.contains_entry_starting_with("abc"));
+  CHECK_FALSE(log.contains_entry_starting_with("Hej"));
+  CHECK_FALSE(log.contains_entry_starting_with("Word"));
+  CHECK_FALSE(log.contains_entry_starting_with("ello"));
+
+  return TEST_PASSED;
+}
+
 bool test_can_add_multiple_messages(void) {
   constexpr uint16_t specified_buffer_size = 30;
   char buffer[specified_buffer_size];
@@ -120,6 +182,21 @@ TestStatistics unit_test_hal_log(void) {
   RUN_TEST(test_can_add_multiple_messages, test_resutls);
 
   RUN_TEST(test_log_contains_entry_finds_entry_in_buffer, test_resutls);
+
+  RUN_TEST(test_log_contains_entry_starting_with_returns_true_for_exact_match,
+           test_resutls);
+
+  RUN_TEST(
+      test_log_contains_entry_starting_with_returns_false_if_the_requested_string_is_empty,
+      test_resutls);
+
+  RUN_TEST(
+      test_log_contains_entry_starting_with_returns_true_when_an_entry_starting_with_the_given_string_is_found,
+      test_resutls);
+
+  RUN_TEST(
+      test_log_contains_entry_starting_with_returns_false_when_entry_does_not_start_with_given_string,
+      test_resutls);
 
   RUN_TEST(test_does_not_falsely_find_log_entires_finding_in_log, test_resutls);
 

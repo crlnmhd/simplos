@@ -25,7 +25,7 @@ bool Log::add_entry(const char *message) {
 }
 
 bool Log::contains_entry(const char *expected_entry) const {
-  const uint16_t expected_entry_length = strlen(expected_entry);
+  const auto expected_entry_length = strlen(expected_entry);
 
   char *next_entry = this->buffer;
   uint16_t next_entry_length = strlen(next_entry);
@@ -39,6 +39,30 @@ bool Log::contains_entry(const char *expected_entry) const {
     }
     next_entry += next_entry_length + 1;
     next_entry_length = strlen(next_entry);
+  }
+  return false;
+}
+
+bool Log::contains_entry_starting_with(const char *expected_entry) const {
+  const auto expected_entry_length = strlen(expected_entry);
+  /* Special case, don't match for empty string. Otherwise everything would be a
+   * match.*/
+  if (expected_entry_length == 0) {
+    return false;
+  }
+
+  char *next_entry = this->buffer;
+  uint16_t next_entry_length = strlen(next_entry);
+  while (next_entry + next_entry_length <= this->end) {
+    const int comparison_found_and_expected =
+        strncmp(next_entry, expected_entry, expected_entry_length);
+
+    if (comparison_found_and_expected == 0) {
+      return true;
+    } else {
+      next_entry += next_entry_length + 1;
+      next_entry_length = strlen(next_entry);
+    }
   }
   return false;
 }
