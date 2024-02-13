@@ -60,7 +60,7 @@ void wait_for_child(void) {
 
 void run_idle_fn(void) {
 #ifdef MOCK_HAL
-  FATAL_ERROR("Can not run idle function on mock hal")
+  FATAL_ERROR("Can not run idle function on mock hal");
 #else
 
   print("Starting scheduler\n");

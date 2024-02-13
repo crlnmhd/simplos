@@ -27,6 +27,19 @@ bool test_operator_star_returns_the_value_of_a_valid_option() {
   return TEST_PASSED;
 }
 
+bool test_operator_star_calls_FATAL_ERROR_if_operator_star_is_used_on_invalid_struct() {
+  Option<uint8_t> invalid{};
+
+  hal_log.clear();
+  __attribute__((unused)) auto something_invalid = *invalid;
+
+  CHECK_TRUE(hal_log.contains_entry(
+      "FATAL ERROR Attempted access of option in invalid state"));
+  hal_log.clear();
+
+  return TEST_PASSED;
+}
+
 TestStatistics unit_test_data_structure_optional() {
   TestStatistics results;
   RUN_TEST(test_is_valid_returns_true_when_value_is_valid, results);
@@ -34,6 +47,10 @@ TestStatistics unit_test_data_structure_optional() {
   RUN_TEST(test_is_valid_returns_false_when_optional_is_invalid, results);
 
   RUN_TEST(test_operator_star_returns_the_value_of_a_valid_option, results);
+
+  RUN_TEST(
+      test_operator_star_calls_FATAL_ERROR_if_operator_star_is_used_on_invalid_struct,
+      results);
 
   return results;
 }
