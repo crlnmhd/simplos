@@ -6,12 +6,12 @@
 #include "io_helpers.hpp"
 
 INLINED void enable_mt() {
-  scilent_enable_mt();
+  SCILENT_ENABLE_MT();
   debug_print("enabling MT\n");
 }
 
 INLINED void disable_mt() {
-  scilent_disable_mt();
+  SCILENT_DISABLE_MT();
   debug_print("disabling MT\n");
 }
 

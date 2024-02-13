@@ -1,9 +1,9 @@
 #ifndef HAL_CONTEXT_SWITCH_MACROS_H_
 #define HAL_CONTEXT_SWITCH_MACROS_H_
 
-#include <avr/io.h>
-
 #include "../inline.hpp"
+#include "stdint.h"
+
 /*
  * Make ret/reti call 'entrypoint_label' instead of the next instruction.
  * Push a modified PC, where the next instruction is a jump to the
@@ -44,12 +44,11 @@
   asm volatile("sts  %[reg], __zero_reg__  \n\t" ::[reg] "M"( \
       ((uint16_t)(&(io_reg)-0x20))));
 
-INLINED void reset_timer() {
-  CLEAR_IO_REG(TCNT1H);
-  CLEAR_IO_REG(TCNT1L);
-}
+#define RESET_TIMER()  \
+  CLEAR_IO_REG(TCNT1H) \
+  CLEAR_IO_REG(TCNT1L)
 
-#define scilent_enable_mt()                                             \
+#define SCILENT_ENABLE_MT()                                             \
   asm volatile(                                                         \
       "push r16                         \n\t "                          \
       "lds r16, %[timer_adr]            \n\t "                          \
@@ -59,16 +58,15 @@ INLINED void reset_timer() {
       [enable_bit] "I"(OCIE1A)                                          \
       : "memory");  // Set enable bit for TIMSK1
 
-INLINED void scilent_disable_mt() {
-  asm volatile(
-      "push r16                         \n\t "
-      "lds r16, %[timer_adr]            \n\t "
-      "andi r16, ~(1 << %[enable_bit])  \n\t "
-      "sts %[timer_adr], r16            \n\t "
-      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F),
-      [enable_bit] "I"(OCIE1A)
+#define SCILENT_DISABLE_MT()                                            \
+  asm volatile(                                                         \
+      "push r16                         \n\t "                          \
+      "lds r16, %[timer_adr]            \n\t "                          \
+      "andi r16, ~(1 << %[enable_bit])  \n\t "                          \
+      "sts %[timer_adr], r16            \n\t "                          \
+      "pop r16                          \n\t " ::[timer_adr] "i"(0x6F), \
+      [enable_bit] "I"(OCIE1A)                                          \
       : "memory");  // Unset enable bit for TMSK1
-}
 
 #define SAVE_CONTEXT()                      \
   asm volatile(                             \
@@ -210,10 +208,10 @@ INLINED void SAVE_SP_TO_ADR(volatile uint16_t &adr_of_adr_holder) {
 #define CONTEXT_SWTICH()                \
   SAVE_CONTEXT();                       \
   SAVE_SP_TO_ADR(prev_task_sp);         \
-  scilent_disable_mt();                 \
+  SCILENT_DISABLE_MT();                 \
   SELECT_SCHEDULED_TASK_OR_SCHEDULER(); \
-  reset_timer();                        \
+  RESET_TIMER();                        \
   RESTORE_CONTEXT();                    \
-  scilent_enable_mt();
+  SCILENT_ENABLE_MT();
 
 #endif  // HAL_CONTEXT_SWITCH_MACROS_H_
