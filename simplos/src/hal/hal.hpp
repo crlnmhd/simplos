@@ -4,42 +4,16 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#ifdef MOCK_HAL
+#include "mock_hal.hpp"
+#else
+#include "atmega2650_hal.hpp"
+#endif
+
 extern volatile uint16_t task_sp;
 extern volatile uint16_t next_task_sp;
 extern volatile uint16_t prev_task_sp;
 extern volatile uint16_t scheduler_task_sp;
-
-/* noreturn hint must not be used with the tests, where the functions will still
- * return. */
-#ifdef MOCK_HAL
-#define NORETURN
-#else
-#define NORETURN __attribute__((noreturn))
-#endif
-
-#ifdef MOCK_HAL  // FIXME: avoid if possible
-#include "log.hpp"
-// TODO: save list of called commands?
-struct HardwareState {
-  bool interrupt_enabled;
-  bool halted;
-};
-
-extern HardwareState state;
-
-void halt_exec(void);
-void disable_interrupts(void);
-void enable_interrupts(void);
-#else
-NORETURN void halt_exec(void);
-
-static inline __attribute__((always_inline)) void disable_interrupts(void) {
-  asm volatile("cli" ::: "memory");
-}
-static inline __attribute__((always_inline)) void enable_interrupts(void) {
-  asm volatile("sei" ::: "memory");
-}
-#endif  // MOCK_HAL
 
 void write_mm(uint8_t *const mem_ptr, const uint8_t value);
 uint8_t read_mm(uint8_t *const mem_ptr);
@@ -61,5 +35,5 @@ int16_t uart_getchar(FILE *);
 
 #define INTERNAL_LED_PORT PORTB
 #define INTERNAL_LED PORTB5
-// Timer interupt for context switching
+
 #endif  // HAL_H_
