@@ -60,6 +60,7 @@ TEST_SOURCES := $(UNIT_TESTS_SRC)/helpers.cpp \
 								$(UNIT_TESTS_SRC)/test_scheduler.cpp \
 								$(UNIT_TESTS_SRC)/test_spawning.cpp \
 								$(UNIT_TESTS_SRC)/test_tasks.cpp \
+								$(UNIT_TESTS_SRC)/test_sstd.cpp \
 								$(UNIT_TESTS_SRC)/unit_test.cpp
 
 TEST_SOURCES += $(UNIT_TESTS_SRC)/data_structures/test_array.cpp \

@@ -87,6 +87,8 @@ int main(void) {
 
   RUN_TEST_SUITE(unit_test_data_structure_optional, test_results);
 
+  RUN_TEST_SUITE(unit_test_sstd, test_results);
+
   debug_printf("Test suite completed.\n");
   print_total_test_results(test_results);
 

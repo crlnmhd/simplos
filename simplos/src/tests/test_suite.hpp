@@ -25,4 +25,6 @@ TestStatistics unit_test_data_structures(void);
 
 TestStatistics unit_test_data_structure_optional(void);
 
+TestStatistics unit_test_sstd();
+
 #endif  // TEST_SUITE_H_
