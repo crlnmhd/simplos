@@ -1,6 +1,7 @@
 
 #include "../sstd.hpp"
 #include "test.hpp"
+#include "test_sstd_templates.hpp"
 #include "test_suite.hpp"
 
 bool test_tow_uint8_ts_have_the_same_type() {
@@ -76,6 +77,20 @@ bool test_uint8_and_int16_do_not_have_the_same_type() {
   return TEST_PASSED;
 }
 
+/*
+ * Test that simple useage of sstd::enable_if (used in test_sstd_templates.hpp)
+ * works as expected.
+ * */
+bool test_template_enable_if_can_distinguish_between_passed_types_when_value_is_the_same() {
+  const uint8_t u8{42};
+  const uint16_t u16{42};
+
+  CHECK_EQ(return_1_for_uint8_t_and_2_for_uint16(u8), 1, "%u");
+  CHECK_EQ(return_1_for_uint8_t_and_2_for_uint16(u16), 2, "%u");
+
+  return TEST_PASSED;
+}
+
 TestStatistics unit_test_sstd() {
   TestStatistics results;
 
@@ -94,6 +109,10 @@ TestStatistics unit_test_sstd() {
   RUN_TEST(test_classes_of_the_same_type_have_the_same_type, results);
 
   RUN_TEST(test_different_classes_do_not_have_the_same_type, results);
+
+  RUN_TEST(
+      test_template_enable_if_can_distinguish_between_passed_types_when_value_is_the_same,
+      results);
 
   return results;
 }
