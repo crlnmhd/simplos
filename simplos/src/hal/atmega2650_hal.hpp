@@ -16,11 +16,11 @@ static inline __attribute__((always_inline)) void enable_interrupts(void) {
   asm volatile("sei" ::: "memory");
 }
 
-#define FATAL_ERROR(str, ...)             \
-  disable_interrupts();                   \
-  print_from_prg_mem("FATAL ERROR!\n");   \
-  print_from_prg_mem(str, ##__VA_ARGS__); \
-  print_from_prg_mem("\n");               \
+#define FATAL_ERROR(message, ...)               \
+  disable_interrupts();                         \
+  print_from_prg_mem("FATAL ERROR!\n");         \
+  print_from_prg_mem((message), ##__VA_ARGS__); \
+  print_from_prg_mem(("\n"));                   \
   halt_exec();
 
 #endif  // ATMEGA2560_HAL_HPP_
