@@ -28,4 +28,6 @@ class ProgmemString {
 #define progmem_string(str_literal) \
   ProgmemString { static_cast<const ProgmemStringWrapper>(PSTR((str_literal))) }
 
+#define print_from_prg_mem(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
+
 #endif  // PROGMEM_HPP_

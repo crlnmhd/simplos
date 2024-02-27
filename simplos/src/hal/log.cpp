@@ -1,11 +1,9 @@
 #include "log.hpp"
 
-#ifndef MOCK_HAL
-#include "../io_helpers.hpp"
-#endif  // MOCK_HAL
-
 #include <stdint.h>
 #include <string.h>
+
+#include "../io_helpers.hpp"
 
 bool Log::add_entry(const char *message) {
   const size_t message_lenght_with_terminator = strlen(message) + 1;

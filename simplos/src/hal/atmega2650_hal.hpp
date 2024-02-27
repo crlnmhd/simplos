@@ -3,7 +3,9 @@
 
 #ifdef MOCH_HAL
 #error "Mocked hal must not be enabled together with real hal header"
-#endif
+#else
+
+#include "../progmem.hpp"
 
 #define NORETURN __attribute__((noreturn))
 
@@ -23,4 +25,5 @@ static inline __attribute__((always_inline)) void enable_interrupts(void) {
   print_from_prg_mem(("\n"));                   \
   halt_exec();
 
+#endif  // MOCK_HAL
 #endif  // ATMEGA2560_HAL_HPP_

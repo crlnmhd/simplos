@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "hal/hal.hpp"  // used by macros
+#include "progmem.hpp"
 #include "simplos_types.hpp"
 
 void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
@@ -18,8 +19,6 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
     0 /* buf */, 0 /* unget */, FL /* flags */, 0 /* size */, 0 /* len */, \
         PU /* put */, GE /* get */, 0 /* udata */                          \
   }
-
-#define print_from_prg_mem(fmt, ...) printf_flash(PSTR(fmt), ##__VA_ARGS__)
 
 // void print(const uint8_t u8) { print_from_prg_mem("%u", u8); }
 // void print(const uint16_t u16) { print_from_prg_mem("%ul", u16); }
