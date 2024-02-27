@@ -38,7 +38,7 @@ void terminate(void);
  * Attempts to allocate 'bytes' of continuous memory. Returns nullptr on
  * failure.
  * */
-void *malloc(size_t bytes);
+void *malloc(const size_t bytes);
 
 // mutex* mutex_create(void);
 // void mutex_lock(mutex* mtx);
