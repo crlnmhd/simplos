@@ -57,10 +57,6 @@ void do_nothing_ignoreing_passed_parameters(__attribute__((unused))
     halt_exec();                                \
   }
 
-#ifdef MOCK_HAL
-#else
-#endif  // MOCK_HAL
-
 #define WARNING(fmt, ...)          \
   print_from_prg_mem("WARNING: "); \
   print_from_prg_mem(fmt, ##__VA_ARGS__);
