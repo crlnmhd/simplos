@@ -51,8 +51,8 @@ uint16_t task_sp_range_high(uint8_t const task_memory_block) {
  * */
 uint16_t task_sp_range_low(uint8_t const task_memory_block) {
   if (task_memory_block >= tasks_max) {
-    FATAL_ERROR("(task_sp_rane_high()): Memory block '%u' is INVALID!",
-                task_memory_block);
+    print_from_prg_mem("Memory block %u is INVALID\n", task_memory_block);
+    FATAL_ERROR("Invalid memory block");
   }
   return task_ram_end + (task_memory_size * task_memory_block);
 }
@@ -84,8 +84,10 @@ void assert_task_pointer_integrity(Simplos_Task &task, Kernel &kernel) {
     debug_print(
         "Current task sp: 0x%X and block: %u\nUpper: 0x%X, lower: 0x%X\n",
         task.task_sp_adr, task.task_memory_block, upper_bound, lower_bound);
-    FATAL_ERROR("STACK OVERFLOW DETECTED!\nTask %u SP = 0x%X is of bounds.",
-                task.task_memory_block, task.task_sp_adr);
+    print_from_prg_mem(
+        "Stack overflow detected!\nTask %u SP = 0x%X is of bounds.",
+        task.task_memory_block, task.task_sp_adr);
+    FATAL_ERROR("Stack overflow!");
   }
 }
 bool mem_adr_belongs_to_task(uint16_t adr, uint8_t task_memory_block,
