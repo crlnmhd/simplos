@@ -27,8 +27,6 @@ void init_measurement_ticks(void);
 uint16_t get_tick_counter(void);  // TODO: inline mem access for performance?
 void clear_tick_counter(void);
 
-void TIMER1_COMPA_vect(void);
-
 void uart_init(void);
 int16_t uart_putchar(char c, FILE *);
 int16_t uart_getchar(FILE *);
