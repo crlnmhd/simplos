@@ -4,8 +4,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../hal/log.hpp"
-
 #if !defined(MOCK_HAL) && \
     !defined(__clang__)  // FIXME: just define separate run mode
 #error \

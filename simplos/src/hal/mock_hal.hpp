@@ -1,9 +1,12 @@
 #ifndef MOCK_HAL_HPP_
 #define MOCK_HAL_HPP_
 
+#ifdef MOCK_HAL
+
 #define NORETURN
 
 #include "log.hpp"
+
 // TODO: save list of called commands?
 struct HardwareState {
   bool interrupt_enabled;
@@ -18,6 +21,9 @@ void halt_exec(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
 
-#define FATAL_ERROR(str, ...) hal_log.add_entry("FATAL ERROR " str)
+void mocked_fatal_error(const char *message);
 
+#define FATAL_ERROR(message) mocked_fatal_error("FATAL ERROR\n" message)
+
+#endif  // MOCK_HAL
 #endif  // MOCK_HAL_HPP_

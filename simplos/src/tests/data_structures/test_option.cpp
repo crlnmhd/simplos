@@ -34,7 +34,7 @@ bool test_operator_star_calls_FATAL_ERROR_if_operator_star_is_used_on_invalid_st
   __attribute__((unused)) auto something_invalid = *invalid;
 
   CHECK_TRUE(hal_log.contains_entry(
-      "FATAL ERROR Attempted access of option in invalid state"));
+      "FATAL ERROR\nAttempted access of option in invalid state"));
   hal_log.clear();
 
   return TEST_PASSED;
