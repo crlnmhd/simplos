@@ -3,16 +3,20 @@
 
 #include <stddef.h>
 
+#include "option.hpp"
+
+class IndexOutOfRangeError {};
+
 template <typename T, size_t Size>
 class Array {
  public:
   Array() : data(){};
 
-  T at(const size_t index) {
+  Option<T> at(const size_t index) {
     if (index < Size) {
-      return data[index];
+      return Option(data[index]);
     } else {
-      return T{};  // FIXME
+      return Option<T>{};
     }
   }
 

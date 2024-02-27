@@ -8,7 +8,8 @@ bool test_can_initiate_array_with_default_values() {
   constexpr size_t given_size{5};
   Array<uint8_t, given_size> arr;
 
-  CHECK_EQ(arr.at(4), 0, "%lu");
+  CHECK_TRUE(arr.at(4).is_valid());
+  CHECK_EQ(*arr.at(4), 0, "%lu");
 
   return TEST_PASSED;
 }
