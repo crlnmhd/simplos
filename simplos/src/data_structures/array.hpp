@@ -12,7 +12,7 @@ class Array {
  public:
   Array() : data(){};
 
-  Option<T> at(const size_t index) {
+  Option<T> at(const size_t index) const {
     if (index < Size) {
       return Option(data[index]);
     } else {
