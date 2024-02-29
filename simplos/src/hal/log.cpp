@@ -126,5 +126,5 @@ size_t Log::num_unused_entries() const {
 
 void Log::clear() {
   this->next_entry_index = 0;
-  this->num_buffer_entries_remaining = this->total_buffer_bytes;
+  this->num_buffer_entries_remaining = this->max_entries;
 }

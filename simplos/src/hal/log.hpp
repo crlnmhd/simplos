@@ -15,7 +15,7 @@ class Log {
       : buffer(buf),
         next_entry_index(0),
         num_buffer_entries_remaining(buf_size),
-        total_buffer_bytes(buf_size) {
+        max_entries(buf_size) {
     // FIXME: templetaize size
   }
 
@@ -32,7 +32,7 @@ class Log {
   char *buffer;
   size_t next_entry_index;
   size_t num_buffer_entries_remaining;
-  size_t total_buffer_bytes;
+  size_t max_entries;
 };
 
 #endif  // LOG_H_
