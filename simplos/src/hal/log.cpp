@@ -8,7 +8,7 @@
 
 // TODO: store pointer to message in progmem.
 bool Log::add_entry(const ProgmemString &message) {
-  constexpr auto buffer_len = 50;
+  constexpr auto buffer_len = 100;
   char message_buf[buffer_len] = {};
 
   const auto message_length_inc_terminator = strlen_P(message.progmem_str) + 1;
