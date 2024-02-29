@@ -27,6 +27,8 @@ void init_measurement_ticks(void) {}
 uint16_t get_tick_counter(void) { return 0xFF; }
 void clear_tick_counter(void) {}
 
-void mocked_fatal_error(const char *message) { hal_log.add_entry(message); }
+void mocked_fatal_error(const ProgmemString &message) {
+  hal_log.add_entry(message);
+}
 
 #endif  // MOCK_HAL

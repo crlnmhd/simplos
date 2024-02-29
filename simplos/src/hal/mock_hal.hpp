@@ -21,9 +21,10 @@ void halt_exec(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
 
-void mocked_fatal_error(const char *message);
+void mocked_fatal_error(const ProgmemString &message);
 
-#define FATAL_ERROR(message) mocked_fatal_error("FATAL ERROR\n" message)
+#define FATAL_ERROR(message) \
+  mocked_fatal_error(progmem_string("FATAL ERROR\n" message))
 
 #endif  // MOCK_HAL
 #endif  // MOCK_HAL_HPP_
