@@ -5,8 +5,6 @@
 
 #include "option.hpp"
 
-class IndexOutOfRangeError {};
-
 template <typename T, size_t Size>
 class Array {
  public:
