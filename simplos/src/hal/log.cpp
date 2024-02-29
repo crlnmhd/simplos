@@ -117,7 +117,7 @@ bool Log::contains_entry_starting_with(const char *expected_entry) const {
   return false;
 }
 
-size_t Log::available_space_bytes() const {
+size_t Log::num_unused_entries() const {
   return this->num_buffer_bytes_remaining;
 }
 

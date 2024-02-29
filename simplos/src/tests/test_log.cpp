@@ -27,7 +27,7 @@ bool test_decreases_remaining_buffer_bytes_by_size_of_mesage_and_terminator(
 
   CHECK_TRUE(log.add_entry(message));
 
-  CHECK_EQ(log.available_space_bytes(), expected_buffer_size_after_addition,
+  CHECK_EQ(log.num_unused_entries(), expected_buffer_size_after_addition,
            "%zu");
 
   return TEST_PASSED;
@@ -141,13 +141,13 @@ bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
   return TEST_PASSED;
 }
 
-bool test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty(
+bool test_num_unused_entries_return_the_remaining_number_of_entries_that_can_be_placed_in_the_log(
     void) {
   constexpr uint16_t specified_buffer_size = 15;
   char buffer[specified_buffer_size];
   Log log{buffer, specified_buffer_size};
 
-  CHECK_EQ(log.available_space_bytes(), specified_buffer_size, "%u");
+  CHECK_EQ(log.num_unused_entries(), specified_buffer_size, "%u");
 
   return TEST_PASSED;
 }
@@ -167,7 +167,7 @@ bool test_clear_removed_existing_entries(void) {
 
   CHECK_FALSE(log.contains_entry(entry1));
   CHECK_FALSE(log.contains_entry(entry2));
-  CHECK_EQ(log.available_space_bytes(), specified_buffer_size, "%u");
+  CHECK_EQ(log.num_unused_entries(), specified_buffer_size, "%u");
 
   return TEST_PASSED;
 }
@@ -204,7 +204,7 @@ TestStatistics unit_test_hal_log(void) {
   RUN_TEST(test_does_not_falsely_find_log_entires_finding_in_log, test_resutls);
 
   RUN_TEST(
-      test_available_space_bytes_return_the_size_of_the_buffer_when_it_is_empty,
+      test_num_unused_entries_return_the_remaining_number_of_entries_that_can_be_placed_in_the_log,
       test_resutls);
 
   RUN_TEST(test_clear_removed_existing_entries, test_resutls);
