@@ -13,7 +13,7 @@ class Log {
  public:
   Log(char *buf, const size_t buf_size)
       : buffer(buf),
-        end(buffer),
+        next_entry_index(0),
         num_buffer_bytes_remaining(buf_size),
         total_buffer_bytes(buf_size) {
     // FIXME: templetaize size
@@ -30,7 +30,7 @@ class Log {
   bool contains_entry(const char *expected_entry) const;
   bool contains_entry_starting_with(const char *expected_entry) const;
   char *buffer;
-  char *end;
+  size_t next_entry_index;
   size_t num_buffer_bytes_remaining;
   size_t total_buffer_bytes;
 };

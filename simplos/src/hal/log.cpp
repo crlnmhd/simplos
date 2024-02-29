@@ -34,9 +34,10 @@ bool Log::add_entry(const char *message) {
 #endif  // MOCK_HAL
     return false;
   }
-  memcpy(this->end, message, message_lenght_with_terminator);
+  memcpy(this->buffer + this->next_entry_index, message,
+         message_lenght_with_terminator);
 
-  this->end += message_lenght_with_terminator;
+  this->next_entry_index += message_lenght_with_terminator;
   this->num_buffer_bytes_remaining -= message_lenght_with_terminator;
 
   return true;
@@ -63,7 +64,8 @@ bool Log::contains_entry(const char *expected_entry) const {
 
   char *next_entry = this->buffer;
   uint16_t next_entry_length = strlen(next_entry);
-  while (next_entry + next_entry_length <= this->end) {
+  while (next_entry + next_entry_length <=
+         this->buffer + this->next_entry_index) {
     if (expected_entry_length == next_entry_length) {
       const int comparison_found_and_expected =
           strcmp(next_entry, expected_entry);
@@ -103,7 +105,8 @@ bool Log::contains_entry_starting_with(const char *expected_entry) const {
 
   char *next_entry = this->buffer;
   uint16_t next_entry_length = strlen(next_entry);
-  while (next_entry + next_entry_length <= this->end) {
+  while (next_entry + next_entry_length <=
+         this->buffer + this->next_entry_index) {
     const int comparison_found_and_expected =
         strncmp(next_entry, expected_entry, expected_entry_length);
 
@@ -122,6 +125,6 @@ size_t Log::num_unused_entries() const {
 }
 
 void Log::clear() {
-  this->end = this->buffer;
+  this->next_entry_index = 0;
   this->num_buffer_bytes_remaining = this->total_buffer_bytes;
 }
