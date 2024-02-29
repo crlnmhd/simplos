@@ -20,7 +20,6 @@ class Log {
   }
 
   bool add_entry(const ProgmemString &entry);
-  bool add_entry(const char *message);
   bool contains_entry(const ProgmemString &expected_entry) const;
   bool contains_entry(const char *expected_entry) const;
   bool contains_entry_starting_with(const ProgmemString &expected_entry) const;
@@ -29,6 +28,7 @@ class Log {
   size_t available_space_bytes() const;
 
  private:
+  bool add_entry(const char *message);
   char *buffer;
   char *end;
   size_t num_buffer_bytes_remaining;
