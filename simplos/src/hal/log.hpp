@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../progmem.hpp"
+
 /* Helper functions for the testing HAL. Can keep and search for entires,
  * matching calls made though the testing hal withouth causing side effects.
  * */
@@ -17,6 +19,7 @@ class Log {
     // FIXME: templetaize size
   }
 
+  bool add_entry(const ProgmemString &entry);
   bool add_entry(const char *entry);
   bool contains_entry(const char *expected_entry) const;
   bool contains_entry_starting_with(const char *expected_entry) const;

@@ -1,9 +1,29 @@
 #include "log.hpp"
 
+#include <avr/pgmspace.h>
 #include <stdint.h>
 #include <string.h>
 
 #include "../io_helpers.hpp"
+
+// TODO: store pointer to message in progmem.
+bool Log::add_entry(const ProgmemString &message) {
+  constexpr auto buffer_len = 50;
+  char message_buf[buffer_len] = {};
+
+  const auto message_length_inc_terminator = strlen_P(message.progmem_str) + 1;
+  if (message_length_inc_terminator > buffer_len) {
+    WARNING("Insufficient buffer space to store message");
+    return false;
+  }
+
+  strcpy_P(message_buf, message.progmem_str);
+  return this->add_entry(
+      message_buf);  // Emediatly copies the content of message_buf,
+                     // so no need to worry about ownership. Note that this is a
+                     // very temporary solution to be replaced by propperly
+                     // stroring the messages in progmem.
+}
 
 bool Log::add_entry(const char *message) {
   const size_t message_lenght_with_terminator = strlen(message) + 1;

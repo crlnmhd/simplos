@@ -1,8 +1,22 @@
 #include <string.h>
 
 #include "../hal/log.hpp"
+#include "../progmem.hpp"
 #include "test.hpp"
 #include "test_suite.hpp"
+
+bool test_can_add_message_stored_in_progmem() {
+  const ProgmemString progmem_message = progmem_string("In progmem");
+
+  constexpr auto buf_size = 20;
+  char buf[buf_size] = {};
+  Log log{buf, buf_size};
+
+  CHECK_TRUE(log.add_entry(progmem_message));
+  CHECK_TRUE(log.contains_entry("In progmem"));
+
+  return TEST_PASSED;
+}
 
 bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   constexpr uint8_t buf_size = 3;
@@ -171,6 +185,8 @@ bool test_clear_removed_existing_entries(void) {
 
 TestStatistics unit_test_hal_log(void) {
   TestStatistics test_resutls = {};
+
+  RUN_TEST(test_can_add_message_stored_in_progmem, test_resutls);
 
   RUN_TEST(test_does_not_append_to_log_when_bufferspace_is_insufficiant,
            test_resutls);
