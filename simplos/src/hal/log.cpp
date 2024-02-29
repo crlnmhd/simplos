@@ -43,7 +43,7 @@ bool Log::add_entry(const char *message) {
 }
 
 bool Log::contains_entry(const ProgmemString &expected_entry) const {
-  constexpr auto buffer_len = 50;
+  constexpr auto buffer_len = 100;
   char message_buf[buffer_len] = {};
 
   const auto message_length_inc_terminator =
