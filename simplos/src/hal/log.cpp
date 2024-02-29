@@ -27,7 +27,7 @@ bool Log::add_entry(const ProgmemString &message) {
 
 bool Log::add_entry(const char *message) {
   const size_t message_lenght_with_terminator = strlen(message) + 1;
-  if (message_lenght_with_terminator > this->num_buffer_bytes_remaining) {
+  if (message_lenght_with_terminator > this->num_buffer_entries_remaining) {
 #ifndef MOCK_HAL  // Surpess mesasge in test mode.
     WARNING("Unable to add entry: '%s' to log. Insufficient buffer space.\n",
             message);
@@ -38,7 +38,7 @@ bool Log::add_entry(const char *message) {
          message_lenght_with_terminator);
 
   this->next_entry_index += message_lenght_with_terminator;
-  this->num_buffer_bytes_remaining -= message_lenght_with_terminator;
+  this->num_buffer_entries_remaining -= message_lenght_with_terminator;
 
   return true;
 }
@@ -121,10 +121,10 @@ bool Log::contains_entry_starting_with(const char *expected_entry) const {
 }
 
 size_t Log::num_unused_entries() const {
-  return this->num_buffer_bytes_remaining;
+  return this->num_buffer_entries_remaining;
 }
 
 void Log::clear() {
   this->next_entry_index = 0;
-  this->num_buffer_bytes_remaining = this->total_buffer_bytes;
+  this->num_buffer_entries_remaining = this->total_buffer_bytes;
 }

@@ -14,7 +14,7 @@ class Log {
   Log(char *buf, const size_t buf_size)
       : buffer(buf),
         next_entry_index(0),
-        num_buffer_bytes_remaining(buf_size),
+        num_buffer_entries_remaining(buf_size),
         total_buffer_bytes(buf_size) {
     // FIXME: templetaize size
   }
@@ -31,7 +31,7 @@ class Log {
   bool contains_entry_starting_with(const char *expected_entry) const;
   char *buffer;
   size_t next_entry_index;
-  size_t num_buffer_bytes_remaining;
+  size_t num_buffer_entries_remaining;
   size_t total_buffer_bytes;
 };
 
