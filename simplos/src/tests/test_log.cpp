@@ -5,19 +5,6 @@
 #include "test.hpp"
 #include "test_suite.hpp"
 
-bool test_contains_entry_accepts_entry_stored_in_progmem() {
-  const ProgmemString progmem_entry = progmem_string("An entry");
-
-  constexpr auto buf_size = 20;
-  char buf[buf_size] = {};
-  Log log{buf, buf_size};
-
-  CHECK_TRUE(log.add_entry(progmem_entry));
-  CHECK_TRUE(log.contains_entry(progmem_entry));
-
-  return TEST_PASSED;
-}
-
 bool test_contains_entry_starting_with_accepts_entry_stored_in_progmem() {
   const ProgmemString full_entry = progmem_string("ABCDEF");
   const ProgmemString progmem_entry = progmem_string("ABC");
@@ -160,7 +147,7 @@ bool test_does_not_falsely_find_log_entires_finding_in_log(void) {
   Log log{buffer, specified_buffer_size};
 
   const ProgmemString real_log_entry = progmem_string("Start");
-  const char *not_in_log = "StartingWith";
+  const ProgmemString not_in_log = progmem_string("StartingWith");
 
   CHECK_TRUE(log.add_entry(real_log_entry));
   CHECK_FALSE(log.contains_entry(not_in_log));
@@ -201,8 +188,6 @@ bool test_clear_removed_existing_entries(void) {
 
 TestStatistics unit_test_hal_log(void) {
   TestStatistics test_resutls = {};
-
-  RUN_TEST(test_contains_entry_accepts_entry_stored_in_progmem, test_resutls);
 
   RUN_TEST(test_contains_entry_starting_with_accepts_entry_stored_in_progmem,
            test_resutls);

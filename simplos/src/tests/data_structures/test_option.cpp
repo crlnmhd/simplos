@@ -33,8 +33,10 @@ bool test_operator_star_calls_FATAL_ERROR_if_operator_star_is_used_on_invalid_st
   hal_log.clear();
   __attribute__((unused)) auto something_invalid = *invalid;
 
-  CHECK_TRUE(hal_log.contains_entry(
-      "FATAL ERROR\nAttempted access of option in invalid state"));
+  const auto expected_entry = progmem_string(
+      "FATAL ERROR\nAttempted access of option in invalid state");
+
+  CHECK_TRUE(hal_log.contains_entry(expected_entry));
   hal_log.clear();
 
   return TEST_PASSED;
