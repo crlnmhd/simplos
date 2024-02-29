@@ -21,6 +21,7 @@ class Log {
 
   bool add_entry(const ProgmemString &entry);
   bool add_entry(const char *entry);
+  bool contains_entry(const ProgmemString &expected_entry) const;
   bool contains_entry(const char *expected_entry) const;
   bool contains_entry_starting_with(const char *expected_entry) const;
   void clear();

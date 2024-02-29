@@ -18,6 +18,20 @@ bool test_can_add_message_stored_in_progmem() {
   return TEST_PASSED;
 }
 
+bool test_contains_entry_accepts_entry_stored_in_progmem() {
+  const char *ram_entry = "An entry";
+  const ProgmemString progmem_entry = progmem_string("An entry");
+
+  constexpr auto buf_size = 20;
+  char buf[buf_size] = {};
+  Log log{buf, buf_size};
+
+  CHECK_TRUE(log.add_entry(ram_entry));
+  CHECK_TRUE(log.contains_entry(progmem_entry));
+
+  return TEST_PASSED;
+}
+
 bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   constexpr uint8_t buf_size = 3;
   char buf[buf_size];
@@ -187,6 +201,8 @@ TestStatistics unit_test_hal_log(void) {
   TestStatistics test_resutls = {};
 
   RUN_TEST(test_can_add_message_stored_in_progmem, test_resutls);
+
+  RUN_TEST(test_contains_entry_accepts_entry_stored_in_progmem, test_resutls);
 
   RUN_TEST(test_does_not_append_to_log_when_bufferspace_is_insufficiant,
            test_resutls);

@@ -42,6 +42,22 @@ bool Log::add_entry(const char *message) {
   return true;
 }
 
+bool Log::contains_entry(const ProgmemString &expected_entry) const {
+  constexpr auto buffer_len = 50;
+  char message_buf[buffer_len] = {};
+
+  const auto message_length_inc_terminator =
+      strlen_P(expected_entry.progmem_str) + 1;
+  if (message_length_inc_terminator > buffer_len) {
+    WARNING("Insufficient buffer space to store message");
+    return false;
+  }
+
+  strcpy_P(message_buf, expected_entry.progmem_str);
+
+  return this->contains_entry(message_buf);
+}
+
 bool Log::contains_entry(const char *expected_entry) const {
   const auto expected_entry_length = strlen(expected_entry);
 
