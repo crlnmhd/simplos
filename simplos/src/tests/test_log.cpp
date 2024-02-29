@@ -5,20 +5,6 @@
 #include "test.hpp"
 #include "test_suite.hpp"
 
-bool test_contains_entry_starting_with_accepts_entry_stored_in_progmem() {
-  const ProgmemString full_entry = progmem_string("ABCDEF");
-  const ProgmemString progmem_entry = progmem_string("ABC");
-
-  constexpr auto buf_size = 20;
-  char buf[buf_size] = {};
-  Log log{buf, buf_size};
-
-  CHECK_TRUE(log.add_entry(full_entry));
-  CHECK_TRUE(log.contains_entry_starting_with(progmem_entry));
-
-  return TEST_PASSED;
-}
-
 bool test_does_not_append_to_log_when_bufferspace_is_insufficiant(void) {
   constexpr uint8_t buf_size = 3;
   char buf[buf_size];
@@ -80,7 +66,7 @@ bool test_log_contains_entry_starting_with_returns_false_if_the_requested_string
   Log log{buffer, buffer_size};
 
   const ProgmemString entry = progmem_string("Anything");
-  const char *empty = "";
+  const auto empty = progmem_string("");
   CHECK_TRUE(log.add_entry(entry));
 
   CHECK_FALSE(log.contains_entry_starting_with(empty));
@@ -96,9 +82,9 @@ bool test_log_contains_entry_starting_with_returns_true_when_an_entry_starting_w
 
   CHECK_TRUE(log.add_entry(progmem_string("Hello World")));
 
-  CHECK_TRUE(log.contains_entry_starting_with("Hel"));
-  CHECK_TRUE(log.contains_entry_starting_with("Hello"));
-  CHECK_TRUE(log.contains_entry_starting_with("Hello Wor"));
+  CHECK_TRUE(log.contains_entry_starting_with(progmem_string("Hel")));
+  CHECK_TRUE(log.contains_entry_starting_with(progmem_string("Hello")));
+  CHECK_TRUE(log.contains_entry_starting_with(progmem_string("Hello Wor")));
 
   return TEST_PASSED;
 }
@@ -114,10 +100,10 @@ bool test_log_contains_entry_starting_with_returns_false_when_entry_does_not_sta
   CHECK_TRUE(log.add_entry(entry1));
   CHECK_TRUE(log.add_entry(entry2));
 
-  CHECK_FALSE(log.contains_entry_starting_with("abc"));
-  CHECK_FALSE(log.contains_entry_starting_with("Hej"));
-  CHECK_FALSE(log.contains_entry_starting_with("Word"));
-  CHECK_FALSE(log.contains_entry_starting_with("ello"));
+  CHECK_FALSE(log.contains_entry_starting_with(progmem_string("abc")));
+  CHECK_FALSE(log.contains_entry_starting_with(progmem_string("Hej")));
+  CHECK_FALSE(log.contains_entry_starting_with(progmem_string("Word")));
+  CHECK_FALSE(log.contains_entry_starting_with(progmem_string("ello")));
 
   return TEST_PASSED;
 }
@@ -188,9 +174,6 @@ bool test_clear_removed_existing_entries(void) {
 
 TestStatistics unit_test_hal_log(void) {
   TestStatistics test_resutls = {};
-
-  RUN_TEST(test_contains_entry_starting_with_accepts_entry_stored_in_progmem,
-           test_resutls);
 
   RUN_TEST(test_does_not_append_to_log_when_bufferspace_is_insufficiant,
            test_resutls);
