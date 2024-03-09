@@ -5,34 +5,10 @@
 #include "memory.hpp"
 #include "simplos_types.hpp"
 
-// clang-format off
-#if defined(__clang__)
-_Pragma("clang diagnostic ignored \"-Wlanguage-extension-token\"")
-#endif
-//clang-format on
+extern volatile Kernel internal_kernel;
+extern Kernel volatile *volatile global_kernel;
 
-extern volatile Kernel internal_kernel; 
-extern Kernel volatile *volatile global_kernel; 
-
-
-#define DO_PRAGMA_(x) _Pragma(#x)
-#define DO_PRAGMA(x) DO_PRAGMA_(x)
-//clang-format off
-#if defined(__clang__)
-#define CLANG_IGNORE_BEGIN(warning)                             \
-  _Pragma("clang diagnostic push")                              \
-  _Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
-  DO_PRAGMA(clang diagnostic ignored warning)
-#define CLANG_IGNORE_END() _Pragma("clang diagnostic pop")
-#elif defined(__GNUC__)
-#define GCC_IGNORE_BEGIN(warning)                             \
-  _Pragma("GCC diagnostic push")                              \
-  _Pragma("GCC diagnostic ignored \"-Wunknown-pragmas\"") \
-  DO_PRAGMA(GCC diagnostic ignored warning)
-#define GCC_IGNORE_END() _Pragma("GCC diagnostic pop")
-#endif  // __GNUC__
-
-INLINED uint8_t index_of_current_task(Kernel &kernel){
+INLINED uint8_t index_of_current_task(Kernel &kernel) {
   return kernel.schedule.active_task_block;
 }
 
