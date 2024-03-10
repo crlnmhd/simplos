@@ -8,11 +8,12 @@ set logging on
 break main
 continue
 set $i = 0
-while ( $i < 5000)
+while ( $i < 100000)
   info registers
   step
   # next
   # continue
   set $i = $i + 1
 end
+
 where

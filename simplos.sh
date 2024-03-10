@@ -93,16 +93,25 @@ run_unit_tests_in_container() {
   code_copy_dir=$(mktemp -d)
   cp -r "$source_directory"/* "$code_copy_dir"
 
+  local test_output
+  test_output="commit_unit_test_output.txt"
+  rm "$test_output"
+
+  local raw_output
+  raw_output=$(mktemp)
+
   local return_val
   if podman run -it --rm \
     -v "${code_copy_dir}:${mount_destination}":Z \
     avr_docker bash \
-    -c "ls && make clean && make run_unit_tests" &> /dev/null; then
+    -c "ls && make clean && make run_unit_tests" &> "$raw_output"; then
+    cp "$code_copy_dir"/unit_test_output.log "$test_output"
     return_val=0
   else
+    cp "$raw_output" "$test_output"
     return_val=1
   fi
-  cp "$code_copy_dir"/unit_test_output.log commit_unit_test_output.txt
+  rm "$raw_output"
   rm -r "$code_copy_dir"
   exit "$return_val"
 }

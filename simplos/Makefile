@@ -1,8 +1,3 @@
-# AVR-c makefile
-# Looks for source and header files in src/ and places .o files in build
-
-
-############### Configurations ######################
 uP := atmega2560 #  (e.g. atmega328p, atmega2560)
 BAUD := 115200
 CPU_FREQ := 16000000UL
@@ -16,6 +11,8 @@ NEXT_TASK_SP_LOCATION := 0x8020FC
 PREV_TASK_SP_LOCATION := 0x8020FA
 KERNEL_DATA_LOCATION := 0x802102
 DATA_SECTION_START := 0x802000
+
+UNIT_TEST_DATA_SECTION_START := 0x801000
 
 DEFINES :=
 # Static scheduling
@@ -54,15 +51,52 @@ DEBUG_BUILD := tests
 LOG_DIR := log
 
 UNIT_TESTS_SRC := src/tests
-TEST_SOURCES := $(wildcard $(UNIT_TESTS_SRC)/*.c)
-UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.c, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
+TEST_SOURCES := $(UNIT_TESTS_SRC)/helpers.cpp \
+								$(UNIT_TESTS_SRC)/test_context_switch.cpp \
+								$(UNIT_TESTS_SRC)/test_kernel.cpp  \
+								$(UNIT_TESTS_SRC)/test_log.cpp \
+								$(UNIT_TESTS_SRC)/test_memory.cpp \
+								$(UNIT_TESTS_SRC)/test_os_api.cpp \
+								$(UNIT_TESTS_SRC)/test_scheduler.cpp \
+								$(UNIT_TESTS_SRC)/test_spawning.cpp \
+								$(UNIT_TESTS_SRC)/test_tasks.cpp \
+								$(UNIT_TESTS_SRC)/test_sstd.cpp \
+								$(UNIT_TESTS_SRC)/unit_test.cpp
 
-ALL_SOURCES := $(wildcard $(SRC)/*.c $(SRC)/hal/*.c)
-MAIN_FILE := $(SRC)/main.c
-SOURCES := $(filter-out $(MAIN_FILE), $(ALL_SOURCES))
+TEST_SOURCES += $(UNIT_TESTS_SRC)/data_structures/test_array.cpp \
+								$(UNIT_TESTS_SRC)/data_structures/test_option.cpp
 
-OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
-TEST_OBJECTS := $(patsubst $(SRC)/%.c, $(DEBUG_BUILD)/%.o, $(SOURCES))
+UNIT_TEST_OBJECTS := $(patsubst $(UNIT_TESTS_SRC)/%.cpp, $(DEBUG_BUILD)/%.unit_test.o, $(TEST_SOURCES))
+
+ALL_SOURCES := 	$(SRC)/io_helpers.cpp \
+								$(SRC)/kernel_status.cpp \
+								$(SRC)/memory.cpp \
+								$(SRC)/os.cpp \
+								$(SRC)/scheduler.cpp \
+								$(SRC)/simplos.cpp \
+								$(SRC)/task.cpp \
+								$(SRC)/timers.cpp
+
+ALL_SOURCES += 	$(SRC)/user_tasks/user_tasks.cpp
+
+ALL_SOURCES += 	$(SRC)/data_structures/array.cpp
+
+# serial.cpp is NOT includes do to special optimization requirenemts.
+ALL_SOURCES += 	$(SRC)/hal/atmega2560_hal.cpp \
+								$(SRC)/hal/mock_hal.cpp \
+								$(SRC)/hal/log.cpp \
+
+MAIN_FILE := $(SRC)/main.cpp
+
+# Needed due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=48026
+ALWAYS_OPTIMIZED_FILES := $(SRC)/hal/serial.cpp
+
+SOURCES := $(filter-out $(MAIN_FILE) $(ALWAYS_OPTIMIZED_FILES), $(ALL_SOURCES))
+
+OBJECTS := $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SOURCES))
+ALWAYS_OPTIMIZED_OBJECTS:= $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(ALWAYS_OPTIMIZED_FILES))
+TEST_OBJECTS := $(patsubst $(SRC)/%.cpp, $(DEBUG_BUILD)/%.o, $(SOURCES))
+ALWAYS_OPTIMIZED_TEST_OBJECTS := $(patsubst $(SRC)/%.cpp, $(DEBUG_BUILD)/%.o, $(ALWAYS_OPTIMIZED_FILES))
 
 ASM_SRC:= src/asm
 ASM_SOURCES := $(wildcard $(ASM_SRC)/*.s)
@@ -77,32 +111,35 @@ LATEST_EXECUTABLE_SOFTLINK := latest_executable
 UNIT_TEST_OUTPUT_FILE := unit_test_output.log
 
 .DEFAULT_GOAL := build
-CC := avr-gcc
+CC := avr-g++
 AVRINC := /usr/avr/include
 SIMAVR := simavr
 AVR_GDB := avr-gdb
 SIMAVR_DEBUG := $(SIMAVR_DEBUG)
 
-BUILD_OPT_LEVEL := -O0
+BUILD_OPT_LEVEL := -Os -ftoplevel-reorder
 DEBUG_OPT_LEVEL := -O0
+ALWAYS_OPTIMIZED_OPT_LEVEL := -Os
+UNIT_TEST_FLAGS :=	-g2 \
+										-DMOCK_HAL \
+										-Wno-error=unused-parameter \
+										-Wno-error=unused-variable \
+										-Wno-error=unused-local-typedefs \
 
-UNIT_TEST_FLAGS :=	-g $\
-										-DMOCK_HAL $\
-										-Wno-unused-parameter
-
-
-CFLAGS := -Werror $\
-					-pedantic $\
+CFLAGS := -std=gnu++20 $\
+					-Werror $\
 					-Wall $\
+					-pedantic $\
 					-Wextra $\
-					-Wstrict-prototypes $\
+					-Wsuggest-attribute=const $\
+					-Wno-error=suggest-attribute=const $\
 					-Wshadow $\
 					-Wpointer-arith $\
 					-Wswitch-enum $\
 					-Wconversion $\
 					-Wstrict-overflow $\
+					-Weffc++ $\
 					-Wno-aggressive-loop-optimizations $\
-					-std=gnu17 $\
 					-fno-omit-frame-pointer $\
 					-fno-common $\
 					-fshort-enums $\
@@ -112,9 +149,8 @@ CFLAGS := -Werror $\
 					-mmcu=$(uP) $\
 					-I$(AVRINC) $\
 					-I/include/ $\
-					-g
 
-CLANGD_FLAGS := -ferror-limit=0 -Wno-language-extension-token $\
+CLANGD_FLAGS := -ferror-limit=0 -Wno-language-extension-token
 
 DATA_SECTIONS := 	-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
 									-Wl,--section-start=.next_task_sp_location=$(NEXT_TASK_SP_LOCATION) $\
@@ -125,12 +161,14 @@ DATA_SECTIONS := 	-Wl,--section-start=.task_sp_location=$(TASK_SP_LOCATION) $\
 # Data sections that are not suitable for unit testing.
 NON_UNIT_TEST_DATA_SECIONS := -Wl,--section-start=.data=$(DATA_SECTION_START)
 
+UNIT_TEST_DATA_SECIONS := -Wl,--section-start=.data=$(UNIT_TEST_DATA_SECTION_START)
+
 FRAMEWORK := wiring
 
 .PHONY: %.compdb_entry compile_commands dir all all_test log
 
 # Borrowed from https://gist.github.com/JayKickliter/f4e1945abe1d3bbbe3263640a3669e3c.
-%.compdb_entry: %.c
+%.compdb_entry: %.cpp
 	@echo "    {"                                                           		>  $@
 	@echo "        \"command\": \"$(CC) $(CFLAGS) $(CLANGD_FLAGS) $(DATA_SECTIONS) -c $<\"," 	>> $@
 	@echo "        \"directory\": \"$(CURDIR)\","            										>> $@
@@ -139,6 +177,7 @@ FRAMEWORK := wiring
 
 COMPDB_ENTRIES = $(addsuffix .compdb_entry, $(basename $(SOURCES)))
 COMPDB_ENTRIES += $(addsuffix .compdb_entry, $(basename $(TEST_SOURCES)))
+COMPDB_ENTRIES += $(addsuffix .compdb_entry, $(basename $(ALWAYS_OPTIMIZED_FILES)))
 
 compile_commands: $(COMPDB_ENTRIES)
 	@echo "[" > $@.tmp
@@ -155,9 +194,13 @@ dir:
 	mkdir -p $(OBJ)/asm
 	mkdir -p $(OBJ)/tests
 	mkdir -p $(OBJ)/hal
+	mkdir -p $(OBJ)/user_tasks
+	mkdir -p $(OBJ)/data_structures
 	mkdir -p $(LOG_DIR)
 	mkdir -p $(DEBUG_BUILD)
 	mkdir -p $(DEBUG_BUILD)/hal
+	mkdir -p $(DEBUG_BUILD)/user_tasks
+	mkdir -p $(DEBUG_BUILD)/data_structures
 
 # Target to compile and generate database for clangd.
 build: compile_commands dir all
@@ -166,22 +209,28 @@ build: compile_commands dir all
 build_tests: compile_commands dir all_test
 	ln -s -f $(UNIT_TESTS) $(LATEST_EXECUTABLE_SOFTLINK)
 
-all: $(OBJECTS) $(ASM_OBJECTS) build/main.o
+all: $(ALL_OBJECTS) build/main.o $(ALWAYS_OPTIMIZED_OBJECTS)
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) $^ -o $(SIMPLOS_EXECUTABLE)
 	avr-size -A -x $(SIMPLOS_EXECUTABLE)
 
-all_test: $(TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $^ -o $(UNIT_TESTS)
+all_test: $(TEST_OBJECTS) $(ALWAYS_OPTIMIZED_TEST_OBJECTS) $(UNIT_TEST_OBJECTS) $(ASM_OBJECTS)
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) $^ -o $(UNIT_TESTS)
 	avr-size -A -x $(UNIT_TESTS)
 
-$(OBJ)/%.o: $(SRC)/%.c
+$(ALWAYS_OPTIMIZED_OBJECTS): $(ALWAYS_OPTIMIZED_FILES)
+	$(CC) $(CFLAGS) $(ALWAYS_OPTIMIZED_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
+
+$(OBJ)/%.o: $(SRC)/%.cpp
 	$(CC) $(CFLAGS) $(BUILD_OPT_LEVEL) $(DATA_SECTIONS) $(NON_UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
-$(DEBUG_BUILD)/%.o: $(SRC)/%.c
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
+$(ALWAYS_OPTIMIZED_TEST_OBJECTS): $(ALWAYS_OPTIMIZED_FILES)
+	$(CC) $(CFLAGS) $(ALWAYS_OPTIMIZED_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
 
-$(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.c
-	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
+$(DEBUG_BUILD)/%.o: $(SRC)/%.cpp
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) -I$(SRC) -c -g $< -o $@
+
+$(DEBUG_BUILD)/%.unit_test.o: $(UNIT_TESTS_SRC)/%.cpp
+	$(CC) $(CFLAGS) $(DEBUG_OPT_LEVEL) $(UNIT_TEST_FLAGS) $(DATA_SECTIONS) $(UNIT_TEST_DATA_SECIONS) -I$(SRC) -I$(UNIT_TESTS_SRC) -c -g $< -o $@
 
 $(OBJ)/asm/%.o: $(ASM_SRC)/%.s
 	$(CC) $(CFLAGS) -I$(ASM_SRC) -c -g $< -o $@
